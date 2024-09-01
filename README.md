@@ -22,3 +22,7 @@
 [The Complete Guide to Event-Driven Architecture](https://medium.com/@seetharamugn/the-complete-guide-to-event-driven-architecture-b25226594227)
 
 ![image.png](doc/img/image.png)
+
+## Доменная модель
+
+![domain_model.svg](doc/img/domain_model.drawio.svg)
