@@ -1,0 +1,49 @@
+type Club {
+    id: ID!
+    name: String!
+    members: [Member!]!
+    tests: [Test!]!
+}
+
+type Member {
+    id: ID!
+    role: MemberRole!
+    clubs: [Club!]!
+}
+
+enum MemberRole {
+    ADMIN
+    USER
+}
+
+type Test {
+    id: ID!
+    type: TestType!
+    data: TestData!
+}
+
+enum TestType {
+    MEMBERS_CONFIRM
+    FORM
+}
+
+union TestData = MembersConfirmData | FormData
+
+type MembersConfirmData {
+    requiredConfirmationNumber: Int!
+}
+
+type FormData {
+    questions: [Question!]!
+}
+
+type Question {
+    text: String!
+    answerOptions: [String!]!
+    answerType: AnswerType!
+}
+
+enum AnswerType {
+    MULTIPLE
+    SINGLE
+}
