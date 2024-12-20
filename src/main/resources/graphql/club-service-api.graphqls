@@ -8,7 +8,6 @@ type Club {
 type Member {
     id: ID!
     role: MemberRole!
-    clubs: [Club!]!
 }
 
 enum MemberRole {
@@ -27,13 +26,13 @@ enum TestType {
     FORM
 }
 
-union TestData = MembersConfirmData | FormData
+union TestData = MembersConfirmTestData | FormTestData
 
-type MembersConfirmData {
+type MembersConfirmTestData {
     requiredConfirmationNumber: Int!
 }
 
-type FormData {
+type FormTestData {
     questions: [Question!]!
 }
 
@@ -46,4 +45,33 @@ type Question {
 enum AnswerType {
     MULTIPLE
     SINGLE
+}
+
+type Answer {
+    id: ID!
+    test: Test!
+    userId: ID!
+    data: AnswerData!
+    status: AnswerStatus!
+}
+
+enum AnswerStatus {
+    CREATED
+    SENT
+    FAILED
+    PASSED
+}
+
+union AnswerData = MembersConfirmAnswerData | FormAnswerData
+
+type MembersConfirmAnswerData {
+    actualConfirmationNumber: Int
+}
+
+type FormAnswerData {
+    questionAnswers: [QuestionAnswer!]!
+}
+
+type QuestionAnswer {
+    optionNumbers: [Int!]!
 }
