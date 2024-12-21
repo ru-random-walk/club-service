@@ -1,0 +1,21 @@
+enum MemberRole {
+    ADMIN
+    USER
+}
+
+enum TestType {
+    MEMBERS_CONFIRM
+    FORM
+}
+
+enum AnswerType {
+    MULTIPLE
+    SINGLE
+}
+
+enum AnswerStatus {
+    CREATED
+    SENT
+    FAILED
+    PASSED
+}
