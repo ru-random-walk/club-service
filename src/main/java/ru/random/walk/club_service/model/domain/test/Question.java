@@ -15,4 +15,5 @@ public class Question {
     private String text;
     private List<String> answerOptions;
     private AnswerType answerType;
+    private List<Integer> correctOptionNumbers;
 }
