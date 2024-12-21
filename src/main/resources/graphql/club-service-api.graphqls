@@ -77,12 +77,11 @@ type QuestionAnswer {
 }
 
 type Query {
-    clubMembers(clubId: ID!): [Member!]!
-    club(clubId: ID!): Club
+    getClubMembers(clubId: ID!): [Member!]!
+    getClub(clubId: ID!): Club
 
-    memberClubs(memberId: ID!): [Club!]!
-
-    userAnswers(userId: ID!): [Answer!]!
+    getUserClubs(userId: ID!): [Club!]!
+    getUserAnswers(userId: ID!): [Answer!]!
 }
 
 input MembersConfirmDataInput {
