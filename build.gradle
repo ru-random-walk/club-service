@@ -18,6 +18,7 @@ generateJava{
     schemaPaths = [
             "${projectDir}/src/main/resources/graphql/queries.graphqls",
             "${projectDir}/src/main/resources/graphql/mutations.graphqls",
+            "${projectDir}/src/main/resources/graphql/enums.graphqls",
     ] // List of directories containing schema files
     packageName = 'ru.random.walk.club_service.model.graphql' // The package name to use to generate sources
 }
