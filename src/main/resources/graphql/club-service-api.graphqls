@@ -76,12 +76,17 @@ type QuestionAnswer {
     optionNumbers: [Int!]!
 }
 
+input PaginationInput {
+    page: Int!
+    size: Int!
+}
+
 type Query {
-    getClubMembers(clubId: ID!): [Member!]!
+    getClubMembers(clubId: ID!, pagination: PaginationInput): [Member!]!
     getClub(clubId: ID!): Club
 
-    getUserClubs(userId: ID!): [Club!]!
-    getUserAnswers(userId: ID!): [Answer!]!
+    getUserClubs(userId: ID!, pagination: PaginationInput): [Club!]!
+    getUserAnswers(userId: ID!, pagination: PaginationInput): [Answer!]!
 }
 
 input MembersConfirmInput {
