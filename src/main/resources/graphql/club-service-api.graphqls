@@ -84,11 +84,11 @@ type Query {
     getUserAnswers(userId: ID!): [Answer!]!
 }
 
-input MembersConfirmDataInput {
+input MembersConfirmInput {
     requiredConfirmationNumber: Int!
 }
 
-input FormDataInput {
+input FormInput {
     questions: [QuestionInput!]!
 }
 
@@ -98,7 +98,7 @@ input QuestionInput {
     answerType: AnswerType!
 }
 
-input FormAnswerDataInput {
+input FormAnswerInput {
     questionAnswers: [QuestionAnswerInput!]!
 }
 
@@ -109,15 +109,15 @@ input QuestionAnswerInput {
 type Mutation {
     createClub(name: String!): Club!
 
-    addClubTestMembersConfirm(clubId: ID!, membersConfirmData: MembersConfirmDataInput!): Test!
-    addClubTestForm(clubId: ID!, formData: FormDataInput!): Test!
-    updateClubTestMembersConfirm(clubId: ID!, testId: ID!, membersConfirmData: MembersConfirmDataInput!): Test!
-    updateClubTestForm(clubId: ID!, testId: ID!, formData: FormDataInput!): Test!
+    addClubTestMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput!): Test!
+    addClubTestForm(clubId: ID!, form: FormInput!): Test!
+    updateClubTestMembersConfirm(clubId: ID!, testId: ID!, membersConfirm: MembersConfirmInput!): Test!
+    updateClubTestForm(clubId: ID!, testId: ID!, form: FormInput!): Test!
     removeClubTest(clubId: ID!, testId: ID!): ID!
 
     changeMemberRole(clubId: ID!, memberId: ID!, role: MemberRole!): Member!
 
     createTestAnswerMembersConfirm(testId: ID!): Answer
-    createTestAnswerForm(testId: ID!, formAnswer: FormAnswerDataInput!): Answer
-    updateTestAnswerForm(testId: ID!, formAnswer: FormAnswerDataInput!): Answer
+    createTestAnswerForm(testId: ID!, formAnswer: FormAnswerInput!): Answer
+    updateTestAnswerForm(testId: ID!, formAnswer: FormAnswerInput!): Answer
 }
