@@ -11,6 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FormAnswerData {
+public class FormAnswerData extends AnswerData {
     private List<QuestionAnswer> questionAnswers;
 }

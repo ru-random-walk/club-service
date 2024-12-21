@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MembersConfirmAnswerData {
+public class MembersConfirmAnswerData extends AnswerData {
     private Integer actualConfirmationNumber;
 }
