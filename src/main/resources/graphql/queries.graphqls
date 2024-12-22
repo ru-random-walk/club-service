@@ -4,7 +4,7 @@ input PaginationInput {
 }
 
 type Query {
-    getClub(clubId: ID!): Club
+    getClub(clubId: ID!, membersPagination: PaginationInput): Club
 
     getUserClubs(userId: ID!, pagination: PaginationInput): [Club!]!
     getUserAnswers(userId: ID!, pagination: PaginationInput): [Answer!]!

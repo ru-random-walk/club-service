@@ -7,6 +7,7 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.entity.ClubEntity;
+import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.UUID;
@@ -15,12 +16,16 @@ import java.util.UUID;
 @Slf4j
 public class ClubController {
     @QueryMapping
-    @Nullable ClubEntity getClub(@Argument UUID clubId) {
+    @Nullable ClubEntity getClub(
+            @Argument UUID clubId,
+            @Argument PaginationInput membersPagination
+    ) {
         log.info("""
                         Get club
                         by clubId [{}]
+                        with members pagination [{}]
                         """,
-                clubId
+                clubId, membersPagination
         );
         return StubDataUtil.clubEntity();
     }
