@@ -120,4 +120,66 @@ public class StabDataUtil {
                 .data(formAnswerData())
                 .build();
     }
+
+    public static ClubEntity clubEntityWith(String name) {
+        return ClubEntity.builder()
+                .id(UUID.randomUUID())
+                .name(name)
+                .tests(Collections.emptyList())
+                .members(
+                        Collections.singletonList(memberEntity())
+                )
+                .build();
+    }
+
+    public static TestEntity membersConfirmTestEntityWith(MembersConfirmTestData membersConfirmTestData) {
+        var membersConfirmTestEntity = membersConfirmTestEntity();
+        membersConfirmTestEntity.setData(membersConfirmTestData);
+        return membersConfirmTestEntity;
+    }
+
+    public static TestEntity formTestEntityWith(FormTestData formTestData) {
+        var formTestEntity = formTestEntity();
+        formTestEntity.setData(formTestData);
+        return formTestEntity;
+    }
+
+    public static MemberEntity memberEntityWith(UUID memberId, MemberRole memberRole) {
+        return MemberEntity.builder()
+                .id(memberId)
+                .role(memberRole)
+                .build();
+    }
+
+    public static AnswerEntity answerMembersConfirmEntityWith(UUID testId) {
+        var membersConfirmTestEntity = membersConfirmTestEntity();
+        membersConfirmTestEntity.setId(testId);
+        return AnswerEntity.builder()
+                .test(membersConfirmTestEntity)
+                .userId(UUID.randomUUID())
+                .status(AnswerStatus.SENT)
+                .build();
+    }
+
+    public static AnswerEntity answerFormEntityWith(UUID testId, FormAnswerData formAnswerData) {
+        var formTestEntity = formTestEntity();
+        formTestEntity.setId(testId);
+        return AnswerEntity.builder()
+                .test(formTestEntity)
+                .userId(UUID.randomUUID())
+                .data(formAnswerData)
+                .status(AnswerStatus.CREATED)
+                .build();
+    }
+
+    public static AnswerEntity answerFormEntityWith(UUID testId, AnswerStatus answerStatus) {
+        var formTestEntity = formTestEntity();
+        formTestEntity.setId(testId);
+        return AnswerEntity.builder()
+                .test(formTestEntity)
+                .userId(UUID.randomUUID())
+                .data(formAnswerData())
+                .status(answerStatus)
+                .build();
+    }
 }

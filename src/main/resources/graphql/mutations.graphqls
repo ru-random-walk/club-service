@@ -34,8 +34,10 @@ type Mutation {
 
     changeMemberRole(clubId: ID!, memberId: ID!, role: MemberRole!): Member!
 
-    createTestAnswerMembersConfirm(testId: ID!): Answer
-    createTestAnswerForm(testId: ID!, formAnswer: FormAnswerInput!): Answer
+    createTestAnswerMembersConfirm(testId: ID!): Answer!
+    createTestAnswerForm(testId: ID!, formAnswer: FormAnswerInput!): Answer!
 
-    updateTestAnswerForm(testId: ID!, formAnswer: FormAnswerInput!): Answer
+    setTestAnswerFormStatusToSent(testId: ID!): Answer!
+
+    updateTestAnswerForm(testId: ID!, formAnswer: FormAnswerInput!): Answer!
 }
