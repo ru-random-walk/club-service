@@ -12,7 +12,7 @@ import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.graphql.types.MemberRole;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
-import ru.random.walk.club_service.util.StabDataUtil;
+import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +36,7 @@ public class UserController {
                         """,
                 userId, pagination
         );
-        return Collections.singletonList(StabDataUtil.clubEntity());
+        return Collections.singletonList(StubDataUtil.clubEntity());
     }
 
     @QueryMapping
@@ -52,8 +52,8 @@ public class UserController {
                 userId, pagination
         );
         return List.of(
-                StabDataUtil.formAnswerEntity(),
-                StabDataUtil.membersConfirmAnswerEntity()
+                StubDataUtil.formAnswerEntity(),
+                StubDataUtil.membersConfirmAnswerEntity()
         );
     }
 
@@ -72,6 +72,6 @@ public class UserController {
                 clubId, memberId, role
         );
         var memberRole = memberMapper.toDomainMemberRole(role);
-        return StabDataUtil.memberEntityWith(memberId, memberRole);
+        return StubDataUtil.memberEntityWith(memberId, memberRole);
     }
 }

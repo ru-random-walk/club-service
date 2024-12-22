@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
-import ru.random.walk.club_service.util.StabDataUtil;
+import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +30,7 @@ public class ClubController {
                         """,
                 clubId, pagination
         );
-        return Collections.singletonList(StabDataUtil.memberEntity());
+        return Collections.singletonList(StubDataUtil.memberEntity());
     }
 
     @QueryMapping
@@ -41,7 +41,7 @@ public class ClubController {
                         """,
                 clubId
         );
-        return StabDataUtil.clubEntity();
+        return StubDataUtil.clubEntity();
     }
 
     @MutationMapping
@@ -52,6 +52,6 @@ public class ClubController {
                         """,
                 name
         );
-        return StabDataUtil.clubEntityWith(name);
+        return StubDataUtil.clubEntityWith(name);
     }
 }

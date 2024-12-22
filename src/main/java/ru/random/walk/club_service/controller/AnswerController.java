@@ -9,7 +9,7 @@ import ru.random.walk.club_service.mapper.AnswerMapper;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.graphql.types.FormAnswerInput;
-import ru.random.walk.club_service.util.StabDataUtil;
+import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.UUID;
 
@@ -27,7 +27,7 @@ public class AnswerController {
                         """,
                 testId
         );
-        return StabDataUtil.answerMembersConfirmEntityWith(testId);
+        return StubDataUtil.answerMembersConfirmEntityWith(testId);
     }
 
     @MutationMapping
@@ -43,7 +43,7 @@ public class AnswerController {
                 testId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return StabDataUtil.answerFormEntityWith(testId, formAnswerData);
+        return StubDataUtil.answerFormEntityWith(testId, formAnswerData);
     }
 
     @MutationMapping
@@ -54,7 +54,7 @@ public class AnswerController {
                         """,
                 testId
         );
-        return StabDataUtil.answerFormEntityWith(testId, AnswerStatus.SENT);
+        return StubDataUtil.answerFormEntityWith(testId, AnswerStatus.SENT);
     }
 
     @MutationMapping
@@ -70,6 +70,6 @@ public class AnswerController {
                 testId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return StabDataUtil.answerFormEntityWith(testId, formAnswerData);
+        return StubDataUtil.answerFormEntityWith(testId, formAnswerData);
     }
 }

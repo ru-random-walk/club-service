@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class StabDataUtil {
+public class StubDataUtil {
     public static Question question() {
         return Question.builder()
                 .text("How many cards are gold in the board game 'Gnome Pests' when playing with four players?")

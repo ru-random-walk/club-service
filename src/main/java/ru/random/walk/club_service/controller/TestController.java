@@ -9,7 +9,7 @@ import ru.random.walk.club_service.mapper.TestMapper;
 import ru.random.walk.club_service.model.entity.TestEntity;
 import ru.random.walk.club_service.model.graphql.types.FormInput;
 import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
-import ru.random.walk.club_service.util.StabDataUtil;
+import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ public class TestController {
                 clubId, membersConfirm
         );
         var membersConfirmTestData = testMapper.toMembersConfirmTestData(membersConfirm);
-        return StabDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
+        return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
     }
 
     @MutationMapping
@@ -48,7 +48,7 @@ public class TestController {
                 clubId, form
         );
         var formTestData = testMapper.toFormTestData(form);
-        return StabDataUtil.formTestEntityWith(formTestData);
+        return StubDataUtil.formTestEntityWith(formTestData);
     }
 
     @MutationMapping
@@ -66,7 +66,7 @@ public class TestController {
                 clubId, testId, membersConfirm
         );
         var membersConfirmTestData = testMapper.toMembersConfirmTestData(membersConfirm);
-        return StabDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
+        return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
     }
 
     @MutationMapping
@@ -84,7 +84,7 @@ public class TestController {
                 clubId, testId, form
         );
         var formTestData = testMapper.toFormTestData(form);
-        return StabDataUtil.formTestEntityWith(formTestData);
+        return StubDataUtil.formTestEntityWith(formTestData);
     }
 
     @MutationMapping
