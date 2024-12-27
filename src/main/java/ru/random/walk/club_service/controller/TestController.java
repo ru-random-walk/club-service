@@ -11,6 +11,7 @@ import ru.random.walk.club_service.model.graphql.types.FormInput;
 import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
 import ru.random.walk.club_service.util.StubDataUtil;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @Controller
@@ -22,14 +23,16 @@ public class TestController {
     @MutationMapping
     TestEntity addClubTestMembersConfirm(
             @Argument UUID clubId,
-            @Argument MembersConfirmInput membersConfirm
+            @Argument MembersConfirmInput membersConfirm,
+            Principal principal
     ) {
         log.info("""
-                        Add club test members confirm
+                        Add club test members confirm for [{}]
+                        with login [{}]
                         for club id [{}]
                         with membersConfirm [{}]
                         """,
-                clubId, membersConfirm
+                principal, principal.getName(), clubId, membersConfirm
         );
         var membersConfirmTestData = testMapper.toMembersConfirmTestData(membersConfirm);
         return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
@@ -38,14 +41,16 @@ public class TestController {
     @MutationMapping
     TestEntity addClubTestForm(
             @Argument UUID clubId,
-            @Argument FormInput form
+            @Argument FormInput form,
+            Principal principal
     ) {
         log.info("""
-                        Add club test members confirm
+                        Add club test members confirm for [{}]
+                        with login [{}]
                         for club id [{}]
                         with form [{}]
                         """,
-                clubId, form
+                principal, principal.getName(), clubId, form
         );
         var formTestData = testMapper.toFormTestData(form);
         return StubDataUtil.formTestEntityWith(formTestData);
@@ -55,15 +60,17 @@ public class TestController {
     TestEntity updateClubTestMembersConfirm(
             @Argument UUID clubId,
             @Argument UUID testId,
-            @Argument MembersConfirmInput membersConfirm
+            @Argument MembersConfirmInput membersConfirm,
+            Principal principal
     ) {
         log.info("""
-                        Update club test members confirm
+                        Update club test members confirm for [{}]
+                        with login [{}]
                         for club id [{}]
                         for test id [{}]
                         with membersConfirm [{}]
                         """,
-                clubId, testId, membersConfirm
+                principal, principal.getName(), clubId, testId, membersConfirm
         );
         var membersConfirmTestData = testMapper.toMembersConfirmTestData(membersConfirm);
         return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
@@ -73,15 +80,17 @@ public class TestController {
     TestEntity updateClubTestForm(
             @Argument UUID clubId,
             @Argument UUID testId,
-            @Argument FormInput form
+            @Argument FormInput form,
+            Principal principal
     ) {
         log.info("""
-                        Update club test form
+                        Update club test form for [{}]
+                        with login [{}]
                         for club id [{}]
                         for test id [{}]
                         with form [{}]
                         """,
-                clubId, testId, form
+                principal, principal.getName(), clubId, testId, form
         );
         var formTestData = testMapper.toFormTestData(form);
         return StubDataUtil.formTestEntityWith(formTestData);
@@ -90,14 +99,16 @@ public class TestController {
     @MutationMapping
     UUID removeClubTest(
             @Argument UUID clubId,
-            @Argument UUID testId
+            @Argument UUID testId,
+            Principal principal
     ) {
         log.info("""
-                        Remove club test
+                        Remove club test for [{}]
+                        with login [{}]
                         for club id [{}]
                         with testId [{}]
                         """,
-                clubId, testId
+                principal, principal.getName(), clubId, testId
         );
         return testId;
     }

@@ -10,6 +10,7 @@ import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.graphql.types.MemberRole;
 import ru.random.walk.club_service.util.StubDataUtil;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @Controller
@@ -22,15 +23,17 @@ public class MemberController {
     MemberEntity changeMemberRole(
             @Argument UUID clubId,
             @Argument UUID memberId,
-            @Argument MemberRole role
+            @Argument MemberRole role,
+            Principal principal
     ) {
         log.info("""
-                        Change member role
+                        Change member role for [{}]
+                        with login [{}]
                         for club id [{}]
                         member id [{}]
                         with role [{}]
                         """,
-                clubId, memberId, role
+                principal, principal.getName(), clubId, memberId, role
         );
         var memberRole = memberMapper.toDomainMemberRole(role);
         return StubDataUtil.memberEntityWith(memberId, memberRole);

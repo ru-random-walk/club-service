@@ -11,6 +11,7 @@ import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.graphql.types.FormAnswerInput;
 import ru.random.walk.club_service.util.StubDataUtil;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @Controller
@@ -20,12 +21,13 @@ public class AnswerController {
     private final AnswerMapper answerMapper;
 
     @MutationMapping
-    AnswerEntity createTestAnswerMembersConfirm(@Argument UUID testId) {
+    AnswerEntity createTestAnswerMembersConfirm(@Argument UUID testId, Principal principal) {
         log.info("""
-                        Create test answer members confirm
+                        Create test answer members confirm for [{}]
+                        with login [{}]
                         for test id [{}]
                         """,
-                testId
+                principal, principal.getName(), testId
         );
         return StubDataUtil.answerMembersConfirmEntityWith(testId);
     }
@@ -33,26 +35,29 @@ public class AnswerController {
     @MutationMapping
     AnswerEntity createTestAnswerForm(
             @Argument UUID testId,
-            @Argument FormAnswerInput formAnswer
+            @Argument FormAnswerInput formAnswer,
+            Principal principal
     ) {
         log.info("""
-                        Create test answer form
+                        Create test answer form for [{}]
+                        with login [{}]
                         for test id [{}]
                         with form answer [{}]
                         """,
-                testId, formAnswer
+                principal, principal.getName(), testId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
         return StubDataUtil.answerFormEntityWith(testId, formAnswerData);
     }
 
     @MutationMapping
-    AnswerEntity setTestAnswerFormStatusToSent(@Argument UUID testId) {
+    AnswerEntity setTestAnswerFormStatusToSent(@Argument UUID testId, Principal principal) {
         log.info("""
-                        Set test answer form status to sent
+                        Set test answer form status to sent for [{}]
+                        with login [{}]
                         for test id [{}]
                         """,
-                testId
+                principal, principal.getName(), testId
         );
         return StubDataUtil.answerFormEntityWith(testId, AnswerStatus.SENT);
     }
