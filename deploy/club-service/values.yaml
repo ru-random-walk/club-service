@@ -83,8 +83,8 @@ resources:
     cpu: 750m
     memory: 512Mi
   requests:
-    cpu: 20m
-    memory: 256Mi
+    cpu: 1m
+    memory: 128Mi
 
 livenessProbe:
   httpGet:
