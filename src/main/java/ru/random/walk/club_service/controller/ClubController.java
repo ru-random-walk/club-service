@@ -10,6 +10,7 @@ import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.util.StubDataUtil;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @Controller
@@ -18,25 +19,28 @@ public class ClubController {
     @QueryMapping
     @Nullable ClubEntity getClub(
             @Argument UUID clubId,
-            @Argument PaginationInput membersPagination
+            @Argument PaginationInput membersPagination,
+            Principal principal
     ) {
         log.info("""
-                        Get club
+                        Get club for [{}]
+                        with login [{}]
                         by clubId [{}]
                         with members pagination [{}]
                         """,
-                clubId, membersPagination
+                principal, principal.getName(), clubId, membersPagination
         );
         return StubDataUtil.clubEntity();
     }
 
     @MutationMapping
-    ClubEntity createClub(@Argument String name) {
+    ClubEntity createClub(@Argument String name, Principal principal) {
         log.info("""
-                        Create club
-                        with name [{}]
+                        Create club for [{}]
+                        with login [{}]
+                        with club name [{}]
                         """,
-                name
+                principal, principal.getName(), name
         );
         return StubDataUtil.clubEntityWith(name);
     }

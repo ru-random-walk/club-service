@@ -11,3 +11,8 @@ spring:
   flyway:
     locations: ${FLYWAY_MIGRATION_LOCATIONS:classpath:db/local_migration,classpath:db/migration}
     baseline-on-migrate: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH_SERVICE_URL:http://localhost:8081}
