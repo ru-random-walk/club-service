@@ -1,6 +1,6 @@
 package ru.random.walk.club_service.model.entity.type;
 
-public enum TestType {
+public enum ApprovementType {
     MEMBERS_CONFIRM,
     FORM,
 }

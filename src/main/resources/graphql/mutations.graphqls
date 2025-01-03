@@ -22,22 +22,26 @@ input QuestionAnswerInput {
 }
 
 type Mutation {
+    # Club mutations
     createClub(name: String!): Club!
 
-    addClubTestMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput!): Test!
-    addClubTestForm(clubId: ID!, form: FormInput!): Test!
+    # Approvement mutations
+    addClubApprovementMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput!): Approvement!
+    addClubApprovementForm(clubId: ID!, form: FormInput!): Approvement!
 
-    updateClubTestMembersConfirm(clubId: ID!, testId: ID!, membersConfirm: MembersConfirmInput!): Test!
-    updateClubTestForm(clubId: ID!, testId: ID!, form: FormInput!): Test!
+    updateClubApprovementMembersConfirm(clubId: ID!, approvementId: ID!, membersConfirm: MembersConfirmInput!): Approvement!
+    updateClubApprovementForm(clubId: ID!, approvementId: ID!, form: FormInput!): Approvement!
 
-    removeClubTest(clubId: ID!, testId: ID!): ID!
+    removeClubApprovement(clubId: ID!, approvementId: ID!): ID!
 
+    # Member mutations
     changeMemberRole(clubId: ID!, memberId: ID!, role: MemberRole!): Member!
 
-    createTestAnswerMembersConfirm(testId: ID!): Answer!
-    createTestAnswerForm(testId: ID!, formAnswer: FormAnswerInput!): Answer!
+    # Answer mutations
+    createApprovementAnswerMembersConfirm(approvementId: ID!): Answer!
+    createApprovementAnswerForm(approvementId: ID!, formAnswer: FormAnswerInput!): Answer!
 
-    setTestAnswerFormStatusToSent(testId: ID!): Answer!
+    setApprovementAnswerFormStatusToSent(approvementId: ID!): Answer!
 
-    updateTestAnswerForm(testId: ID!, formAnswer: FormAnswerInput!): Answer!
+    updateApprovementAnswerForm(approvementId: ID!, formAnswer: FormAnswerInput!): Answer!
 }

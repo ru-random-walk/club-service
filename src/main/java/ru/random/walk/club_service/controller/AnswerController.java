@@ -11,7 +11,6 @@ import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.graphql.types.FormAnswerInput;
 import ru.random.walk.club_service.util.StubDataUtil;
 
-import java.security.Principal;
 import java.util.UUID;
 
 @Controller
@@ -21,60 +20,56 @@ public class AnswerController {
     private final AnswerMapper answerMapper;
 
     @MutationMapping
-    AnswerEntity createTestAnswerMembersConfirm(@Argument UUID testId, Principal principal) {
+    public AnswerEntity createApprovementAnswerMembersConfirm(@Argument UUID approvementId) {
         log.info("""
-                        Create test answer members confirm for [{}]
-                        with login [{}]
-                        for test id [{}]
+                        Create approvement answer members confirm
+                        for approvement id [{}]
                         """,
-                principal, principal.getName(), testId
+                approvementId
         );
-        return StubDataUtil.answerMembersConfirmEntityWith(testId);
+        return StubDataUtil.answerMembersConfirmEntityWith(approvementId);
     }
 
     @MutationMapping
-    AnswerEntity createTestAnswerForm(
-            @Argument UUID testId,
-            @Argument FormAnswerInput formAnswer,
-            Principal principal
-    ) {
-        log.info("""
-                        Create test answer form for [{}]
-                        with login [{}]
-                        for test id [{}]
-                        with form answer [{}]
-                        """,
-                principal, principal.getName(), testId, formAnswer
-        );
-        var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return StubDataUtil.answerFormEntityWith(testId, formAnswerData);
-    }
-
-    @MutationMapping
-    AnswerEntity setTestAnswerFormStatusToSent(@Argument UUID testId, Principal principal) {
-        log.info("""
-                        Set test answer form status to sent for [{}]
-                        with login [{}]
-                        for test id [{}]
-                        """,
-                principal, principal.getName(), testId
-        );
-        return StubDataUtil.answerFormEntityWith(testId, AnswerStatus.SENT);
-    }
-
-    @MutationMapping
-    AnswerEntity updateTestAnswerForm(
-            @Argument UUID testId,
+    public AnswerEntity createApprovementAnswerForm(
+            @Argument UUID approvementId,
             @Argument FormAnswerInput formAnswer
     ) {
         log.info("""
-                        Update test answer form
-                        for test id [{}]
+                        Create approvement answer form
+                        for approvement id [{}]
                         with form answer [{}]
                         """,
-                testId, formAnswer
+                approvementId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return StubDataUtil.answerFormEntityWith(testId, formAnswerData);
+        return StubDataUtil.answerFormEntityWith(approvementId, formAnswerData);
+    }
+
+    @MutationMapping
+    public AnswerEntity setApprovementAnswerFormStatusToSent(@Argument UUID approvementId) {
+        log.info("""
+                        Set approvement answer form status to sent
+                        for approvement id [{}]
+                        """,
+                approvementId
+        );
+        return StubDataUtil.answerFormEntityWith(approvementId, AnswerStatus.SENT);
+    }
+
+    @MutationMapping
+    public AnswerEntity updateApprovementAnswerForm(
+            @Argument UUID approvementId,
+            @Argument FormAnswerInput formAnswer
+    ) {
+        log.info("""
+                        Update approvement answer form
+                        for approvement id [{}]
+                        with form answer [{}]
+                        """,
+                approvementId, formAnswer
+        );
+        var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
+        return StubDataUtil.answerFormEntityWith(approvementId, formAnswerData);
     }
 }
