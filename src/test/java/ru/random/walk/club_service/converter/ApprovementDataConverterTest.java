@@ -36,7 +36,7 @@ class ApprovementDataConverterTest {
         List<JsonAndExpectedClass> approvementTestDataList = List.of(
                 JsonAndExpectedClass.of("""
                                 {
-                                    "type":"form_test_data",
+                                    "type":"form_approvement_data",
                                     "questions":[
                                         {
                                             "text":"How many cards are gold in the board game 'Gnome Pests' when playing with four players?",
@@ -50,7 +50,7 @@ class ApprovementDataConverterTest {
                 ),
                 JsonAndExpectedClass.of("""
                                 {
-                                    "type":"members_confirm_test_data",
+                                    "type":"members_confirm_approvement_data",
                                     "requiredConfirmationNumber":2
                                 }""",
                         MembersConfirmApprovementData.class
