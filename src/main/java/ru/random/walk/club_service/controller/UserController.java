@@ -10,6 +10,7 @@ import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.util.StubDataUtil;
 
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -21,14 +22,16 @@ public class UserController {
     @QueryMapping
     public List<ClubEntity> getUserClubs(
             @Argument UUID userId,
-            @Argument PaginationInput pagination
+            @Argument PaginationInput pagination,
+            Principal principal
     ) {
         log.info("""
-                        Get user clubs
+                        Get user clubs for [{}]
+                        with login [{}]
                         by user id [{}]
                         with pagination [{}]
                         """,
-                userId, pagination
+                principal, principal.getName(), userId, pagination
         );
         return Collections.singletonList(StubDataUtil.clubEntity());
     }
@@ -36,14 +39,16 @@ public class UserController {
     @QueryMapping
     public List<AnswerEntity> getUserAnswers(
             @Argument UUID userId,
-            @Argument PaginationInput pagination
+            @Argument PaginationInput pagination,
+            Principal principal
     ) {
         log.info("""
-                        Get user answers
+                        Get user answers for [{}]
+                        with login [{}]
                         by user id [{}]
                         with pagination [{}]
                         """,
-                userId, pagination
+                principal, principal.getName(), userId, pagination
         );
         return List.of(
                 StubDataUtil.formAnswerEntity(),
