@@ -71,5 +71,5 @@ create table if not exists club.answer
     user_id        uuid               not null,
     data           jsonb,
     status         club.answer_status not null,
-    foreign key (approvement_id) references approvement (id)
+    foreign key (approvement_id) references club.approvement (id)
 );
