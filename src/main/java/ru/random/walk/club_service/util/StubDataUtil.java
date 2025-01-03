@@ -36,29 +36,29 @@ public class StubDataUtil {
                 .build();
     }
 
-    public static FormApprovementData formTestData() {
+    public static FormApprovementData formApprovementData() {
         return new FormApprovementData(
                 Collections.singletonList(question())
         );
     }
 
-    public static ApprovementEntity formTestEntity() {
+    public static ApprovementEntity formApprovementEntity() {
         return ApprovementEntity.builder()
                 .id(UUID.randomUUID())
                 .type(ApprovementType.FORM)
-                .data(formTestData())
+                .data(formApprovementData())
                 .build();
     }
 
-    public static MembersConfirmApprovementData membersConfirmTestData() {
+    public static MembersConfirmApprovementData membersConfirmApprovementData() {
         return new MembersConfirmApprovementData(2);
     }
 
-    public static ApprovementEntity membersConfirmTestEntity() {
+    public static ApprovementEntity membersConfirmApprovementEntity() {
         return ApprovementEntity.builder()
                 .id(UUID.randomUUID())
                 .type(ApprovementType.MEMBERS_CONFIRM)
-                .data(membersConfirmTestData())
+                .data(membersConfirmApprovementData())
                 .build();
     }
 
@@ -74,8 +74,8 @@ public class StubDataUtil {
                                         .build()
                         )
                 )
-                .tests(
-                        List.of(formTestEntity(), membersConfirmTestEntity())
+                .approvements(
+                        List.of(formApprovementEntity(), membersConfirmApprovementEntity())
                 )
                 .build();
     }
@@ -93,7 +93,7 @@ public class StubDataUtil {
 
     public static AnswerEntity membersConfirmAnswerEntity() {
         return AnswerEntity.builder()
-                .test(membersConfirmTestEntity())
+                .approvement(membersConfirmApprovementEntity())
                 .id(UUID.randomUUID())
                 .userId(UUID.randomUUID())
                 .status(AnswerStatus.SENT)
@@ -113,7 +113,7 @@ public class StubDataUtil {
 
     public static AnswerEntity formAnswerEntity() {
         return AnswerEntity.builder()
-                .test(formTestEntity())
+                .approvement(formApprovementEntity())
                 .id(UUID.randomUUID())
                 .userId(UUID.randomUUID())
                 .status(AnswerStatus.SENT)
@@ -125,23 +125,23 @@ public class StubDataUtil {
         return ClubEntity.builder()
                 .id(UUID.randomUUID())
                 .name(name)
-                .tests(Collections.emptyList())
+                .approvements(Collections.emptyList())
                 .members(
                         Collections.singletonList(memberEntity())
                 )
                 .build();
     }
 
-    public static ApprovementEntity membersConfirmTestEntityWith(MembersConfirmApprovementData membersConfirmApprovementData) {
-        var membersConfirmTestEntity = membersConfirmTestEntity();
-        membersConfirmTestEntity.setData(membersConfirmApprovementData);
-        return membersConfirmTestEntity;
+    public static ApprovementEntity membersConfirmApprovementEntityWith(MembersConfirmApprovementData membersConfirmApprovementData) {
+        var membersConfirmApprovementEntity = membersConfirmApprovementEntity();
+        membersConfirmApprovementEntity.setData(membersConfirmApprovementData);
+        return membersConfirmApprovementEntity;
     }
 
-    public static ApprovementEntity formTestEntityWith(FormApprovementData formApprovementData) {
-        var formTestEntity = formTestEntity();
-        formTestEntity.setData(formApprovementData);
-        return formTestEntity;
+    public static ApprovementEntity formApprovementEntityWith(FormApprovementData formApprovementData) {
+        var formApprovementEntity = formApprovementEntity();
+        formApprovementEntity.setData(formApprovementData);
+        return formApprovementEntity;
     }
 
     public static MemberEntity memberEntityWith(UUID memberId, MemberRole memberRole) {
@@ -151,32 +151,32 @@ public class StubDataUtil {
                 .build();
     }
 
-    public static AnswerEntity answerMembersConfirmEntityWith(UUID testId) {
-        var membersConfirmTestEntity = membersConfirmTestEntity();
-        membersConfirmTestEntity.setId(testId);
+    public static AnswerEntity answerMembersConfirmEntityWith(UUID approvementId) {
+        var membersConfirmApprovementEntity = membersConfirmApprovementEntity();
+        membersConfirmApprovementEntity.setId(approvementId);
         return AnswerEntity.builder()
-                .test(membersConfirmTestEntity)
+                .approvement(membersConfirmApprovementEntity)
                 .userId(UUID.randomUUID())
                 .status(AnswerStatus.SENT)
                 .build();
     }
 
-    public static AnswerEntity answerFormEntityWith(UUID testId, FormAnswerData formAnswerData) {
-        var formTestEntity = formTestEntity();
-        formTestEntity.setId(testId);
+    public static AnswerEntity answerFormEntityWith(UUID approvementId, FormAnswerData formAnswerData) {
+        var formApprovementEntity = formApprovementEntity();
+        formApprovementEntity.setId(approvementId);
         return AnswerEntity.builder()
-                .test(formTestEntity)
+                .approvement(formApprovementEntity)
                 .userId(UUID.randomUUID())
                 .data(formAnswerData)
                 .status(AnswerStatus.CREATED)
                 .build();
     }
 
-    public static AnswerEntity answerFormEntityWith(UUID testId, AnswerStatus answerStatus) {
-        var formTestEntity = formTestEntity();
-        formTestEntity.setId(testId);
+    public static AnswerEntity answerFormEntityWith(UUID approvementId, AnswerStatus answerStatus) {
+        var formApprovementEntity = formApprovementEntity();
+        formApprovementEntity.setId(approvementId);
         return AnswerEntity.builder()
-                .test(formTestEntity)
+                .approvement(formApprovementEntity)
                 .userId(UUID.randomUUID())
                 .data(formAnswerData())
                 .status(answerStatus)

@@ -25,80 +25,80 @@ public class ApprovementController {
             @Argument MembersConfirmInput membersConfirm
     ) {
         log.info("""
-                        Add club test members confirm
+                        Add club approvement members confirm
                         for club id [{}]
                         with membersConfirm [{}]
                         """,
                 clubId, membersConfirm
         );
-        var membersConfirmTestData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
-        return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
+        var membersConfirmApprovementData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
+        return StubDataUtil.membersConfirmApprovementEntityWith(membersConfirmApprovementData);
     }
 
     @MutationMapping
-    ApprovementEntity addClubTestForm(
+    ApprovementEntity addClubApprovementForm(
             @Argument UUID clubId,
             @Argument FormInput form
     ) {
         log.info("""
-                        Add club test members confirm
+                        Add club approvement members confirm
                         for club id [{}]
                         with form [{}]
                         """,
                 clubId, form
         );
-        var formTestData = approvementMapper.toFormApprovementData(form);
-        return StubDataUtil.formTestEntityWith(formTestData);
+        var formApprovementData = approvementMapper.toFormApprovementData(form);
+        return StubDataUtil.formApprovementEntityWith(formApprovementData);
     }
 
     @MutationMapping
-    ApprovementEntity updateClubTestMembersConfirm(
+    ApprovementEntity updateClubApprovementMembersConfirm(
             @Argument UUID clubId,
-            @Argument UUID testId,
+            @Argument UUID approvementId,
             @Argument MembersConfirmInput membersConfirm
     ) {
         log.info("""
-                        Update club test members confirm
+                        Update club approvement members confirm
                         for club id [{}]
-                        for test id [{}]
+                        for approvement id [{}]
                         with membersConfirm [{}]
                         """,
-                clubId, testId, membersConfirm
+                clubId, approvementId, membersConfirm
         );
-        var membersConfirmTestData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
-        return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
+        var membersConfirmApprovementData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
+        return StubDataUtil.membersConfirmApprovementEntityWith(membersConfirmApprovementData);
     }
 
     @MutationMapping
-    ApprovementEntity updateClubTestForm(
+    ApprovementEntity updateClubApprovementForm(
             @Argument UUID clubId,
-            @Argument UUID testId,
+            @Argument UUID approvementId,
             @Argument FormInput form
     ) {
         log.info("""
-                        Update club test form
+                        Update club approvement form
                         for club id [{}]
-                        for test id [{}]
+                        for approvement id [{}]
                         with form [{}]
                         """,
-                clubId, testId, form
+                clubId, approvementId, form
         );
-        var formTestData = approvementMapper.toFormApprovementData(form);
-        return StubDataUtil.formTestEntityWith(formTestData);
+        var formApprovementData = approvementMapper.toFormApprovementData(form);
+        return StubDataUtil.formApprovementEntityWith(formApprovementData);
     }
 
     @MutationMapping
-    UUID removeClubTest(
+    UUID removeClubApprovement(
             @Argument UUID clubId,
-            @Argument UUID testId
+            @Argument UUID approvementId
     ) {
         log.info("""
-                        Remove club test
+                        Remove club approvement
                         for club id [{}]
-                        with testId [{}]
+                        with approvementId [{}]
                         """,
-                clubId, testId
+                clubId, approvementId
         );
-        return testId;
+        return approvementId;
     }
 }

@@ -20,56 +20,56 @@ public class AnswerController {
     private final AnswerMapper answerMapper;
 
     @MutationMapping
-    AnswerEntity createTestAnswerMembersConfirm(@Argument UUID testId) {
+    AnswerEntity createApprovementAnswerMembersConfirm(@Argument UUID approvementId) {
         log.info("""
-                        Create test answer members confirm
-                        for test id [{}]
+                        Create approvement answer members confirm
+                        for approvement id [{}]
                         """,
-                testId
+                approvementId
         );
-        return StubDataUtil.answerMembersConfirmEntityWith(testId);
+        return StubDataUtil.answerMembersConfirmEntityWith(approvementId);
     }
 
     @MutationMapping
-    AnswerEntity createTestAnswerForm(
-            @Argument UUID testId,
+    AnswerEntity createApprovementAnswerForm(
+            @Argument UUID approvementId,
             @Argument FormAnswerInput formAnswer
     ) {
         log.info("""
-                        Create test answer form
-                        for test id [{}]
+                        Create approvement answer form
+                        for approvement id [{}]
                         with form answer [{}]
                         """,
-                testId, formAnswer
+                approvementId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return StubDataUtil.answerFormEntityWith(testId, formAnswerData);
+        return StubDataUtil.answerFormEntityWith(approvementId, formAnswerData);
     }
 
     @MutationMapping
-    AnswerEntity setTestAnswerFormStatusToSent(@Argument UUID testId) {
+    AnswerEntity setApprovementAnswerFormStatusToSent(@Argument UUID approvementId) {
         log.info("""
-                        Set test answer form status to sent
-                        for test id [{}]
+                        Set approvement answer form status to sent
+                        for approvement id [{}]
                         """,
-                testId
+                approvementId
         );
-        return StubDataUtil.answerFormEntityWith(testId, AnswerStatus.SENT);
+        return StubDataUtil.answerFormEntityWith(approvementId, AnswerStatus.SENT);
     }
 
     @MutationMapping
-    AnswerEntity updateTestAnswerForm(
-            @Argument UUID testId,
+    AnswerEntity updateApprovementAnswerForm(
+            @Argument UUID approvementId,
             @Argument FormAnswerInput formAnswer
     ) {
         log.info("""
-                        Update test answer form
-                        for test id [{}]
+                        Update approvement answer form
+                        for approvement id [{}]
                         with form answer [{}]
                         """,
-                testId, formAnswer
+                approvementId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return StubDataUtil.answerFormEntityWith(testId, formAnswerData);
+        return StubDataUtil.answerFormEntityWith(approvementId, formAnswerData);
     }
 }

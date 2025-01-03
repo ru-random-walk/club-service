@@ -22,8 +22,10 @@ input QuestionAnswerInput {
 }
 
 type Mutation {
+    # Club mutations
     createClub(name: String!): Club!
 
+    # Approvement mutations
     addClubApprovementMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput!): Approvement!
     addClubApprovementForm(clubId: ID!, form: FormInput!): Approvement!
 
@@ -32,8 +34,10 @@ type Mutation {
 
     removeClubApprovement(clubId: ID!, approvementId: ID!): ID!
 
+    # Member mutations
     changeMemberRole(clubId: ID!, memberId: ID!, role: MemberRole!): Member!
 
+    # Answer mutations
     createApprovementAnswerMembersConfirm(approvementId: ID!): Answer!
     createApprovementAnswerForm(approvementId: ID!, formAnswer: FormAnswerInput!): Answer!
 
