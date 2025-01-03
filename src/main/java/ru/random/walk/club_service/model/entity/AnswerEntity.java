@@ -3,6 +3,7 @@ package ru.random.walk.club_service.model.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,9 +35,9 @@ public class AnswerEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @OneToOne
-    @JoinColumn(name = "test_id", nullable = false)
-    private ApprovementEntity test;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approvement_id", nullable = false)
+    private ApprovementEntity approvement;
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;
