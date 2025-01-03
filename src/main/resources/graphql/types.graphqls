@@ -2,7 +2,7 @@ type Club {
     id: ID!
     name: String!
     members: [Member!]!
-    tests: [Test!]!
+    approvements: [Approvement!]!
 }
 
 type Member {
@@ -10,19 +10,19 @@ type Member {
     role: MemberRole!
 }
 
-type Test {
+type Approvement {
     id: ID!
-    type: TestType!
-    data: TestData!
+    type: ApprovementType!
+    data: ApprovementData!
 }
 
-union TestData = MembersConfirmTestData | FormTestData
+union ApprovementData = MembersConfirmApprovementData | FormApprovementData
 
-type MembersConfirmTestData {
+type MembersConfirmApprovementData {
     requiredConfirmationNumber: Int!
 }
 
-type FormTestData {
+type FormApprovementData {
     questions: [Question!]!
 }
 
@@ -35,7 +35,7 @@ type Question {
 
 type Answer {
     id: ID!
-    test: Test!
+    approvement: Approvement!
     userId: ID!
     data: AnswerData!
     status: AnswerStatus!
