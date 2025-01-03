@@ -20,7 +20,7 @@ public class AnswerController {
     private final AnswerMapper answerMapper;
 
     @MutationMapping
-    AnswerEntity createApprovementAnswerMembersConfirm(@Argument UUID approvementId) {
+    public AnswerEntity createApprovementAnswerMembersConfirm(@Argument UUID approvementId) {
         log.info("""
                         Create approvement answer members confirm
                         for approvement id [{}]
@@ -31,7 +31,7 @@ public class AnswerController {
     }
 
     @MutationMapping
-    AnswerEntity createApprovementAnswerForm(
+    public AnswerEntity createApprovementAnswerForm(
             @Argument UUID approvementId,
             @Argument FormAnswerInput formAnswer
     ) {
@@ -47,7 +47,7 @@ public class AnswerController {
     }
 
     @MutationMapping
-    AnswerEntity setApprovementAnswerFormStatusToSent(@Argument UUID approvementId) {
+    public AnswerEntity setApprovementAnswerFormStatusToSent(@Argument UUID approvementId) {
         log.info("""
                         Set approvement answer form status to sent
                         for approvement id [{}]
@@ -58,7 +58,7 @@ public class AnswerController {
     }
 
     @MutationMapping
-    AnswerEntity updateApprovementAnswerForm(
+    public AnswerEntity updateApprovementAnswerForm(
             @Argument UUID approvementId,
             @Argument FormAnswerInput formAnswer
     ) {

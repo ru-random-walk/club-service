@@ -20,7 +20,7 @@ public class ApprovementController {
     private final ApprovementMapper approvementMapper;
 
     @MutationMapping
-    ApprovementEntity addClubApprovementMembersConfirm(
+    public ApprovementEntity addClubApprovementMembersConfirm(
             @Argument UUID clubId,
             @Argument MembersConfirmInput membersConfirm
     ) {
@@ -36,7 +36,7 @@ public class ApprovementController {
     }
 
     @MutationMapping
-    ApprovementEntity addClubApprovementForm(
+    public ApprovementEntity addClubApprovementForm(
             @Argument UUID clubId,
             @Argument FormInput form
     ) {
@@ -52,7 +52,7 @@ public class ApprovementController {
     }
 
     @MutationMapping
-    ApprovementEntity updateClubApprovementMembersConfirm(
+    public ApprovementEntity updateClubApprovementMembersConfirm(
             @Argument UUID clubId,
             @Argument UUID approvementId,
             @Argument MembersConfirmInput membersConfirm
@@ -70,7 +70,7 @@ public class ApprovementController {
     }
 
     @MutationMapping
-    ApprovementEntity updateClubApprovementForm(
+    public ApprovementEntity updateClubApprovementForm(
             @Argument UUID clubId,
             @Argument UUID approvementId,
             @Argument FormInput form
@@ -88,7 +88,7 @@ public class ApprovementController {
     }
 
     @MutationMapping
-    UUID removeClubApprovement(
+    public UUID removeClubApprovement(
             @Argument UUID clubId,
             @Argument UUID approvementId
     ) {

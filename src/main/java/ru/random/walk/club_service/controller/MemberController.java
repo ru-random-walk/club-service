@@ -19,7 +19,7 @@ public class MemberController {
     private final MemberMapper memberMapper;
 
     @MutationMapping
-    MemberEntity changeMemberRole(
+    public MemberEntity changeMemberRole(
             @Argument UUID clubId,
             @Argument UUID memberId,
             @Argument MemberRole role
