@@ -1,0 +1,13 @@
+input PaginationInput {
+    page: Int!
+    size: Int!
+}
+
+type Query {
+    # Club queries
+    getClub(clubId: ID!, membersPagination: PaginationInput): Club
+
+    # User queries
+    getUserClubs(userId: ID!, pagination: PaginationInput): [Club!]!
+    getUserAnswers(userId: ID!, pagination: PaginationInput): [Answer!]!
+}

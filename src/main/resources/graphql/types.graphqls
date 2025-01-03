@@ -1,0 +1,57 @@
+type Club {
+    id: ID!
+    name: String!
+    members: [Member!]!
+    approvements: [Approvement!]!
+}
+
+type Member {
+    id: ID!
+    role: MemberRole!
+}
+
+type Approvement {
+    id: ID!
+    club: Club!
+    type: ApprovementType!
+    data: ApprovementData!
+}
+
+union ApprovementData = MembersConfirmApprovementData | FormApprovementData
+
+type MembersConfirmApprovementData {
+    requiredConfirmationNumber: Int!
+}
+
+type FormApprovementData {
+    questions: [Question!]!
+}
+
+type Question {
+    text: String!
+    answerOptions: [String!]!
+    answerType: AnswerType!
+    correctOptionNumbers: [Int!]!
+}
+
+type Answer {
+    id: ID!
+    approvement: Approvement!
+    userId: ID!
+    data: AnswerData!
+    status: AnswerStatus!
+}
+
+union AnswerData = MembersConfirmAnswerData | FormAnswerData
+
+type MembersConfirmAnswerData {
+    actualConfirmationNumber: Int
+}
+
+type FormAnswerData {
+    questionAnswers: [QuestionAnswer!]!
+}
+
+type QuestionAnswer {
+    optionNumbers: [Int!]!
+}

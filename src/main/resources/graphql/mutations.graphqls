@@ -1,0 +1,47 @@
+input MembersConfirmInput {
+    requiredConfirmationNumber: Int!
+}
+
+input FormInput {
+    questions: [QuestionInput!]!
+}
+
+input QuestionInput {
+    text: String!
+    answerOptions: [String!]!
+    answerType: AnswerType!
+    correctOptionNumbers: [Int!]!
+}
+
+input FormAnswerInput {
+    questionAnswers: [QuestionAnswerInput!]!
+}
+
+input QuestionAnswerInput {
+    optionNumbers: [Int!]!
+}
+
+type Mutation {
+    # Club mutations
+    createClub(name: String!): Club!
+
+    # Approvement mutations
+    addClubApprovementMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput!): Approvement!
+    addClubApprovementForm(clubId: ID!, form: FormInput!): Approvement!
+
+    updateClubApprovementMembersConfirm(clubId: ID!, approvementId: ID!, membersConfirm: MembersConfirmInput!): Approvement!
+    updateClubApprovementForm(clubId: ID!, approvementId: ID!, form: FormInput!): Approvement!
+
+    removeClubApprovement(clubId: ID!, approvementId: ID!): ID!
+
+    # Member mutations
+    changeMemberRole(clubId: ID!, memberId: ID!, role: MemberRole!): Member!
+
+    # Answer mutations
+    createApprovementAnswerMembersConfirm(approvementId: ID!): Answer!
+    createApprovementAnswerForm(approvementId: ID!, formAnswer: FormAnswerInput!): Answer!
+
+    setApprovementAnswerFormStatusToSent(approvementId: ID!): Answer!
+
+    updateApprovementAnswerForm(approvementId: ID!, formAnswer: FormAnswerInput!): Answer!
+}

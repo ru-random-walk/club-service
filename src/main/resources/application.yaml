@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: club_service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/random_walk_postgres}
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+    hikari:
+      schema: club
+  flyway:
+    locations: ${FLYWAY_MIGRATION_LOCATIONS:classpath:db/local_migration,classpath:db/migration}
+    baseline-on-migrate: true
