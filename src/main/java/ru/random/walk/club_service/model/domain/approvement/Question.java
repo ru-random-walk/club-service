@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.model.domain.test;
+package ru.random.walk.club_service.model.domain.approvement;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

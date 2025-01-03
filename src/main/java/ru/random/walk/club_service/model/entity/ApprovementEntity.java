@@ -16,9 +16,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import ru.random.walk.club_service.converter.TestDataConverter;
-import ru.random.walk.club_service.model.domain.test.TestData;
-import ru.random.walk.club_service.model.entity.type.TestType;
+import ru.random.walk.club_service.converter.ApprovementDataConverter;
+import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
+import ru.random.walk.club_service.model.entity.type.ApprovementType;
 
 import java.util.UUID;
 
@@ -28,17 +28,17 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-@Table(name = "test", schema = "club")
-public class TestEntity {
+@Table(name = "approvement", schema = "club")
+public class ApprovementEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TestType type;
+    private ApprovementType type;
 
-    @Convert(converter = TestDataConverter.class)
+    @Convert(converter = ApprovementDataConverter.class)
     @JdbcTypeCode(SqlTypes.JSON)
-    private TestData data;
+    private ApprovementData data;
 }

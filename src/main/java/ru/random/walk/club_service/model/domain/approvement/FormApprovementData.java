@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.model.domain.test;
+package ru.random.walk.club_service.model.domain.approvement;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FormTestData extends TestData {
+public class FormApprovementData extends ApprovementData {
     private List<Question> questions;
 }

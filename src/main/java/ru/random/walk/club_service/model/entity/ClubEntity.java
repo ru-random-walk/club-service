@@ -45,5 +45,5 @@ public class ClubEntity {
             joinColumns = @JoinColumn(name = "club_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "test_id", nullable = false)
     )
-    private List<TestEntity> tests;
+    private List<ApprovementEntity> tests;
 }

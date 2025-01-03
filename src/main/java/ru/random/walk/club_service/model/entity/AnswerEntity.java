@@ -36,7 +36,7 @@ public class AnswerEntity {
 
     @OneToOne
     @JoinColumn(name = "test_id", nullable = false)
-    private TestEntity test;
+    private ApprovementEntity test;
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;

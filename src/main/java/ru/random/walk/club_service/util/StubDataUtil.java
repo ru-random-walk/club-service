@@ -4,17 +4,17 @@ import ru.random.walk.club_service.model.domain.answer.AnswerData;
 import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
 import ru.random.walk.club_service.model.domain.answer.QuestionAnswer;
-import ru.random.walk.club_service.model.domain.test.AnswerType;
-import ru.random.walk.club_service.model.domain.test.FormTestData;
-import ru.random.walk.club_service.model.domain.test.MembersConfirmTestData;
-import ru.random.walk.club_service.model.domain.test.Question;
+import ru.random.walk.club_service.model.domain.approvement.AnswerType;
+import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;
+import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
+import ru.random.walk.club_service.model.domain.approvement.Question;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
+import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
-import ru.random.walk.club_service.model.entity.TestEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
+import ru.random.walk.club_service.model.entity.type.ApprovementType;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
-import ru.random.walk.club_service.model.entity.type.TestType;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,28 +36,28 @@ public class StubDataUtil {
                 .build();
     }
 
-    public static FormTestData formTestData() {
-        return new FormTestData(
+    public static FormApprovementData formTestData() {
+        return new FormApprovementData(
                 Collections.singletonList(question())
         );
     }
 
-    public static TestEntity formTestEntity() {
-        return TestEntity.builder()
+    public static ApprovementEntity formTestEntity() {
+        return ApprovementEntity.builder()
                 .id(UUID.randomUUID())
-                .type(TestType.FORM)
+                .type(ApprovementType.FORM)
                 .data(formTestData())
                 .build();
     }
 
-    public static MembersConfirmTestData membersConfirmTestData() {
-        return new MembersConfirmTestData(2);
+    public static MembersConfirmApprovementData membersConfirmTestData() {
+        return new MembersConfirmApprovementData(2);
     }
 
-    public static TestEntity membersConfirmTestEntity() {
-        return TestEntity.builder()
+    public static ApprovementEntity membersConfirmTestEntity() {
+        return ApprovementEntity.builder()
                 .id(UUID.randomUUID())
-                .type(TestType.MEMBERS_CONFIRM)
+                .type(ApprovementType.MEMBERS_CONFIRM)
                 .data(membersConfirmTestData())
                 .build();
     }
@@ -132,15 +132,15 @@ public class StubDataUtil {
                 .build();
     }
 
-    public static TestEntity membersConfirmTestEntityWith(MembersConfirmTestData membersConfirmTestData) {
+    public static ApprovementEntity membersConfirmTestEntityWith(MembersConfirmApprovementData membersConfirmApprovementData) {
         var membersConfirmTestEntity = membersConfirmTestEntity();
-        membersConfirmTestEntity.setData(membersConfirmTestData);
+        membersConfirmTestEntity.setData(membersConfirmApprovementData);
         return membersConfirmTestEntity;
     }
 
-    public static TestEntity formTestEntityWith(FormTestData formTestData) {
+    public static ApprovementEntity formTestEntityWith(FormApprovementData formApprovementData) {
         var formTestEntity = formTestEntity();
-        formTestEntity.setData(formTestData);
+        formTestEntity.setData(formApprovementData);
         return formTestEntity;
     }
 

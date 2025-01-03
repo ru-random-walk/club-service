@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.stereotype.Controller;
-import ru.random.walk.club_service.mapper.TestMapper;
-import ru.random.walk.club_service.model.entity.TestEntity;
+import ru.random.walk.club_service.mapper.ApprovementMapper;
+import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.graphql.types.FormInput;
 import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
 import ru.random.walk.club_service.util.StubDataUtil;
@@ -16,11 +16,11 @@ import java.util.UUID;
 @Controller
 @Slf4j
 @AllArgsConstructor
-public class TestController {
-    private final TestMapper testMapper;
+public class ApprovementController {
+    private final ApprovementMapper approvementMapper;
 
     @MutationMapping
-    TestEntity addClubTestMembersConfirm(
+    ApprovementEntity addClubApprovementMembersConfirm(
             @Argument UUID clubId,
             @Argument MembersConfirmInput membersConfirm
     ) {
@@ -31,12 +31,12 @@ public class TestController {
                         """,
                 clubId, membersConfirm
         );
-        var membersConfirmTestData = testMapper.toMembersConfirmTestData(membersConfirm);
+        var membersConfirmTestData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
         return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
     }
 
     @MutationMapping
-    TestEntity addClubTestForm(
+    ApprovementEntity addClubTestForm(
             @Argument UUID clubId,
             @Argument FormInput form
     ) {
@@ -47,12 +47,12 @@ public class TestController {
                         """,
                 clubId, form
         );
-        var formTestData = testMapper.toFormTestData(form);
+        var formTestData = approvementMapper.toFormApprovementData(form);
         return StubDataUtil.formTestEntityWith(formTestData);
     }
 
     @MutationMapping
-    TestEntity updateClubTestMembersConfirm(
+    ApprovementEntity updateClubTestMembersConfirm(
             @Argument UUID clubId,
             @Argument UUID testId,
             @Argument MembersConfirmInput membersConfirm
@@ -65,12 +65,12 @@ public class TestController {
                         """,
                 clubId, testId, membersConfirm
         );
-        var membersConfirmTestData = testMapper.toMembersConfirmTestData(membersConfirm);
+        var membersConfirmTestData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
         return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
     }
 
     @MutationMapping
-    TestEntity updateClubTestForm(
+    ApprovementEntity updateClubTestForm(
             @Argument UUID clubId,
             @Argument UUID testId,
             @Argument FormInput form
@@ -83,7 +83,7 @@ public class TestController {
                         """,
                 clubId, testId, form
         );
-        var formTestData = testMapper.toFormTestData(form);
+        var formTestData = approvementMapper.toFormApprovementData(form);
         return StubDataUtil.formTestEntityWith(formTestData);
     }
 

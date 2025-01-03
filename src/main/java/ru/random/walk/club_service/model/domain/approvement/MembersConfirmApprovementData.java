@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.model.domain.test;
+package ru.random.walk.club_service.model.domain.approvement;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MembersConfirmTestData extends TestData {
+public class MembersConfirmApprovementData extends ApprovementData {
     private Integer requiredConfirmationNumber;
 }
