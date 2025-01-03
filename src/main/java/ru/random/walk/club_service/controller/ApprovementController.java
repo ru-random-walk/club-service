@@ -11,6 +11,7 @@ import ru.random.walk.club_service.model.graphql.types.FormInput;
 import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
 import ru.random.walk.club_service.util.StubDataUtil;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @Controller
@@ -22,14 +23,16 @@ public class ApprovementController {
     @MutationMapping
     public ApprovementEntity addClubApprovementMembersConfirm(
             @Argument UUID clubId,
-            @Argument MembersConfirmInput membersConfirm
+            @Argument MembersConfirmInput membersConfirm,
+            Principal principal
     ) {
         log.info("""
-                        Add club approvement members confirm
+                        Add club approvement members confirm for [{}]
+                        with login [{}]
                         for club id [{}]
                         with membersConfirm [{}]
                         """,
-                clubId, membersConfirm
+                principal, principal.getName(), clubId, membersConfirm
         );
         var membersConfirmApprovementData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
         return StubDataUtil.membersConfirmApprovementEntityWith(membersConfirmApprovementData);
@@ -38,14 +41,16 @@ public class ApprovementController {
     @MutationMapping
     public ApprovementEntity addClubApprovementForm(
             @Argument UUID clubId,
-            @Argument FormInput form
+            @Argument FormInput form,
+            Principal principal
     ) {
         log.info("""
-                        Add club approvement members confirm
+                        Add club approvement members confirm for [{}]
+                        with login [{}]
                         for club id [{}]
                         with form [{}]
                         """,
-                clubId, form
+                principal, principal.getName(), clubId, form
         );
         var formApprovementData = approvementMapper.toFormApprovementData(form);
         return StubDataUtil.formApprovementEntityWith(formApprovementData);
@@ -55,15 +60,17 @@ public class ApprovementController {
     public ApprovementEntity updateClubApprovementMembersConfirm(
             @Argument UUID clubId,
             @Argument UUID approvementId,
-            @Argument MembersConfirmInput membersConfirm
+            @Argument MembersConfirmInput membersConfirm,
+            Principal principal
     ) {
         log.info("""
-                        Update club approvement members confirm
+                        Update club approvement members confirm for [{}]
+                        with login [{}]
                         for club id [{}]
                         for approvement id [{}]
                         with membersConfirm [{}]
                         """,
-                clubId, approvementId, membersConfirm
+                principal, principal.getName(), clubId, approvementId, membersConfirm
         );
         var membersConfirmApprovementData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
         return StubDataUtil.membersConfirmApprovementEntityWith(membersConfirmApprovementData);
@@ -73,15 +80,17 @@ public class ApprovementController {
     public ApprovementEntity updateClubApprovementForm(
             @Argument UUID clubId,
             @Argument UUID approvementId,
-            @Argument FormInput form
+            @Argument FormInput form,
+            Principal principal
     ) {
         log.info("""
-                        Update club approvement form
+                        Update club approvement form for [{}]
+                        with login [{}]
                         for club id [{}]
                         for approvement id [{}]
                         with form [{}]
                         """,
-                clubId, approvementId, form
+                principal, principal.getName(), clubId, approvementId, form
         );
         var formApprovementData = approvementMapper.toFormApprovementData(form);
         return StubDataUtil.formApprovementEntityWith(formApprovementData);
@@ -90,14 +99,16 @@ public class ApprovementController {
     @MutationMapping
     public UUID removeClubApprovement(
             @Argument UUID clubId,
-            @Argument UUID approvementId
+            @Argument UUID approvementId,
+            Principal principal
     ) {
         log.info("""
-                        Remove club approvement
+                        Remove club approvement for [{}]
+                        with login [{}]
                         for club id [{}]
                         with approvementId [{}]
                         """,
-                clubId, approvementId
+                principal, principal.getName(), clubId, approvementId
         );
         return approvementId;
     }
