@@ -12,6 +12,7 @@ type Member {
 
 type Approvement {
     id: ID!
+    club: Club!
     type: ApprovementType!
     data: ApprovementData!
 }
