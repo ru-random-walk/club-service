@@ -17,7 +17,7 @@ import java.util.UUID;
 @Slf4j
 public class ClubController {
     @QueryMapping
-    @Nullable ClubEntity getClub(
+    public @Nullable ClubEntity getClub(
             @Argument UUID clubId,
             @Argument PaginationInput membersPagination,
             Principal principal
@@ -34,11 +34,14 @@ public class ClubController {
     }
 
     @MutationMapping
-    ClubEntity createClub(@Argument String name, Principal principal) {
+    public ClubEntity createClub(
+            @Argument String name,
+            Principal principal
+    ) {
         log.info("""
                         Create club for [{}]
                         with login [{}]
-                        with club name [{}]
+                        with name [{}]
                         """,
                 principal, principal.getName(), name
         );

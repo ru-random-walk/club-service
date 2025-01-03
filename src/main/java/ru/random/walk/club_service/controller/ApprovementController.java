@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.stereotype.Controller;
-import ru.random.walk.club_service.mapper.TestMapper;
-import ru.random.walk.club_service.model.entity.TestEntity;
+import ru.random.walk.club_service.mapper.ApprovementMapper;
+import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.graphql.types.FormInput;
 import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
 import ru.random.walk.club_service.util.StubDataUtil;
@@ -17,99 +17,99 @@ import java.util.UUID;
 @Controller
 @Slf4j
 @AllArgsConstructor
-public class TestController {
-    private final TestMapper testMapper;
+public class ApprovementController {
+    private final ApprovementMapper approvementMapper;
 
     @MutationMapping
-    TestEntity addClubTestMembersConfirm(
+    public ApprovementEntity addClubApprovementMembersConfirm(
             @Argument UUID clubId,
             @Argument MembersConfirmInput membersConfirm,
             Principal principal
     ) {
         log.info("""
-                        Add club test members confirm for [{}]
+                        Add club approvement members confirm for [{}]
                         with login [{}]
                         for club id [{}]
                         with membersConfirm [{}]
                         """,
                 principal, principal.getName(), clubId, membersConfirm
         );
-        var membersConfirmTestData = testMapper.toMembersConfirmTestData(membersConfirm);
-        return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
+        var membersConfirmApprovementData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
+        return StubDataUtil.membersConfirmApprovementEntityWith(membersConfirmApprovementData);
     }
 
     @MutationMapping
-    TestEntity addClubTestForm(
+    public ApprovementEntity addClubApprovementForm(
             @Argument UUID clubId,
             @Argument FormInput form,
             Principal principal
     ) {
         log.info("""
-                        Add club test members confirm for [{}]
+                        Add club approvement members confirm for [{}]
                         with login [{}]
                         for club id [{}]
                         with form [{}]
                         """,
                 principal, principal.getName(), clubId, form
         );
-        var formTestData = testMapper.toFormTestData(form);
-        return StubDataUtil.formTestEntityWith(formTestData);
+        var formApprovementData = approvementMapper.toFormApprovementData(form);
+        return StubDataUtil.formApprovementEntityWith(formApprovementData);
     }
 
     @MutationMapping
-    TestEntity updateClubTestMembersConfirm(
+    public ApprovementEntity updateClubApprovementMembersConfirm(
             @Argument UUID clubId,
-            @Argument UUID testId,
+            @Argument UUID approvementId,
             @Argument MembersConfirmInput membersConfirm,
             Principal principal
     ) {
         log.info("""
-                        Update club test members confirm for [{}]
+                        Update club approvement members confirm for [{}]
                         with login [{}]
                         for club id [{}]
-                        for test id [{}]
+                        for approvement id [{}]
                         with membersConfirm [{}]
                         """,
-                principal, principal.getName(), clubId, testId, membersConfirm
+                principal, principal.getName(), clubId, approvementId, membersConfirm
         );
-        var membersConfirmTestData = testMapper.toMembersConfirmTestData(membersConfirm);
-        return StubDataUtil.membersConfirmTestEntityWith(membersConfirmTestData);
+        var membersConfirmApprovementData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
+        return StubDataUtil.membersConfirmApprovementEntityWith(membersConfirmApprovementData);
     }
 
     @MutationMapping
-    TestEntity updateClubTestForm(
+    public ApprovementEntity updateClubApprovementForm(
             @Argument UUID clubId,
-            @Argument UUID testId,
+            @Argument UUID approvementId,
             @Argument FormInput form,
             Principal principal
     ) {
         log.info("""
-                        Update club test form for [{}]
+                        Update club approvement form for [{}]
                         with login [{}]
                         for club id [{}]
-                        for test id [{}]
+                        for approvement id [{}]
                         with form [{}]
                         """,
-                principal, principal.getName(), clubId, testId, form
+                principal, principal.getName(), clubId, approvementId, form
         );
-        var formTestData = testMapper.toFormTestData(form);
-        return StubDataUtil.formTestEntityWith(formTestData);
+        var formApprovementData = approvementMapper.toFormApprovementData(form);
+        return StubDataUtil.formApprovementEntityWith(formApprovementData);
     }
 
     @MutationMapping
-    UUID removeClubTest(
+    public UUID removeClubApprovement(
             @Argument UUID clubId,
-            @Argument UUID testId,
+            @Argument UUID approvementId,
             Principal principal
     ) {
         log.info("""
-                        Remove club test for [{}]
+                        Remove club approvement for [{}]
                         with login [{}]
                         for club id [{}]
-                        with testId [{}]
+                        with approvementId [{}]
                         """,
-                principal, principal.getName(), clubId, testId
+                principal, principal.getName(), clubId, approvementId
         );
-        return testId;
+        return approvementId;
     }
 }

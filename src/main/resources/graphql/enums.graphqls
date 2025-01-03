@@ -3,7 +3,7 @@ enum MemberRole {
     USER
 }
 
-enum TestType {
+enum ApprovementType {
     MEMBERS_CONFIRM
     FORM
 }
