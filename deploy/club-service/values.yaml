@@ -17,7 +17,7 @@ env:
   - name: GENERAL_LOGGING_LEVEL
     value: "INFO"
   - name: POSTGRES_URL
-    value: "jdbc:postgresql://postgres-postgresql.default.svc.cluster.local:5432/random_walk_postgres"
+    value: "jdbc:postgresql://postgres.postgresql.svc.cluster.local:5432/random_walk_postgres"
   - name: FLYWAY_MIGRATION_LOCATIONS
     value: "classpath:db/migration"
   - name: LOGGING_SHOW_JPA_QUERIES
@@ -29,12 +29,12 @@ env:
 
 secrets:
   - name: POSTGRES_USERNAME
-    secret_key: POSTGRES_USERNAME
-    secret_name: club-postgres-secret
+    secret_key: POSTGRES_USER
+    secret_name: postgresql-secret
 
   - name: POSTGRES_PASSWORD
     secret_key: POSTGRES_PASSWORD
-    secret_name: club-postgres-secret
+    secret_name: postgresql-secret
 
 serviceAccount:
   # Specifies whether a service account should be created
