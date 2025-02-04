@@ -80,10 +80,10 @@ ingress:
 
 resources:
   limits:
-    cpu: 20m
+    cpu: 750m
     memory: 512Mi
   requests:
-    cpu: 1m
+    cpu: 20m
     memory: 256Mi
 
 livenessProbe:
