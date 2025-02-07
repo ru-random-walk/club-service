@@ -1,5 +1,7 @@
 package ru.random.walk.club_service.controller;
 
+import graphql.schema.DataFetchingEnvironment;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -8,20 +10,31 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
+import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.security.Principal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
 @Slf4j
+@AllArgsConstructor
 public class ClubController {
+    private final ClubService clubService;
+
     @QueryMapping
     public @Nullable ClubEntity getClub(
             @Argument UUID clubId,
-            @Argument PaginationInput membersPagination,
-            Principal principal
+            @Nullable @Argument PaginationInput membersPagination,
+            Principal principal,
+            DataFetchingEnvironment env
     ) {
+        boolean membersIsRequired = env.getSelectionSet().contains("members");
+        if (membersIsRequired) {
+            membersPagination = Optional.ofNullable(membersPagination)
+                    .orElse(new PaginationInput(0, 10));
+        }
         log.info("""
                         Get club for [{}]
                         with login [{}]
@@ -30,7 +43,7 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId, membersPagination
         );
-        return StubDataUtil.clubEntity();
+        return clubService.getClubById(clubId, membersPagination, membersIsRequired, principal);
     }
 
     @MutationMapping
