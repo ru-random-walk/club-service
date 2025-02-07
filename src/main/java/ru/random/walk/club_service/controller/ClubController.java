@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.service.ClubService;
-import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.security.Principal;
 import java.util.Optional;
@@ -58,6 +57,6 @@ public class ClubController {
                         """,
                 principal, principal.getName(), name
         );
-        return StubDataUtil.clubEntityWith(name);
+        return clubService.createClub(name, principal);
     }
 }

@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface MembersRepository extends CrudRepository<MemberEntity, MemberEntity.MemberId> {
+public interface MemberRepository extends CrudRepository<MemberEntity, MemberEntity.MemberId> {
     Page<MemberEntity> findAllByClubId(UUID clubId, Pageable pageable);
 
     Optional<MemberEntity> findByIdAndClubId(UUID login, UUID clubId);
