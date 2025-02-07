@@ -44,10 +44,11 @@ $$;
 -- создание таблицы 'member', если она не существует
 create table if not exists club.member
 (
-    id      uuid default gen_random_uuid() primary key,
+    id      uuid,
     club_id uuid             not null,
     role    club.member_role not null,
-    foreign key (club_id) references club.club (id)
+    foreign key (club_id) references club.club (id),
+    unique (id, club_id)
 );
 
 -- создание типа 'answer_status', если он не существует

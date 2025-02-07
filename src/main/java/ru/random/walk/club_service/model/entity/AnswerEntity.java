@@ -3,6 +3,8 @@ package ru.random.walk.club_service.model.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,6 +48,7 @@ public class AnswerEntity {
     @JdbcTypeCode(SqlTypes.JSON)
     private AnswerData data;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AnswerStatus status;
 }
