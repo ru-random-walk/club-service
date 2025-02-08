@@ -2,6 +2,7 @@ package ru.random.walk.club_service.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
@@ -25,6 +26,18 @@ public class ApprovementService {
                 .clubId(clubId)
                 .data(membersConfirmData)
                 .type(ApprovementType.MEMBERS_CONFIRM)
+                .build();
+        return approvementRepository.save(approvement);
+    }
+
+    public ApprovementEntity addForClub(FormApprovementData formApprovementData, UUID clubId) {
+        var club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
+        var approvement = ApprovementEntity.builder()
+                .club(club)
+                .clubId(clubId)
+                .data(formApprovementData)
+                .type(ApprovementType.FORM)
                 .build();
         return approvementRepository.save(approvement);
     }

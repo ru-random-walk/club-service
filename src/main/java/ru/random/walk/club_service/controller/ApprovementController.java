@@ -58,7 +58,8 @@ public class ApprovementController {
                 principal, principal.getName(), clubId, form
         );
         var formApprovementData = approvementMapper.toFormApprovementData(form);
-        return StubDataUtil.formApprovementEntityWith(formApprovementData);
+        authenticator.authAdminByClubId(principal, clubId);
+        return approvementService.addForClub(formApprovementData, clubId);
     }
 
     @MutationMapping
