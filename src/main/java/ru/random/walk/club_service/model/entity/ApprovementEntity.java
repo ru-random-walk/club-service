@@ -38,7 +38,7 @@ public class ApprovementEntity {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_id", nullable = false)
+    @JoinColumn(name = "club_id", nullable = false, insertable = false, updatable = false)
     private ClubEntity club;
 
     @Enumerated(EnumType.STRING)

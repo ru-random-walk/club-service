@@ -1,3 +1,10 @@
+-- создание таблицы 'club', если она не существует
+create table if not exists club.club
+(
+    id   uuid default gen_random_uuid() primary key,
+    name varchar not null
+);
+
 -- создание типа 'approvement_type', если он не существует
 do
 $$
@@ -19,13 +26,6 @@ create table if not exists club.approvement
     type    club.approvement_type not null,
     data    jsonb                 not null,
     foreign key (club_id) references club.club (id)
-);
-
--- создание таблицы 'club', если она не существует
-create table if not exists club.club
-(
-    id   uuid default gen_random_uuid() primary key,
-    name varchar not null
 );
 
 -- создание типа 'member_role', если он не существует

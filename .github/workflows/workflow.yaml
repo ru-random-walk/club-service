@@ -1,0 +1,116 @@
+name: ci
+
+on:
+  push:
+
+env:
+  APP_NAME: club-service
+  IMAGE_NAME: random-walk-club-service
+  DOCKER_REPO_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
+jobs:
+  build-project-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          cache: gradle
+          distribution: corretto
+
+      - name: Build Project
+        run: |
+          chmod +x gradlew
+          ./gradlew clean
+          ./gradlew build
+        env:
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,enable=true,priority=100,prefix=,suffix=,format=short
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: build-project-and-push-image
+    environment:
+      name: approvers
+
+    env:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      INTERNAL_IP: ${{ secrets.INTERNAL_IP }}
+      SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}
+      EXTERNAL_IP: ${{ secrets.EXTERNAL_IP }}
+      EXTERNAL_PORT: ${{ secrets.EXTERNAL_PORT }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.32.1'
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+
+      - name: Get image tag
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          tags: |
+            type=sha,enable=true,priority=100,prefix=,suffix=,format=short
+
+      - name: Install helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      - name: Establishing SSH tunnel
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "$(ssh-keyscan -p ${EXTERNAL_PORT} ${EXTERNAL_IP})" >> ~/.ssh/known_hosts
+          ssh -fNL 6443:${INTERNAL_IP}:6443 ${SERVER_USERNAME}@${EXTERNAL_IP} -p ${EXTERNAL_PORT}
+          echo "127.0.0.1 kubernetes.default.svc.cluster.local" | sudo tee -a /etc/hosts
+
+      - name: Deploy
+        run: |
+          helm upgrade $APP_NAME ./deploy/$APP_NAME/ \
+            --set image.tag=$DOCKER_METADATA_OUTPUT_TAGS \
+            --set image.repository=$DOCKER_REPO_USERNAME/$IMAGE_NAME \
+            --namespace $APP_NAME --create-namespace \
+            --install \
+            --wait

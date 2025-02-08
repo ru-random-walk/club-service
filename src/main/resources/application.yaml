@@ -16,3 +16,9 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${AUTH_SERVICE_URL:http://localhost:8081}
+  jpa:
+    show-sql: ${LOGGING_SHOW_JPA_QUERIES:true}
+logging:
+  level:
+    ru.random.walk.chat_service: ${GENERAL_LOGGING_LEVEL:DEBUG}
+    org.hibernate.orm.jdbc.bind: ${LOGGING_SHOW_BINDING_JPA_VALUES_LEVEL:TRACE}
