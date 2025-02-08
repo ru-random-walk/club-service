@@ -39,7 +39,7 @@ public class ClubEntity {
     private List<MemberEntity> members;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_id", nullable = false)
+    @JoinColumn(name = "club_id", nullable = false, insertable = false, updatable = false)
     @Builder.Default
     private List<ApprovementEntity> approvements = new ArrayList<>();
 }

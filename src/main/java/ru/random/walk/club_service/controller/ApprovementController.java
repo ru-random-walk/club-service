@@ -9,6 +9,8 @@ import ru.random.walk.club_service.mapper.ApprovementMapper;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.graphql.types.FormInput;
 import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
+import ru.random.walk.club_service.service.ApprovementService;
+import ru.random.walk.club_service.service.Authenticator;
 import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.security.Principal;
@@ -18,7 +20,9 @@ import java.util.UUID;
 @Slf4j
 @AllArgsConstructor
 public class ApprovementController {
+    private final ApprovementService approvementService;
     private final ApprovementMapper approvementMapper;
+    private final Authenticator authenticator;
 
     @MutationMapping
     public ApprovementEntity addClubApprovementMembersConfirm(
@@ -35,7 +39,8 @@ public class ApprovementController {
                 principal, principal.getName(), clubId, membersConfirm
         );
         var membersConfirmApprovementData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
-        return StubDataUtil.membersConfirmApprovementEntityWith(membersConfirmApprovementData);
+        authenticator.authAdminByClubId(principal, clubId);
+        return approvementService.addForClub(membersConfirmApprovementData, clubId);
     }
 
     @MutationMapping
