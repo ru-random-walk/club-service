@@ -41,4 +41,27 @@ public class ApprovementService {
                 .build();
         return approvementRepository.save(approvement);
     }
+
+    public ApprovementEntity update(MembersConfirmApprovementData membersConfirmData, UUID approvementId) {
+        var approvement = approvementRepository.findById(approvementId)
+                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
+        approvement.setData(membersConfirmData);
+        approvement.setType(ApprovementType.MEMBERS_CONFIRM);
+        return approvementRepository.save(approvement);
+    }
+
+    public ApprovementEntity update(FormApprovementData formApprovementData, UUID approvementId) {
+        var approvement = approvementRepository.findById(approvementId)
+                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
+        approvement.setData(formApprovementData);
+        approvement.setType(ApprovementType.FORM);
+        return approvementRepository.save(approvement);
+    }
+
+    public UUID delete(UUID approvementId) {
+        var approvement = approvementRepository.findById(approvementId)
+                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
+        approvementRepository.delete(approvement);
+        return approvement.getId();
+    }
 }
