@@ -1,16 +1,16 @@
 input MembersConfirmInput {
-    requiredConfirmationNumber: Int!
+    requiredConfirmationNumber: Int! @Min(value: 1, message: "requiredConfirmationNumber must be bigger or equals than 1")
 }
 
 input FormInput {
     questions: [QuestionInput!]!
 }
 
-input QuestionInput {
-    text: String!
-    answerOptions: [String!]!
+input QuestionInput @ValidQuestion {
+    text: String! @Size(max: 200, message: "text size must be less or equals 200")
+    answerOptions: [String!]! @ContainerSize(min: 1, max: 10, message: "answerOptions size must be between 1 and 10")
     answerType: AnswerType!
-    correctOptionNumbers: [Int!]!
+    correctOptionNumbers: [Int!]! @ContainerSize(min: 1, max: 10, message: "answerOptions size must be between 1 and 10")
 }
 
 input FormAnswerInput {

@@ -1,0 +1,33 @@
+directive @Max(
+    value : Int! = 2147483647
+    message : String = "graphql.validation.Max.message"
+) on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @Min(
+    value : Int! = 0
+    message : String = "graphql.validation.Min.message"
+) on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @Range(
+    min : Int = 0
+    max : Int = 2147483647
+    message : String = "graphql.validation.Range.message"
+) on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @Size(
+    min : Int = 0
+    max : Int = 2147483647
+    message : String = "graphql.validation.Size.message"
+) on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+directive @ContainerSize(
+    min : Int = 0
+    max : Int = 2147483647
+    message : String = "graphql.validation.ContainerSize.message"
+) on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
+
+# Valid question:
+# - Has fields answerOptions: [String!]!, answerType: AnswerType! and correctOptionNumbers: [Int!]!
+# - Answer type matches with correct option numbers size
+# - Answer options matches with correct option numbers indices
+directive @ValidQuestion on INPUT_OBJECT
