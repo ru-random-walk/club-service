@@ -50,7 +50,7 @@ public class ApprovementController {
             Principal principal
     ) {
         log.info("""
-                        Add club approvement members confirm for [{}]
+                        Add club approvement form for [{}]
                         with login [{}]
                         for club id [{}]
                         with form [{}]
