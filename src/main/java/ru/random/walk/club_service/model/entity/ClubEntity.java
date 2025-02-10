@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,10 +35,11 @@ public class ClubEntity {
     private String name;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_id", nullable = false)
+    @JoinColumn(name = "club_id", nullable = false, insertable = false, updatable = false)
     private List<MemberEntity> members;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id", nullable = false)
-    private List<ApprovementEntity> approvements;
+    @Builder.Default
+    private List<ApprovementEntity> approvements = new ArrayList<>();
 }

@@ -18,6 +18,19 @@ $$
     end
 $$;
 
+-- Автоматический каст строки в тип approvement_type
+DO
+$$
+    BEGIN
+        IF NOT EXISTS (SELECT 1
+                       FROM pg_cast
+                       WHERE castsource = 'character varying'::regtype
+                         AND casttarget = 'club.approvement_type'::regtype) THEN
+            CREATE CAST (character varying AS club.approvement_type) WITH INOUT AS IMPLICIT;
+        END IF;
+    END
+$$;
+
 -- создание таблицы 'approvement', если она не существует
 create table if not exists club.approvement
 (
@@ -41,13 +54,27 @@ $$
     end
 $$;
 
+-- Автоматический каст строки в тип member_role
+DO
+$$
+    BEGIN
+        IF NOT EXISTS (SELECT 1
+                       FROM pg_cast
+                       WHERE castsource = 'character varying'::regtype
+                         AND casttarget = 'club.member_role'::regtype) THEN
+            CREATE CAST (character varying AS club.member_role) WITH INOUT AS IMPLICIT;
+        END IF;
+    END
+$$;
+
 -- создание таблицы 'member', если она не существует
 create table if not exists club.member
 (
-    id      uuid default gen_random_uuid() primary key,
+    id      uuid             not null,
     club_id uuid             not null,
     role    club.member_role not null,
-    foreign key (club_id) references club.club (id)
+    foreign key (club_id) references club.club (id),
+    unique (id, club_id)
 );
 
 -- создание типа 'answer_status', если он не существует
@@ -61,6 +88,19 @@ $$
             create type club.answer_status as enum ('CREATED', 'SENT', 'IN_PROCESS', 'IN_REVIEW', 'FAILED', 'PASSED');
         end if;
     end
+$$;
+
+-- Автоматический каст строки в тип answer_status
+DO
+$$
+    BEGIN
+        IF NOT EXISTS (SELECT 1
+                       FROM pg_cast
+                       WHERE castsource = 'character varying'::regtype
+                         AND casttarget = 'club.answer_status'::regtype) THEN
+            CREATE CAST (character varying AS club.answer_status) WITH INOUT AS IMPLICIT;
+        END IF;
+    END
 $$;
 
 -- создание таблицы 'answer', если она не существует
