@@ -19,6 +19,7 @@ public class ApprovementServiceImpl implements ApprovementService {
     private final ApprovementRepository approvementRepository;
     private final ClubRepository clubRepository;
 
+    @Override
     public ApprovementEntity addForClub(MembersConfirmApprovementData membersConfirmData, UUID clubId) {
         var club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
@@ -31,6 +32,7 @@ public class ApprovementServiceImpl implements ApprovementService {
         return approvementRepository.save(approvement);
     }
 
+    @Override
     public ApprovementEntity addForClub(FormApprovementData formApprovementData, UUID clubId) {
         var club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
@@ -43,6 +45,7 @@ public class ApprovementServiceImpl implements ApprovementService {
         return approvementRepository.save(approvement);
     }
 
+    @Override
     public ApprovementEntity update(MembersConfirmApprovementData membersConfirmData, UUID approvementId) {
         var approvement = approvementRepository.findById(approvementId)
                 .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
@@ -51,6 +54,7 @@ public class ApprovementServiceImpl implements ApprovementService {
         return approvementRepository.save(approvement);
     }
 
+    @Override
     public ApprovementEntity update(FormApprovementData formApprovementData, UUID approvementId) {
         var approvement = approvementRepository.findById(approvementId)
                 .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
@@ -59,6 +63,7 @@ public class ApprovementServiceImpl implements ApprovementService {
         return approvementRepository.save(approvement);
     }
 
+    @Override
     public UUID delete(UUID approvementId) {
         var approvement = approvementRepository.findById(approvementId)
                 .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));

@@ -18,6 +18,7 @@ public class AuthenticatorImpl implements Authenticator {
     private final MemberRepository memberRepository;
     private final ApprovementRepository approvementRepository;
 
+    @Override
     public void authAdminByClubId(Principal principal, UUID clubId) {
         var login = UUID.fromString(principal.getName());
         var member = memberRepository.findByIdAndClubId(login, clubId)
@@ -27,6 +28,7 @@ public class AuthenticatorImpl implements Authenticator {
         }
     }
 
+    @Override
     public void authAdminByApprovementId(Principal principal, UUID approvementId) {
         var approvement = approvementRepository.findById(approvementId)
                 .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
