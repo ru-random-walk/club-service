@@ -31,19 +31,10 @@ public class QuestionDirectiveConstraint extends AbstractDirectiveConstraint {
     @Override
     protected List<GraphQLError> runConstraint(ValidationEnvironment env) {
         try {
-            //noinspection unchecked
-            var fieldMap = (Map<String, Object>) env.getValidatedValue();
-            List<?> answerOptions = Optional.ofNullable(fieldMap.get("answerOptions"))
-                    .map(obj -> (List<?>) obj)
-                    .orElseThrow(() -> new ValidationException("QuestionInput must contains field answerOptions: [String!]!"));
-            AnswerType answerType = Optional.ofNullable(fieldMap.get("answerType"))
-                    .map(obj -> (String) obj)
-                    .map(AnswerType::valueOf)
-                    .orElseThrow(() -> new ValidationException("QuestionInput must contains field answerType: AnswerType!"));
-            //noinspection unchecked
-            List<Integer> correctOptionNumbers = Optional.ofNullable(fieldMap.get("correctOptionNumbers"))
-                    .map(obj -> (List<Integer>) obj)
-                    .orElseThrow(() -> new ValidationException("QuestionInput must contains field correctOptionNumbers: [Int!]!"));
+            Map<String, Object> fieldMap = getFieldMap(env);
+            List<?> answerOptions = getAnswerOptions(fieldMap);
+            AnswerType answerType = getAnswerType(fieldMap);
+            List<Integer> correctOptionNumbers = getCorrectOptionNumbers(fieldMap);
             checkAnswerTypeMatchWithAnswer(answerType, correctOptionNumbers);
             checkAnswerIndices(answerOptions, correctOptionNumbers);
         } catch (ClassCastException ignored) {
@@ -53,6 +44,31 @@ public class QuestionDirectiveConstraint extends AbstractDirectiveConstraint {
                     and correctOptionNumbers: [Int!]!""");
         }
         return Collections.emptyList();
+    }
+
+    private static List<Integer> getCorrectOptionNumbers(Map<String, Object> fieldMap) {
+        //noinspection unchecked
+        return Optional.ofNullable(fieldMap.get("correctOptionNumbers"))
+                .map(obj -> (List<Integer>) obj)
+                .orElseThrow(() -> new ValidationException("QuestionInput must contains field correctOptionNumbers: [Int!]!"));
+    }
+
+    private static AnswerType getAnswerType(Map<String, Object> fieldMap) {
+        return Optional.ofNullable(fieldMap.get("answerType"))
+                .map(obj -> (String) obj)
+                .map(AnswerType::valueOf)
+                .orElseThrow(() -> new ValidationException("QuestionInput must contains field answerType: AnswerType!"));
+    }
+
+    private static List<?> getAnswerOptions(Map<String, Object> fieldMap) {
+        return Optional.ofNullable(fieldMap.get("answerOptions"))
+                .map(obj -> (List<?>) obj)
+                .orElseThrow(() -> new ValidationException("QuestionInput must contains field answerOptions: [String!]!"));
+    }
+
+    private static Map<String, Object> getFieldMap(ValidationEnvironment env) {
+        //noinspection unchecked
+        return (Map<String, Object>) env.getValidatedValue();
     }
 
     private void checkAnswerIndices(List<?> answerOptions, List<Integer> correctOptionNumbers) {
