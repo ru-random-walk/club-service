@@ -49,6 +49,7 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.6.2'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'com.graphql-java:graphql-java-extended-validation'
 }
 
 tasks.named('test') {

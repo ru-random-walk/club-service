@@ -5,4 +5,6 @@ import java.util.UUID;
 
 public interface Authenticator {
     void authAdminByClubId(Principal principal, UUID clubId);
+
+    void authAdminByApprovementId(Principal principal, UUID approvementId);
 }

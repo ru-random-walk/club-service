@@ -37,6 +37,9 @@ public class ApprovementEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "club_id", nullable = false)
+    private UUID clubId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id", nullable = false, insertable = false, updatable = false)
     private ClubEntity club;

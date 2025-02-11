@@ -25,6 +25,7 @@ public class ClubServiceImpl implements ClubService {
     private final MemberRepository memberRepository;
     private final Authenticator authenticator;
 
+    @Override
     public ClubEntity getClubById(
             UUID clubId,
             PaginationInput membersPagination,
@@ -42,6 +43,7 @@ public class ClubServiceImpl implements ClubService {
         return club;
     }
 
+    @Override
     @Transactional
     public ClubEntity createClub(String clubName, Principal principal) {
         var club = clubRepository.save(ClubEntity.builder()
