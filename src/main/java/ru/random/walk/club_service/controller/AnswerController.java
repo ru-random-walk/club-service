@@ -9,6 +9,7 @@ import ru.random.walk.club_service.mapper.AnswerMapper;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.graphql.types.FormAnswerInput;
+import ru.random.walk.club_service.service.AnswerService;
 import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.security.Principal;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class AnswerController {
     private final AnswerMapper answerMapper;
+    private final AnswerService answerService;
 
     @MutationMapping
     public AnswerEntity createApprovementAnswerMembersConfirm(
@@ -32,7 +34,7 @@ public class AnswerController {
                         """,
                 principal, principal.getName(), approvementId
         );
-        return StubDataUtil.answerMembersConfirmEntityWith(approvementId);
+        return answerService.createMembersConfirm(approvementId, principal);
     }
 
     @MutationMapping
@@ -50,26 +52,11 @@ public class AnswerController {
                 principal, principal.getName(), approvementId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return StubDataUtil.answerFormEntityWith(approvementId, formAnswerData);
+        return answerService.createForm(approvementId, formAnswerData, principal);
     }
 
     @MutationMapping
-    public AnswerEntity setApprovementAnswerFormStatusToSent(
-            @Argument UUID approvementId,
-            Principal principal
-    ) {
-        log.info("""
-                        Set approvement answer form status to sent for [{}]
-                        with login [{}]
-                        for approvement id [{}]
-                        """,
-                principal, principal.getName(), approvementId
-        );
-        return StubDataUtil.answerFormEntityWith(approvementId, AnswerStatus.SENT);
-    }
-
-    @MutationMapping
-    public AnswerEntity updateApprovementAnswerForm(
+    public AnswerEntity updateAnswerForm(
             @Argument UUID approvementId,
             @Argument FormAnswerInput formAnswer,
             Principal principal
@@ -84,5 +71,35 @@ public class AnswerController {
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
         return StubDataUtil.answerFormEntityWith(approvementId, formAnswerData);
+    }
+
+    @MutationMapping
+    public AnswerEntity setAnswerFormStatusToSent(
+            @Argument UUID answerId,
+            Principal principal
+    ) {
+        log.info("""
+                        Set approvement answer form status to sent for [{}]
+                        with login [{}]
+                        for answer id [{}]
+                        """,
+                principal, principal.getName(), answerId
+        );
+        return StubDataUtil.answerFormEntityWith(answerId, AnswerStatus.SENT);
+    }
+
+    @MutationMapping
+    public AnswerEntity setAnswerMembersConfirmStatusToSent(
+            @Argument UUID answerId,
+            Principal principal
+    ) {
+        log.info("""
+                        Set approvement answer members confirm status to sent for [{}]
+                        with login [{}]
+                        for answer id [{}]
+                        """,
+                principal, principal.getName(), answerId
+        );
+        return StubDataUtil.answerFormEntityWith(answerId, AnswerStatus.SENT);
     }
 }
