@@ -57,20 +57,20 @@ public class AnswerController {
 
     @MutationMapping
     public AnswerEntity updateAnswerForm(
-            @Argument UUID approvementId,
+            @Argument UUID answerId,
             @Argument FormAnswerInput formAnswer,
             Principal principal
     ) {
         log.info("""
                         Update approvement answer form for [{}]
                         with login [{}]
-                        for approvement id [{}]
+                        for answer id [{}]
                         with form answer [{}]
                         """,
-                principal, principal.getName(), approvementId, formAnswer
+                principal, principal.getName(), answerId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return StubDataUtil.answerFormEntityWith(approvementId, formAnswerData);
+        return answerService.updateForm(answerId, formAnswerData, principal);
     }
 
     @MutationMapping
