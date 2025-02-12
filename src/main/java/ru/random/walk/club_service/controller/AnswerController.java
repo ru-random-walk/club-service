@@ -7,10 +7,8 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.mapper.AnswerMapper;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
-import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.graphql.types.FormAnswerInput;
 import ru.random.walk.club_service.service.AnswerService;
-import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.security.Principal;
 import java.util.UUID;
@@ -85,6 +83,6 @@ public class AnswerController {
                         """,
                 principal, principal.getName(), answerId
         );
-        return StubDataUtil.answerFormEntityWith(answerId, AnswerStatus.SENT);
+        return answerService.setStatusToSent(answerId, principal);
     }
 }

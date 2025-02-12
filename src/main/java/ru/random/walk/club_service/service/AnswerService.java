@@ -12,4 +12,6 @@ public interface AnswerService {
     AnswerEntity createForm(UUID approvementId, FormAnswerData formAnswerData, Principal principal);
 
     AnswerEntity updateForm(UUID answerId, FormAnswerData formAnswerData, Principal principal);
+
+    AnswerEntity setStatusToSent(UUID answerId, Principal principal);
 }

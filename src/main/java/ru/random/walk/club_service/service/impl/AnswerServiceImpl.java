@@ -1,6 +1,7 @@
 package ru.random.walk.club_service.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
@@ -65,16 +66,32 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public AnswerEntity updateForm(UUID answerId, FormAnswerData formAnswerData, Principal principal) {
+        var answer = authUserByAnswerAndGet(answerId, principal);
+        if (answer.getStatus() != AnswerStatus.CREATED) {
+            throw new ValidationException("Answer status is not created!");
+        }
+        answer.setData(formAnswerData);
+        return answerRepository.save(answer);
+    }
+
+    @Override
+    public AnswerEntity setStatusToSent(UUID answerId, Principal principal) {
+        var answer = authUserByAnswerAndGet(answerId, principal);
+        if (answer.getStatus() != AnswerStatus.CREATED) {
+            throw new ValidationException("Answer status is not created!");
+        }
+        answer.setStatus(AnswerStatus.SENT);
+        return answerRepository.save(answer);
+    }
+
+    @NotNull
+    private AnswerEntity authUserByAnswerAndGet(UUID answerId, Principal principal) {
         var answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new NotFoundException("Answer with such id not found!"));
         var userLogin = UUID.fromString(principal.getName());
         if (!answer.getUserId().equals(userLogin)) {
             throw new AuthenticationException("You do not have access to update this answer!");
         }
-        if (answer.getStatus() != AnswerStatus.CREATED) {
-            throw new ValidationException("Answer status already sent!");
-        }
-        answer.setData(formAnswerData);
-        return answerRepository.save(answer);
+        return answer;
     }
 }
