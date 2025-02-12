@@ -46,7 +46,7 @@ public class FormValidator implements AnswerDataValidator {
     }
 
     private void validateAnswerByApprovementType(int answerIndex, List<Integer> answerOptions, AnswerType approvementType) {
-        if (approvementType == AnswerType.SINGLE && answerOptions.size() != 1) {
+        if (approvementType == AnswerType.SINGLE && answerOptions.size() > 1) {
             throw new ValidationException("Answer[%s] does not match the single answer type!".formatted(answerIndex));
         }
     }
