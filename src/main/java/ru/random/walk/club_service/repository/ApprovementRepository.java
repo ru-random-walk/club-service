@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface ApprovementRepository extends CrudRepository<ApprovementEntity, UUID> {
+    Integer countByClubId(UUID clubId);
 }

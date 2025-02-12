@@ -49,4 +49,8 @@ class MemberRepositoryTest extends AbstractPostgresContainerTest {
         assertNotNull(club.getApprovements());
     }
 
+    @Test
+    void countByIdAndRole() {
+        memberRepository.countByIdAndRole(UUID.randomUUID(), MemberRole.ADMIN);
+    }
 }
