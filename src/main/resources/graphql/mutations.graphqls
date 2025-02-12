@@ -43,6 +43,5 @@ type Mutation {
 
     updateAnswerForm(answerId: ID!, formAnswer: FormAnswerInput!): Answer!
 
-    setAnswerFormStatusToSent(answerId: ID!): Answer!
-    setAnswerMembersConfirmStatusToSent(answerId: ID!): Answer!
+    setAnswerStatusToSent(answerId: ID!): Answer!
 }

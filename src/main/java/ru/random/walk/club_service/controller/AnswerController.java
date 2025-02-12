@@ -74,27 +74,12 @@ public class AnswerController {
     }
 
     @MutationMapping
-    public AnswerEntity setAnswerFormStatusToSent(
+    public AnswerEntity setAnswerStatusToSent(
             @Argument UUID answerId,
             Principal principal
     ) {
         log.info("""
-                        Set approvement answer form status to sent for [{}]
-                        with login [{}]
-                        for answer id [{}]
-                        """,
-                principal, principal.getName(), answerId
-        );
-        return StubDataUtil.answerFormEntityWith(answerId, AnswerStatus.SENT);
-    }
-
-    @MutationMapping
-    public AnswerEntity setAnswerMembersConfirmStatusToSent(
-            @Argument UUID answerId,
-            Principal principal
-    ) {
-        log.info("""
-                        Set approvement answer members confirm status to sent for [{}]
+                        Set approvement answer status to sent for [{}]
                         with login [{}]
                         for answer id [{}]
                         """,
