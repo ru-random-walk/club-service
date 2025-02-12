@@ -75,7 +75,7 @@ public class AnswerServiceImpl implements AnswerService {
     public AnswerEntity setStatusToSent(UUID answerId, Principal principal) {
         var answer = authenticator.authUserByAnswerAndGet(answerId, principal);
         if (answer.getStatus() != AnswerStatus.CREATED) {
-            throw new ValidationException("Answer status is not created!");
+            throw new ValidationException("Answer status is not equals 'CREATED'!");
         }
         answer.setStatus(AnswerStatus.SENT);
         return answerRepository.save(answer);
