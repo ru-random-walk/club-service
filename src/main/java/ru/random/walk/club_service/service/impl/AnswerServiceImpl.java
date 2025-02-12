@@ -31,6 +31,10 @@ public class AnswerServiceImpl implements AnswerService {
             throw new ValidationException("Approvement type mismatch with answer type!");
         }
         var userId = UUID.fromString(principal.getName());
+        var userAnswerCount = answerRepository.countByApprovementAndUserId(approvement, userId);
+        if (userAnswerCount >= 1) {
+            throw new ValidationException("You can not have more than one answer for approvement!");
+        }
         return answerRepository.save(AnswerEntity.builder()
                 .userId(userId)
                 .status(AnswerStatus.CREATED)
@@ -47,6 +51,10 @@ public class AnswerServiceImpl implements AnswerService {
             throw new ValidationException("Approvement type mismatch with answer type!");
         }
         var userId = UUID.fromString(principal.getName());
+        var userAnswerCount = answerRepository.countByApprovementAndUserId(approvement, userId);
+        if (userAnswerCount >= 1) {
+            throw new ValidationException("You can not have more than one answer for approvement!");
+        }
         return answerRepository.save(AnswerEntity.builder()
                 .userId(userId)
                 .status(AnswerStatus.CREATED)
