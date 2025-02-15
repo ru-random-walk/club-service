@@ -36,6 +36,8 @@ type Mutation {
 
     # Member mutations
     changeMemberRole(clubId: ID!, memberId: ID!, role: MemberRole!): Member!
+    removeMemberFromClub(clubId: ID!, memberId: ID!): ID!
+    addMemberInClub(clubId: ID!, memberId: ID!): Member!
 
     # Answer mutations
     createApprovementAnswerMembersConfirm(approvementId: ID!): Answer!
