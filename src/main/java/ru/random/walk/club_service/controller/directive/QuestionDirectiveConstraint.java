@@ -80,7 +80,7 @@ public class QuestionDirectiveConstraint extends AbstractDirectiveConstraint {
     }
 
     private void checkAnswerTypeMatchWithAnswer(AnswerType answerType, List<Integer> correctOptionNumbers) {
-        if (answerType == AnswerType.SINGLE && correctOptionNumbers.size() != 1) {
+        if (answerType == AnswerType.SINGLE && correctOptionNumbers.size() > 1) {
             throw new ValidationException("correctOptionNumbers with SINGLE answer type must contain exactly one option");
         }
     }

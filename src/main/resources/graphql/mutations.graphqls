@@ -43,7 +43,7 @@ type Mutation {
     createApprovementAnswerMembersConfirm(approvementId: ID!): Answer!
     createApprovementAnswerForm(approvementId: ID!, formAnswer: FormAnswerInput!): Answer!
 
-    setApprovementAnswerFormStatusToSent(approvementId: ID!): Answer!
+    updateAnswerForm(answerId: ID!, formAnswer: FormAnswerInput!): Answer!
 
-    updateApprovementAnswerForm(approvementId: ID!, formAnswer: FormAnswerInput!): Answer!
+    setAnswerStatusToSent(answerId: ID!): Answer!
 }
