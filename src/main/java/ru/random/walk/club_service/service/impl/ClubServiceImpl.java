@@ -8,6 +8,7 @@ import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.NotFoundException;
+import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
@@ -21,6 +22,8 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class ClubServiceImpl implements ClubService {
+    private final static int MAX_CLUB_COUNT_BY_USER = 3;
+
     private final ClubRepository clubRepository;
     private final MemberRepository memberRepository;
     private final Authenticator authenticator;
@@ -46,10 +49,14 @@ public class ClubServiceImpl implements ClubService {
     @Override
     @Transactional
     public ClubEntity createClub(String clubName, Principal principal) {
+        var adminLogin = UUID.fromString(principal.getName());
+        var userClubCount = memberRepository.countByIdAndRole(adminLogin, MemberRole.ADMIN);
+        if (userClubCount >= MAX_CLUB_COUNT_BY_USER) {
+            throw new ValidationException("You are reached maximum count of clubs!");
+        }
         var club = clubRepository.save(ClubEntity.builder()
                 .name(clubName)
                 .build());
-        var adminLogin = UUID.fromString(principal.getName());
         var adminMember = memberRepository.save(MemberEntity.builder()
                 .id(adminLogin)
                 .clubId(club.getId())

@@ -7,6 +7,7 @@ import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprov
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
 import ru.random.walk.club_service.model.exception.NotFoundException;
+import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.service.ApprovementService;
@@ -16,6 +17,8 @@ import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class ApprovementServiceImpl implements ApprovementService {
+    private final static int MAX_APPROVEMENT_COUNT_BY_CLUB = 10;
+
     private final ApprovementRepository approvementRepository;
     private final ClubRepository clubRepository;
 
@@ -23,6 +26,7 @@ public class ApprovementServiceImpl implements ApprovementService {
     public ApprovementEntity addForClub(MembersConfirmApprovementData membersConfirmData, UUID clubId) {
         var club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
+        checkApprovementLimit(clubId);
         var approvement = ApprovementEntity.builder()
                 .club(club)
                 .clubId(clubId)
@@ -36,6 +40,7 @@ public class ApprovementServiceImpl implements ApprovementService {
     public ApprovementEntity addForClub(FormApprovementData formApprovementData, UUID clubId) {
         var club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
+        checkApprovementLimit(clubId);
         var approvement = ApprovementEntity.builder()
                 .club(club)
                 .clubId(clubId)
@@ -43,6 +48,13 @@ public class ApprovementServiceImpl implements ApprovementService {
                 .type(ApprovementType.FORM)
                 .build();
         return approvementRepository.save(approvement);
+    }
+
+    private void checkApprovementLimit(UUID clubId) {
+        var approvementCount = approvementRepository.countByClubId(clubId);
+        if (approvementCount >= MAX_APPROVEMENT_COUNT_BY_CLUB) {
+            throw new ValidationException("Your club are reached max count of approvements!");
+        }
     }
 
     @Override
