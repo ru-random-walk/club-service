@@ -24,6 +24,10 @@ env:
     value: "false"
   - name: LOGGING_SHOW_BINDING_JPA_VALUES_LEVEL
     value: "INFO"
+  - name: LOGGING_CONFIG_FILE_PATH
+    value: "classpath:loki-with-console-logger.xml"
+  - name: LOKI_HOST
+    value: "http://lgtm-loki-gateway.observability.svc.cluster.local:3100"
 #  - name: KAFKA_URL
 #    value: "kafka-cluster.kafka.svc.cluster.local:9092"
 

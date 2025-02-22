@@ -22,3 +22,4 @@ logging:
   level:
     ru.random.walk.chat_service: ${GENERAL_LOGGING_LEVEL:DEBUG}
     org.hibernate.orm.jdbc.bind: ${LOGGING_SHOW_BINDING_JPA_VALUES_LEVEL:TRACE}
+  config: {LOGGING_CONFIG_FILE_PATH:classpath:simple-console-logger.xml}
