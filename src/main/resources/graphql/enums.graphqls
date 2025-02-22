@@ -14,8 +14,12 @@ enum AnswerType {
 }
 
 enum AnswerStatus {
+    # The answer was created, but not sent
     CREATED
+    # The answer has been sent for review
     SENT
+    # The answer was reviewed with failed result
     FAILED
+    # The answer was reviewed with passed result
     PASSED
 }
