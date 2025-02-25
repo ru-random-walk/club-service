@@ -13,7 +13,7 @@ fullnameOverride: ""
 
 env:
   - name: AUTH_SERVICE_URL
-    value: "https://random-walk.ru:44424/auth"
+    value: "http://auth-service.auth-service.svc.cluster.local:8080"
   - name: GENERAL_LOGGING_LEVEL
     value: "INFO"
   - name: POSTGRES_URL
