@@ -25,4 +25,6 @@ public interface MemberRepository extends CrudRepository<MemberEntity, MemberEnt
             nativeQuery = true
     )
     Integer countByIdAndRole(UUID id, MemberRole role);
+
+    Page<MemberEntity> findAllById(UUID userId, Pageable pageable);
 }
