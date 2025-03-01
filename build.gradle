@@ -61,7 +61,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'com.graphql-java:graphql-java-extended-validation'
-    implementation 'ru.random.walk:event-exchange-contract:1.1.1'
+    implementation 'ru.random.walk:event-exchange-contract:1.2.1'
 }
 
 tasks.named('test') {
