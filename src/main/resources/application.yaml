@@ -18,6 +18,8 @@ spring:
           issuer-uri: ${AUTH_SERVICE_URL:http://localhost:8081}
   jpa:
     show-sql: ${LOGGING_SHOW_JPA_QUERIES:true}
+  kafka:
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
 logging:
   level:
     ru.random.walk.chat_service: ${GENERAL_LOGGING_LEVEL:DEBUG}

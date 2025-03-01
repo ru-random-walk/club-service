@@ -2,6 +2,7 @@ package ru.random.walk.club_service.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.model.entity.ClubEntity;
@@ -14,6 +15,8 @@ import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.Authenticator;
 import ru.random.walk.club_service.service.ClubService;
+import ru.random.walk.dto.CreateClubEvent;
+import ru.random.walk.topic.EventTopic;
 
 import java.security.Principal;
 import java.util.Collections;
@@ -27,6 +30,7 @@ public class ClubServiceImpl implements ClubService {
     private final ClubRepository clubRepository;
     private final MemberRepository memberRepository;
     private final Authenticator authenticator;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
     public ClubEntity getClubById(
@@ -63,6 +67,7 @@ public class ClubServiceImpl implements ClubService {
                 .role(MemberRole.ADMIN)
                 .build());
         club.setMembers(Collections.singletonList(adminMember));
+        kafkaTemplate.send(EventTopic.CREATE_CLUB, new CreateClubEvent(club.getId()));
         return club;
     }
 }
