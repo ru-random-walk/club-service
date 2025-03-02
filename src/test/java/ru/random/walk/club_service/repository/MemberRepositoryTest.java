@@ -25,17 +25,16 @@ class MemberRepositoryTest extends AbstractPostgresContainerTest {
     private MemberRepository memberRepository;
     @Autowired
     private ClubRepository clubRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @PersistenceContext
     EntityManager entityManager;
-    @Autowired
-    private UserRepository userRepository;
 
     @Test
     @Transactional
     void save() {
         var user = userRepository.save(UserEntity.builder()
-                .id(UUID.randomUUID())
                 .fullName("Lonely dad :(")
                 .build());
         var club = clubRepository.save(ClubEntity.builder()
