@@ -1,8 +1,8 @@
 -- Создание таблицы user (если не существует)
 create table if not exists club.user
 (
-    id       uuid default gen_random_uuid() primary key,
-    fullname varchar
+    id        uuid default gen_random_uuid() primary key,
+    full_name varchar
 );
 
 -- Добавление внешнего ключа в таблицу 'member', если он еще не существует
