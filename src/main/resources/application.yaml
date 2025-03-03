@@ -16,6 +16,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${AUTH_SERVICE_URL:http://localhost:8081}
+  kafka:
+    bootstrap-servers: ${KAFKA_URL:localhost:9092}
+    consumer:
+      group-id: "club-service"
   jpa:
     show-sql: ${LOGGING_SHOW_JPA_QUERIES:true}
 logging:

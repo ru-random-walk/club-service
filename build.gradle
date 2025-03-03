@@ -25,6 +25,17 @@ generateJava{
 
 repositories {
     mavenCentral()
+    repositories {
+        mavenCentral()
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/ru-random-walk/event-exchange-contract")
+            credentials {
+                username = project.findProperty("user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("token") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -50,6 +61,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'com.graphql-java:graphql-java-extended-validation'
+    implementation 'ru.random.walk:event-exchange-contract:1.2.0'
+    implementation 'org.springframework.kafka:spring-kafka'
 }
 
 tasks.named('test') {

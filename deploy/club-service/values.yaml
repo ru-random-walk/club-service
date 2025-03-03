@@ -24,8 +24,8 @@ env:
     value: "false"
   - name: LOGGING_SHOW_BINDING_JPA_VALUES_LEVEL
     value: "INFO"
-#  - name: KAFKA_URL
-#    value: "kafka-cluster.kafka.svc.cluster.local:9092"
+  - name: KAFKA_URL
+    value: "kafka-cluster.kafka.svc.cluster.local:9092"
 
 secrets:
   - name: POSTGRES_USERNAME
