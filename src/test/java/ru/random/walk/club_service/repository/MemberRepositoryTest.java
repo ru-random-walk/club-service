@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.AbstractPostgresContainerTest;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
+import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 
 import java.util.UUID;
@@ -24,6 +25,8 @@ class MemberRepositoryTest extends AbstractPostgresContainerTest {
     private MemberRepository memberRepository;
     @Autowired
     private ClubRepository clubRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -31,11 +34,14 @@ class MemberRepositoryTest extends AbstractPostgresContainerTest {
     @Test
     @Transactional
     void save() {
+        var user = userRepository.save(UserEntity.builder()
+                .fullName("Lonely dad :(")
+                .build());
         var club = clubRepository.save(ClubEntity.builder()
                 .name("Lonely dads")
                 .build());
         memberRepository.save(MemberEntity.builder()
-                .id(UUID.randomUUID())
+                .id(user.getId())
                 .clubId(club.getId())
                 .role(MemberRole.ADMIN)
                 .build());
