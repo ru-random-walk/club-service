@@ -1,11 +1,9 @@
 package ru.random.walk.club_service.repository;
 
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 
 import java.util.UUID;
 
-@Repository
-public interface ClubRepository extends CrudRepository<ClubEntity, UUID> {
+public interface ClubRepository extends JpaRepository<ClubEntity, UUID> {
 }
