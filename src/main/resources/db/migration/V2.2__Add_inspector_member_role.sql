@@ -1,0 +1,1 @@
+alter type club.member_role add value if not exists 'INSPECTOR';
