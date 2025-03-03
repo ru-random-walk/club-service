@@ -12,7 +12,7 @@ import ru.random.walk.topic.EventTopic;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class KafkaEventListener {
+public class UserKafkaEventListener {
     private final UserService userService;
     private final UserMapper userMapper;
 
