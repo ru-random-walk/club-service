@@ -59,4 +59,19 @@ class MemberRepositoryTest extends AbstractPostgresContainerTest {
     void countByIdAndRole() {
         memberRepository.countByIdAndRole(UUID.randomUUID(), MemberRole.ADMIN);
     }
+
+    @Test
+    void saveWithNewInspectorRole() {
+        var user = userRepository.save(UserEntity.builder()
+                .fullName("Boy with dead dad :(")
+                .build());
+        var club = clubRepository.save(ClubEntity.builder()
+                .name("Chainsaw Mans...")
+                .build());
+        memberRepository.save(MemberEntity.builder()
+                .role(MemberRole.INSPECTOR)
+                .id(user.getId())
+                .clubId(club.getId())
+                .build());
+    }
 }

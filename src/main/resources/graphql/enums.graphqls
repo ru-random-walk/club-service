@@ -1,6 +1,7 @@
 enum MemberRole {
     ADMIN
     USER
+    INSPECTOR
 }
 
 enum ApprovementType {
