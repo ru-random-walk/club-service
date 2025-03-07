@@ -48,4 +48,12 @@ public class AuthenticatorImpl implements Authenticator {
         }
         return answer;
     }
+
+    @Override
+    public void authUserById(UUID userId, Principal principal) {
+        var login = UUID.fromString(principal.getName());
+        if (!login.equals(userId)) {
+            throw new AuthenticationException("You do not have the same login with userId!");
+        }
+    }
 }

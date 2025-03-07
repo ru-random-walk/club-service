@@ -1,6 +1,6 @@
 input PaginationInput {
-    page: Int!
-    size: Int!
+    page: Int! @Min(value: 0, message: "page for PaginationInput must be bigger than 0")
+    size: Int! @Range(min: 1, max: 30, message: "size for PaginationInput must be in range from 1 to 30")
 }
 
 type Query {

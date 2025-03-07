@@ -23,4 +23,6 @@ public interface MemberRepository extends JpaRepository<MemberEntity, MemberEnti
             nativeQuery = true
     )
     Integer countByIdAndRole(UUID id, MemberRole role);
+
+    Page<MemberEntity> findAllById(UUID userId, Pageable pageable);
 }

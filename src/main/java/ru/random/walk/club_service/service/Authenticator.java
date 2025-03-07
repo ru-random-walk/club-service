@@ -11,4 +11,6 @@ public interface Authenticator {
     void authAdminByApprovementId(Principal principal, UUID approvementId);
 
     AnswerEntity authUserByAnswerAndGet(UUID answerId, Principal principal);
+
+    void authUserById(UUID userId, Principal principal);
 }
