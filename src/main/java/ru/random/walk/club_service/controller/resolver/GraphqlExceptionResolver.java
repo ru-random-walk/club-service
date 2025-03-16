@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter;
 import org.springframework.graphql.execution.ErrorType;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Component;
 import ru.random.walk.club_service.model.exception.AuthenticationException;
 import ru.random.walk.club_service.model.exception.NotFoundException;
@@ -25,6 +26,10 @@ public class GraphqlExceptionResolver extends DataFetcherExceptionResolverAdapte
             case AuthenticationException authentication -> GraphqlErrorBuilder.newError()
                     .errorType(ErrorType.UNAUTHORIZED)
                     .message(authentication.getMessage())
+                    .build();
+            case AuthorizationDeniedException denied -> GraphqlErrorBuilder.newError()
+                    .errorType(ErrorType.UNAUTHORIZED)
+                    .message(denied.getMessage())
                     .build();
             case ValidationException validation -> GraphqlErrorBuilder.newError()
                     .errorType(ErrorType.BAD_REQUEST)
