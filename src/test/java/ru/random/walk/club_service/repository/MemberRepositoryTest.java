@@ -35,6 +35,7 @@ class MemberRepositoryTest extends AbstractPostgresContainerTest {
     @Transactional
     void save() {
         var user = userRepository.save(UserEntity.builder()
+                .id(UUID.randomUUID())
                 .fullName("Lonely dad :(")
                 .build());
         var club = clubRepository.save(ClubEntity.builder()
@@ -63,6 +64,7 @@ class MemberRepositoryTest extends AbstractPostgresContainerTest {
     @Test
     void saveWithNewInspectorRole() {
         var user = userRepository.save(UserEntity.builder()
+                .id(UUID.randomUUID())
                 .fullName("Boy with dead dad :(")
                 .build());
         var club = clubRepository.save(ClubEntity.builder()
