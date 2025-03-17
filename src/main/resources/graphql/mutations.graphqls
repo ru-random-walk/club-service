@@ -21,6 +21,11 @@ input QuestionAnswerInput {
     optionNumbers: [Int!]!
 }
 
+input RegisteredUserInfoEvent {
+    id: ID!
+    fullName: String!
+}
+
 type Mutation {
     # Club mutations
     createClub(name: String!): Club!
@@ -46,4 +51,7 @@ type Mutation {
     updateAnswerForm(answerId: ID!, formAnswer: FormAnswerInput!): Answer!
 
     setAnswerStatusToSent(answerId: ID!): Answer!
+
+    # Test event contract handlers (only with TEST role and testing purposes)
+    listenRegisteredUserInfoEvent(event: RegisteredUserInfoEvent!): ID!
 }
