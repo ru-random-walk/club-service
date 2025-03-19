@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-// TODO: Убрать класс в папку test после того как заглушек в контроллерах не станет
+@SuppressWarnings("ALL")
 public class StubDataUtil {
     public static Question question() {
         return Question.builder()
