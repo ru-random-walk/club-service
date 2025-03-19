@@ -6,13 +6,16 @@ import org.springframework.stereotype.Service;
 import ru.random.walk.club_service.model.domain.answer.AnswerData;
 import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
+import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
+import ru.random.walk.club_service.model.model.ForReviewAnswerData;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
+import ru.random.walk.club_service.service.AnswerReviewer;
 import ru.random.walk.club_service.service.AnswerService;
 import ru.random.walk.club_service.service.validation.impl.AnswerValidatorChainImpl;
 
@@ -26,30 +29,44 @@ public class AnswerServiceImpl implements AnswerService {
     private final ApprovementRepository approvementRepository;
     private final AnswerValidatorChainImpl answerValidatorChain;
     private final AuthenticatorImpl authenticator;
+    private final AnswerReviewer answerReviewer;
 
     @Override
     public AnswerEntity createMembersConfirm(UUID approvementId, Principal principal) {
-        return saveWithValidateAnswerData(approvementId, MembersConfirmAnswerData.DEFAULT, principal);
+        return saveWithValidateAndScheduleReviewAnswerData(approvementId, MembersConfirmAnswerData.DEFAULT, principal);
     }
 
     @Override
     public AnswerEntity createForm(UUID approvementId, FormAnswerData formAnswerData, Principal principal) {
-        return saveWithValidateAnswerData(approvementId, formAnswerData, principal);
+        return saveWithValidateAndScheduleReviewAnswerData(approvementId, formAnswerData, principal);
     }
 
     @NotNull
-    private AnswerEntity saveWithValidateAnswerData(UUID approvementId, AnswerData answerData, Principal principal) {
+    private AnswerEntity saveWithValidateAndScheduleReviewAnswerData(UUID approvementId, AnswerData answerData, Principal principal) {
         var approvement = approvementRepository.findById(approvementId)
                 .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
         answerValidatorChain.validate(answerData, approvement.getData(), approvement.getType());
         var userId = UUID.fromString(principal.getName());
         checkUserAnswerCount(approvement, userId);
-        return answerRepository.save(AnswerEntity.builder()
+        var answer = answerRepository.save(AnswerEntity.builder()
                 .userId(userId)
                 .status(AnswerStatus.CREATED)
                 .approvement(approvement)
                 .data(answerData)
                 .build());
+        scheduleReview(answer.getId(), answerData, approvement.getData(), userId, approvement.getClubId());
+        return answer;
+    }
+
+    private void scheduleReview(
+            UUID answerId,
+            AnswerData answerData,
+            ApprovementData approvementData,
+            UUID userId,
+            UUID clubId
+    ) {
+        var reviewData = new ForReviewAnswerData(answerId, answerData, approvementData, userId, clubId);
+        answerReviewer.scheduleReview(reviewData);
     }
 
     private void checkUserAnswerCount(ApprovementEntity approvement, UUID userId) {
