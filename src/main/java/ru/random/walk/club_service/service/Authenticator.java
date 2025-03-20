@@ -13,4 +13,6 @@ public interface Authenticator {
     AnswerEntity authUserByAnswerAndGet(UUID answerId, Principal principal);
 
     void authUserById(UUID userId, Principal principal);
+
+    UUID getLogin(Principal principal);
 }

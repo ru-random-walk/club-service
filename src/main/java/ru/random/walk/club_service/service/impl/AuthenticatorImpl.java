@@ -23,7 +23,7 @@ public class AuthenticatorImpl implements Authenticator {
 
     @Override
     public void authAdminByClubId(Principal principal, UUID clubId) {
-        var login = UUID.fromString(principal.getName());
+        var login = getLogin(principal);
         var member = memberRepository.findByIdAndClubId(login, clubId)
                 .orElseThrow(() -> new AuthenticationException("You are not become member of given club!"));
         if (member.getRole() != MemberRole.ADMIN) {
@@ -42,7 +42,7 @@ public class AuthenticatorImpl implements Authenticator {
     public AnswerEntity authUserByAnswerAndGet(UUID answerId, Principal principal) {
         var answer = answerRepository.findById(answerId)
                 .orElseThrow(() -> new NotFoundException("Answer with such id not found!"));
-        var userLogin = UUID.fromString(principal.getName());
+        var userLogin = getLogin(principal);
         if (!answer.getUserId().equals(userLogin)) {
             throw new AuthenticationException("You do not have access to update this answer!");
         }
@@ -51,9 +51,14 @@ public class AuthenticatorImpl implements Authenticator {
 
     @Override
     public void authUserById(UUID userId, Principal principal) {
-        var login = UUID.fromString(principal.getName());
+        var login = getLogin(principal);
         if (!login.equals(userId)) {
             throw new AuthenticationException("You do not have the same login with userId!");
         }
+    }
+
+    @Override
+    public UUID getLogin(Principal principal) {
+        return UUID.fromString(principal.getName());
     }
 }

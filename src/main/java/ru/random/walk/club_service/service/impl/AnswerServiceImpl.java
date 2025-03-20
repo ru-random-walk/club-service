@@ -3,6 +3,7 @@ package ru.random.walk.club_service.service.impl;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.model.domain.answer.AnswerData;
 import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
@@ -33,40 +34,27 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public AnswerEntity createMembersConfirm(UUID approvementId, Principal principal) {
-        return saveWithValidateAndScheduleReviewAnswerData(approvementId, MembersConfirmAnswerData.DEFAULT, principal);
+        return saveWithValidateAnswerData(approvementId, MembersConfirmAnswerData.DEFAULT, principal);
     }
 
     @Override
     public AnswerEntity createForm(UUID approvementId, FormAnswerData formAnswerData, Principal principal) {
-        return saveWithValidateAndScheduleReviewAnswerData(approvementId, formAnswerData, principal);
+        return saveWithValidateAnswerData(approvementId, formAnswerData, principal);
     }
 
     @NotNull
-    private AnswerEntity saveWithValidateAndScheduleReviewAnswerData(UUID approvementId, AnswerData answerData, Principal principal) {
+    private AnswerEntity saveWithValidateAnswerData(UUID approvementId, AnswerData answerData, Principal principal) {
         var approvement = approvementRepository.findById(approvementId)
                 .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
         answerValidatorChain.validate(answerData, approvement.getData(), approvement.getType());
         var userId = UUID.fromString(principal.getName());
         checkUserAnswerCount(approvement, userId);
-        var answer = answerRepository.save(AnswerEntity.builder()
+        return answerRepository.save(AnswerEntity.builder()
                 .userId(userId)
                 .status(AnswerStatus.CREATED)
                 .approvement(approvement)
                 .data(answerData)
                 .build());
-        scheduleReview(answer.getId(), answerData, approvement.getData(), userId, approvement.getClubId());
-        return answer;
-    }
-
-    private void scheduleReview(
-            UUID answerId,
-            AnswerData answerData,
-            ApprovementData approvementData,
-            UUID userId,
-            UUID clubId
-    ) {
-        var reviewData = new ForReviewAnswerData(answerId, answerData, approvementData, userId, clubId);
-        answerReviewer.scheduleReview(reviewData);
     }
 
     private void checkUserAnswerCount(ApprovementEntity approvement, UUID userId) {
@@ -90,11 +78,32 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public AnswerEntity setStatusToSent(UUID answerId, Principal principal) {
+        var answer = updateEntityStatusToSent(answerId, principal);
+        var userId = authenticator.getLogin(principal);
+        var approvement = answer.getApprovement();
+        scheduleReview(answerId, answer.getData(), approvement.getData(), userId, approvement.getClubId());
+        return answer;
+    }
+
+    @NotNull
+    @Transactional
+    private AnswerEntity updateEntityStatusToSent(UUID answerId, Principal principal) {
         var answer = authenticator.authUserByAnswerAndGet(answerId, principal);
         if (answer.getStatus() != AnswerStatus.CREATED) {
             throw new ValidationException("Answer status is not equals 'CREATED'!");
         }
         answer.setStatus(AnswerStatus.SENT);
         return answerRepository.save(answer);
+    }
+
+    private void scheduleReview(
+            UUID answerId,
+            AnswerData answerData,
+            ApprovementData approvementData,
+            UUID userId,
+            UUID clubId
+    ) {
+        var reviewData = new ForReviewAnswerData(answerId, answerData, approvementData, userId, clubId);
+        answerReviewer.scheduleReview(reviewData);
     }
 }

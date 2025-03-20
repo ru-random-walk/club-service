@@ -3,6 +3,7 @@ package ru.random.walk.club_service.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
+import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
 import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
 import ru.random.walk.club_service.model.entity.MemberEntity;
@@ -32,16 +33,25 @@ public class AnswerReviewerImpl implements AnswerReviewer {
 
     private void reviewAnswerData(ForReviewAnswerData forReviewAnswerData) {
         switch (forReviewAnswerData.approvementData()) {
-            case FormApprovementData formApprovementData ->
-                    reviewForm(forReviewAnswerData, formApprovementData, (FormAnswerData) forReviewAnswerData.answerData());
-            case MembersConfirmApprovementData membersConfirmApprovementData -> {
-                // TODO
-            }
+            case FormApprovementData formApprovementData -> reviewForm(
+                    forReviewAnswerData,
+                    formApprovementData,
+                    (FormAnswerData) forReviewAnswerData.answerData()
+            );
+            case MembersConfirmApprovementData membersConfirmApprovementData -> reviewConfirmation(
+                    forReviewAnswerData,
+                    membersConfirmApprovementData,
+                    (MembersConfirmAnswerData) forReviewAnswerData.answerData()
+            );
             default -> throw new IllegalStateException("Unexpected value: " + forReviewAnswerData.approvementData());
         }
     }
 
-    private void reviewForm(ForReviewAnswerData forReviewAnswerData, FormApprovementData formApprovementData, FormAnswerData formAnswerData) {
+    private void reviewForm(
+            ForReviewAnswerData forReviewAnswerData,
+            FormApprovementData formApprovementData,
+            FormAnswerData formAnswerData
+    ) {
         var success = formAnswerReviewer.review(formApprovementData, formAnswerData);
         if (success) {
             answerRepository.updateStatus(forReviewAnswerData.id(), AnswerStatus.PASSED);
@@ -53,5 +63,13 @@ public class AnswerReviewerImpl implements AnswerReviewer {
         } else {
             answerRepository.updateStatus(forReviewAnswerData.id(), AnswerStatus.FAILED);
         }
+    }
+
+    private void reviewConfirmation(
+            ForReviewAnswerData forReviewAnswerData,
+            MembersConfirmApprovementData membersConfirmApprovementData,
+            MembersConfirmAnswerData membersConfirmAnswerData
+    ) {
+        // TODO
     }
 }
