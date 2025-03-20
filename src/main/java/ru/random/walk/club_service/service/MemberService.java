@@ -11,4 +11,6 @@ public interface MemberService {
     UUID removeFromClub(UUID memberId, UUID clubId);
 
     MemberEntity addInClub(UUID memberId, UUID clubId);
+
+    void addInClubIfAllTestPassed(UUID memberId, UUID clubId);
 }

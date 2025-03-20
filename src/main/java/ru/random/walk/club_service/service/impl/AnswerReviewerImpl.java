@@ -6,14 +6,12 @@ import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
 import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
-import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
-import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.model.ForReviewAnswerData;
 import ru.random.walk.club_service.repository.AnswerRepository;
-import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.AnswerReviewer;
 import ru.random.walk.club_service.service.FormAnswerReviewer;
+import ru.random.walk.club_service.service.MemberService;
 import ru.random.walk.club_service.util.VirtualThreadUtil;
 
 @Service
@@ -21,11 +19,11 @@ import ru.random.walk.club_service.util.VirtualThreadUtil;
 public class AnswerReviewerImpl implements AnswerReviewer {
     private final AnswerRepository answerRepository;
     private final FormAnswerReviewer formAnswerReviewer;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     @Override
     public void scheduleReview(ForReviewAnswerData forReviewAnswerData) {
-        VirtualThreadUtil.executor.submit(() -> {
+        VirtualThreadUtil.scheduleTask(() -> {
             answerRepository.updateStatus(forReviewAnswerData.id(), AnswerStatus.IN_PROGRESS);
             reviewAnswerData(forReviewAnswerData);
         });
@@ -55,11 +53,7 @@ public class AnswerReviewerImpl implements AnswerReviewer {
         var success = formAnswerReviewer.review(formApprovementData, formAnswerData);
         if (success) {
             answerRepository.updateStatus(forReviewAnswerData.id(), AnswerStatus.PASSED);
-            memberRepository.save(MemberEntity.builder()
-                    .clubId(forReviewAnswerData.clubId())
-                    .id(forReviewAnswerData.userId())
-                    .role(MemberRole.USER)
-                    .build());
+            memberService.addInClubIfAllTestPassed(forReviewAnswerData.userId(), forReviewAnswerData.clubId());
         } else {
             answerRepository.updateStatus(forReviewAnswerData.id(), AnswerStatus.FAILED);
         }

@@ -29,4 +29,16 @@ public interface AnswerRepository extends JpaRepository<AnswerEntity, UUID> {
             nativeQuery = true
     )
     void updateStatus(@Param("id") UUID id, @Param("status") AnswerStatus status);
+
+    @Query(
+            value = """
+                    select answer.*
+                    from club.answer answer
+                    join club.approvement approvement
+                    on answer.approvement_id = approvement.id
+                    where answer.user_id = :userId and approvement.club_id = :clubId
+                    """,
+            nativeQuery = true
+    )
+    List<AnswerEntity> findAllByUserIdAndClubId(@Param("userId") UUID userId, @Param("clubId") UUID clubId);
 }
