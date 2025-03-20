@@ -12,7 +12,6 @@ import ru.random.walk.club_service.model.domain.approvement.Question;
 import java.util.Collections;
 import java.util.List;
 
-// TODO: Убрать класс в папку test после того как заглушек в контроллерах не станет
 public class StubDataUtil {
     public static Question question() {
         return Question.builder()
