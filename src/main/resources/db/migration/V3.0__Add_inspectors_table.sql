@@ -31,8 +31,8 @@ create table if not exists club.confirmation
     approver_id     uuid                            not null,
     user_id uuid                                    not null,
     status          club.confirmation_status        not null,
-    approvement_id  uuid                            not null,
+    answer_id       uuid                            not null,
     foreign key (approver_id) references club.user (id),
     foreign key (user_id) references club.user (id),
-    foreign key (approvement_id) references club.approvement (id)
+    foreign key (answer_id) references club.answer (id)
 );

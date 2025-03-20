@@ -43,6 +43,6 @@ public class ConfirmationEntity {
     private ConfirmationStatus status;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "approvement_id", nullable = false)
-    private ApprovementEntity approvement;
+    @JoinColumn(name = "answer_id", nullable = false)
+    private AnswerEntity answer;
 }
