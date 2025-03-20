@@ -28,12 +28,13 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 class AnswerReviewerTest extends AbstractPostgresContainerTest {
+    private static final int REVIEW_TIMEOUT_IN_SECONDS = 1;
+
     private final AnswerReviewer answerReviewer;
     private final ClubRepository clubRepository;
     private final UserRepository userRepository;
@@ -50,15 +51,14 @@ class AnswerReviewerTest extends AbstractPostgresContainerTest {
                 StubDataUtil.formCorrectAnswerData()
         );
         answerReviewer.scheduleReview(reviewAnswerData);
-        TimeUnit.SECONDS.sleep(1);
+        TimeUnit.SECONDS.sleep(REVIEW_TIMEOUT_IN_SECONDS);
         var actualAnswer = answerRepository.findById(reviewAnswerData.id()).orElseThrow();
         assertEquals(AnswerStatus.PASSED, actualAnswer.getStatus());
         var member = memberRepository.findById(MemberEntity.MemberId.builder()
-                        .id(userId)
-                        .clubId(reviewAnswerData.clubId())
-                        .build())
-                .orElseThrow();
-        assertNotNull(member);
+                .id(userId)
+                .clubId(reviewAnswerData.clubId())
+                .build());
+        assertTrue(member.isPresent(), "Member must be present!");
     }
 
     @Test
@@ -70,14 +70,14 @@ class AnswerReviewerTest extends AbstractPostgresContainerTest {
                 StubDataUtil.formWrongAnswerData()
         );
         answerReviewer.scheduleReview(reviewAnswerData);
-        TimeUnit.SECONDS.sleep(1);
+        TimeUnit.SECONDS.sleep(REVIEW_TIMEOUT_IN_SECONDS);
         var actualAnswer = answerRepository.findById(reviewAnswerData.id()).orElseThrow();
         assertEquals(AnswerStatus.FAILED, actualAnswer.getStatus());
         var member = memberRepository.findById(MemberEntity.MemberId.builder()
                 .id(userId)
                 .clubId(reviewAnswerData.clubId())
                 .build());
-        assertTrue(member.isEmpty());
+        assertTrue(member.isEmpty(), "Member must not be present!");
     }
 
     @Transactional
