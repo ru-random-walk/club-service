@@ -16,8 +16,9 @@ import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.model.ForReviewAnswerData;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
-import ru.random.walk.club_service.service.AnswerReviewer;
 import ru.random.walk.club_service.service.AnswerService;
+import ru.random.walk.club_service.service.auth.impl.AuthenticatorImpl;
+import ru.random.walk.club_service.service.reviewer.AnswerReviewer;
 import ru.random.walk.club_service.service.validation.impl.AnswerValidatorChainImpl;
 
 import java.security.Principal;

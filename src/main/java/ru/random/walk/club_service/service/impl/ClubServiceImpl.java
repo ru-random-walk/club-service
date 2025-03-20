@@ -12,8 +12,8 @@ import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
-import ru.random.walk.club_service.service.Authenticator;
 import ru.random.walk.club_service.service.ClubService;
+import ru.random.walk.club_service.service.auth.Authenticator;
 
 import java.security.Principal;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.service.impl;
+package ru.random.walk.club_service.service.auth.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
-import ru.random.walk.club_service.service.Authenticator;
+import ru.random.walk.club_service.service.auth.Authenticator;
 
 import java.security.Principal;
 import java.util.UUID;

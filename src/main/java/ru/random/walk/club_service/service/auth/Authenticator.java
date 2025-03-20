@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.service;
+package ru.random.walk.club_service.service.auth;
 
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 

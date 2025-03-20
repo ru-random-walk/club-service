@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.service;
+package ru.random.walk.club_service.service.reviewer;
 
 import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;

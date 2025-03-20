@@ -21,7 +21,7 @@ import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.repository.UserRepository;
-import ru.random.walk.club_service.service.AnswerReviewer;
+import ru.random.walk.club_service.service.reviewer.AnswerReviewer;
 import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.UUID;

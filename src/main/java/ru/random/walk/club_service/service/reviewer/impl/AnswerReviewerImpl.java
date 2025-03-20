@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.service.impl;
+package ru.random.walk.club_service.service.reviewer.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,9 +9,9 @@ import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprov
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.model.ForReviewAnswerData;
 import ru.random.walk.club_service.repository.AnswerRepository;
-import ru.random.walk.club_service.service.AnswerReviewer;
-import ru.random.walk.club_service.service.FormAnswerReviewer;
 import ru.random.walk.club_service.service.MemberService;
+import ru.random.walk.club_service.service.reviewer.AnswerReviewer;
+import ru.random.walk.club_service.service.reviewer.FormAnswerReviewer;
 import ru.random.walk.club_service.util.VirtualThreadUtil;
 
 @Service
@@ -64,6 +64,6 @@ public class AnswerReviewerImpl implements AnswerReviewer {
             MembersConfirmApprovementData membersConfirmApprovementData,
             MembersConfirmAnswerData membersConfirmAnswerData
     ) {
-        // TODO
+        
     }
 }

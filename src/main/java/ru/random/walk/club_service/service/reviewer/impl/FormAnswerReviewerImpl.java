@@ -1,11 +1,11 @@
-package ru.random.walk.club_service.service.impl;
+package ru.random.walk.club_service.service.reviewer.impl;
 
 import org.springframework.stereotype.Service;
 import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.domain.answer.QuestionAnswer;
 import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.Question;
-import ru.random.walk.club_service.service.FormAnswerReviewer;
+import ru.random.walk.club_service.service.reviewer.FormAnswerReviewer;
 
 import java.util.HashSet;
 import java.util.List;
