@@ -24,3 +24,9 @@ enum AnswerStatus {
     # The answer was reviewed with passed result
     PASSED
 }
+
+enum ConfirmationStatus {
+    WAITING
+    APPLIED
+    REJECT
+}

@@ -52,6 +52,10 @@ type Mutation {
 
     setAnswerStatusToSent(answerId: ID!): Answer!
 
+    # Confirmation mutations
+    tryJoinInClub(userId: ID!, clubId: ID!): Member!
+    approveConfirmation(confirmationId: ID!): Confirmation!
+
     # Test event contract handlers (only with TEST role and testing purposes)
     listenRegisteredUserInfoEvent(event: RegisteredUserInfoEvent!): ID!
 }
