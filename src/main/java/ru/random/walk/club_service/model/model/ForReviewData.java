@@ -5,10 +5,11 @@ import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
 
 import java.util.UUID;
 
-public record ForReviewAnswerData(
-        UUID id,
+public record ForReviewData(
+        UUID answerId,
         AnswerData answerData,
         ApprovementData approvementData,
         UUID userId,
-        UUID clubId) {
+        UUID clubId
+) {
 }

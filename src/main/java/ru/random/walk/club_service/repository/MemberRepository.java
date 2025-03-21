@@ -4,9 +4,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,4 +27,16 @@ public interface MemberRepository extends JpaRepository<MemberEntity, MemberEnti
     Integer countByIdAndRole(UUID id, MemberRole role);
 
     Page<MemberEntity> findAllById(UUID userId, Pageable pageable);
+
+    @Query(
+            value = """
+                    select id
+                    from club.member
+                    where club_id = :clubId
+                    order by random()
+                    limit :count
+                    """,
+            nativeQuery = true
+    )
+    List<UUID> findRandomApproversByClubId(@Param("clubId") UUID clubId, @Param("count") Integer count);
 }

@@ -1,7 +1,7 @@
 package ru.random.walk.club_service.service.reviewer;
 
-import ru.random.walk.club_service.model.model.ForReviewAnswerData;
+import ru.random.walk.club_service.model.model.ForReviewData;
 
 public interface AnswerReviewer {
-    void scheduleReview(ForReviewAnswerData forReviewAnswerData);
+    void scheduleReview(ForReviewData forReviewData);
 }

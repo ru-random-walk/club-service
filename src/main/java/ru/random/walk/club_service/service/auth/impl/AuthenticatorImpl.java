@@ -34,14 +34,14 @@ public class AuthenticatorImpl implements Authenticator {
     @Override
     public void authAdminByApprovementId(Principal principal, UUID approvementId) {
         var approvement = approvementRepository.findById(approvementId)
-                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
+                .orElseThrow(() -> new NotFoundException("Approvement with such answerId not found!"));
         authAdminByClubId(principal, approvement.getClubId());
     }
 
     @Override
     public AnswerEntity authUserByAnswerAndGet(UUID answerId, Principal principal) {
         var answer = answerRepository.findById(answerId)
-                .orElseThrow(() -> new NotFoundException("Answer with such id not found!"));
+                .orElseThrow(() -> new NotFoundException("Answer with such answerId not found!"));
         var userLogin = getLogin(principal);
         if (!answer.getUserId().equals(userLogin)) {
             throw new AuthenticationException("You do not have access to update this answer!");

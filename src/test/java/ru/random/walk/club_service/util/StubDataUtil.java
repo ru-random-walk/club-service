@@ -39,7 +39,7 @@ public class StubDataUtil {
     }
 
     public static AnswerData membersConfirmAnswerData() {
-        return MembersConfirmAnswerData.of(1);
+        return MembersConfirmAnswerData.INSTANCE;
     }
 
     public static AnswerData formWrongAnswerData() {

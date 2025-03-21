@@ -15,10 +15,11 @@ import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
-import ru.random.walk.club_service.model.model.ForReviewAnswerData;
+import ru.random.walk.club_service.model.model.ForReviewData;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
+import ru.random.walk.club_service.repository.ConfirmationRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.repository.UserRepository;
 import ru.random.walk.club_service.service.reviewer.AnswerReviewer;
@@ -41,6 +42,7 @@ class AnswerReviewerTest extends AbstractPostgresContainerTest {
     private final AnswerRepository answerRepository;
     private final ApprovementRepository approvementRepository;
     private final MemberRepository memberRepository;
+    private final ConfirmationRepository confirmationRepository;
 
     @Test
     void reviewCorrectAnswerToFormTest() throws InterruptedException {
@@ -52,7 +54,7 @@ class AnswerReviewerTest extends AbstractPostgresContainerTest {
         );
         answerReviewer.scheduleReview(reviewAnswerData);
         TimeUnit.SECONDS.sleep(REVIEW_TIMEOUT_IN_SECONDS);
-        var actualAnswer = answerRepository.findById(reviewAnswerData.id()).orElseThrow();
+        var actualAnswer = answerRepository.findById(reviewAnswerData.answerId()).orElseThrow();
         assertEquals(AnswerStatus.PASSED, actualAnswer.getStatus());
         var member = memberRepository.findById(MemberEntity.MemberId.builder()
                 .id(userId)
@@ -71,7 +73,7 @@ class AnswerReviewerTest extends AbstractPostgresContainerTest {
         );
         answerReviewer.scheduleReview(reviewAnswerData);
         TimeUnit.SECONDS.sleep(REVIEW_TIMEOUT_IN_SECONDS);
-        var actualAnswer = answerRepository.findById(reviewAnswerData.id()).orElseThrow();
+        var actualAnswer = answerRepository.findById(reviewAnswerData.answerId()).orElseThrow();
         assertEquals(AnswerStatus.FAILED, actualAnswer.getStatus());
         var member = memberRepository.findById(MemberEntity.MemberId.builder()
                 .id(userId)
@@ -80,8 +82,27 @@ class AnswerReviewerTest extends AbstractPostgresContainerTest {
         assertTrue(member.isEmpty(), "Member must not be present!");
     }
 
+    @Test
+    void reviewMembersConfirmTest() throws InterruptedException {
+        var userId = UUID.randomUUID();
+        var reviewAnswerData = userAnswerToApprovement(
+                userId,
+                StubDataUtil.membersConfirmApprovementData(),
+                StubDataUtil.membersConfirmAnswerData()
+        );
+        answerReviewer.scheduleReview(reviewAnswerData);
+        TimeUnit.SECONDS.sleep(REVIEW_TIMEOUT_IN_SECONDS);
+        var actualAnswer = answerRepository.findById(reviewAnswerData.answerId()).orElseThrow();
+        assertEquals(AnswerStatus.IN_REVIEW, actualAnswer.getStatus());
+//        var member = memberRepository.findById(MemberEntity.MemberId.builder()
+//                .answerId(userId)
+//                .clubId(reviewAnswerData.clubId())
+//                .build());
+//        assertTrue(member.isEmpty(), "Member must not be present!");
+    }
+
     @Transactional
-    private ForReviewAnswerData userAnswerToApprovement(UUID userId, ApprovementData approvementData, AnswerData answerData) {
+    private ForReviewData userAnswerToApprovement(UUID userId, ApprovementData approvementData, AnswerData answerData) {
         var club = clubRepository.save(ClubEntity.builder()
                 .name("Da")
                 .build());
@@ -100,7 +121,7 @@ class AnswerReviewerTest extends AbstractPostgresContainerTest {
                 .data(answerData)
                 .approvement(approvement)
                 .build());
-        return new ForReviewAnswerData(
+        return new ForReviewData(
                 answer.getId(),
                 answer.getData(),
                 approvement.getData(),

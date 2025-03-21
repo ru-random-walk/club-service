@@ -13,7 +13,7 @@ import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
-import ru.random.walk.club_service.model.model.ForReviewAnswerData;
+import ru.random.walk.club_service.model.model.ForReviewData;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.service.AnswerService;
@@ -35,7 +35,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public AnswerEntity createMembersConfirm(UUID approvementId, Principal principal) {
-        return saveWithValidateAnswerData(approvementId, MembersConfirmAnswerData.DEFAULT, principal);
+        return saveWithValidateAnswerData(approvementId, MembersConfirmAnswerData.INSTANCE, principal);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AnswerServiceImpl implements AnswerService {
     @NotNull
     private AnswerEntity saveWithValidateAnswerData(UUID approvementId, AnswerData answerData, Principal principal) {
         var approvement = approvementRepository.findById(approvementId)
-                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
+                .orElseThrow(() -> new NotFoundException("Approvement with such answerId not found!"));
         answerValidatorChain.validate(answerData, approvement.getData(), approvement.getType());
         var userId = UUID.fromString(principal.getName());
         checkUserAnswerCount(approvement, userId);
@@ -104,7 +104,7 @@ public class AnswerServiceImpl implements AnswerService {
             UUID userId,
             UUID clubId
     ) {
-        var reviewData = new ForReviewAnswerData(answerId, answerData, approvementData, userId, clubId);
+        var reviewData = new ForReviewData(answerId, answerData, approvementData, userId, clubId);
         answerReviewer.scheduleReview(reviewData);
     }
 }

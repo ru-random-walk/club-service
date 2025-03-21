@@ -36,7 +36,7 @@ public class ClubServiceImpl implements ClubService {
             Principal principal
     ) {
         var club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
+                .orElseThrow(() -> new NotFoundException("Club with such answerId not found!"));
         if (membersIsRequired) {
             authenticator.authAdminByClubId(principal, clubId);
             var membersPageable = PageRequest.of(membersPagination.getPage(), membersPagination.getSize());
