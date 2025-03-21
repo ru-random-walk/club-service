@@ -94,11 +94,8 @@ class AnswerReviewerTest extends AbstractPostgresContainerTest {
         TimeUnit.SECONDS.sleep(REVIEW_TIMEOUT_IN_SECONDS);
         var actualAnswer = answerRepository.findById(reviewAnswerData.answerId()).orElseThrow();
         assertEquals(AnswerStatus.IN_REVIEW, actualAnswer.getStatus());
-//        var member = memberRepository.findById(MemberEntity.MemberId.builder()
-//                .answerId(userId)
-//                .clubId(reviewAnswerData.clubId())
-//                .build());
-//        assertTrue(member.isEmpty(), "Member must not be present!");
+        var approversCount = confirmationRepository.countByUserId(userId);
+        assertEquals(2, approversCount);
     }
 
     @Transactional
