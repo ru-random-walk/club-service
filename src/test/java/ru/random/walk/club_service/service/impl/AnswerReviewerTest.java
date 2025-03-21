@@ -15,6 +15,7 @@ import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
+import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.model.ForReviewData;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
@@ -27,6 +28,7 @@ import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -103,6 +105,23 @@ class AnswerReviewerTest extends AbstractPostgresContainerTest {
         var club = clubRepository.save(ClubEntity.builder()
                 .name("Da")
                 .build());
+        var users = userRepository.saveAllAndFlush(
+                IntStream.range(0, 10)
+                        .mapToObj(i -> UserEntity.builder()
+                                .fullName(String.valueOf(i))
+                                .id(UUID.randomUUID())
+                                .build())
+                        .toList()
+        );
+        memberRepository.saveAllAndFlush(
+                users.stream()
+                        .map(user -> MemberEntity.builder()
+                                .role(MemberRole.INSPECTOR)
+                                .id(user.getId())
+                                .clubId(club.getId())
+                                .build())
+                        .toList()
+        );
         var approvement = approvementRepository.save(ApprovementEntity.builder()
                 .clubId(club.getId())
                 .data(approvementData)

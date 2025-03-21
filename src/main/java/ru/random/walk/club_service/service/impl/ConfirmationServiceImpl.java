@@ -1,6 +1,7 @@
 package ru.random.walk.club_service.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
@@ -14,6 +15,7 @@ import ru.random.walk.club_service.service.ConfirmationService;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ConfirmationServiceImpl implements ConfirmationService {
     private final ConfirmationRepository confirmationRepository;
     private final AnswerRepository answerRepository;
@@ -30,7 +32,9 @@ public class ConfirmationServiceImpl implements ConfirmationService {
                 forReviewData.clubId(),
                 membersConfirmApprovementData.getRequiredConfirmationNumber()
         );
-        confirmationRepository.saveAll(
+
+        log.info("Save all assigned approvers: {}", approvers);
+        confirmationRepository.saveAllAndFlush(
                 approvers.stream()
                         .map(approver -> ConfirmationEntity.builder()
                                 .approverId(approver)
