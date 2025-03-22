@@ -2,16 +2,21 @@ package ru.random.walk.club_service.service.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
 import ru.random.walk.club_service.model.entity.ConfirmationEntity;
 import ru.random.walk.club_service.model.entity.type.ConfirmationStatus;
+import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.model.model.ForReviewData;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ConfirmationRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ConfirmationService;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -44,5 +49,11 @@ public class ConfirmationServiceImpl implements ConfirmationService {
                                 .build())
                         .toList()
         );
+    }
+
+    @Override
+    public List<ConfirmationEntity> getUserWaitingConfirmations(UUID userId, PaginationInput pagination) {
+        var pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        return confirmationRepository.findAllByUserId(userId, pageable);
     }
 }
