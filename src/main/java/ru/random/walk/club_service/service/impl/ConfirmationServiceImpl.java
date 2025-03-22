@@ -3,6 +3,7 @@ package ru.random.walk.club_service.service.impl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
@@ -53,7 +54,13 @@ public class ConfirmationServiceImpl implements ConfirmationService {
 
     @Override
     public List<ConfirmationEntity> getUserWaitingConfirmations(UUID userId, PaginationInput pagination) {
-        var pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         return confirmationRepository.findAllByUserId(userId, pageable);
+    }
+
+    @Override
+    public List<ConfirmationEntity> getApproverWaitingConfirmations(UUID approverId, PaginationInput pagination) {
+        Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        return confirmationRepository.findAllByApproverId(approverId, pageable);
     }
 }

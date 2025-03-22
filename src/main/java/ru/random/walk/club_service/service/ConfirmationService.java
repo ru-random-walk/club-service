@@ -12,4 +12,6 @@ public interface ConfirmationService {
     void assignApprovers(ForReviewData forReviewData, MembersConfirmApprovementData membersConfirmApprovementData);
 
     List<ConfirmationEntity> getUserWaitingConfirmations(UUID userId, PaginationInput pagination);
+
+    List<ConfirmationEntity> getApproverWaitingConfirmations(UUID approverId, PaginationInput pagination);
 }

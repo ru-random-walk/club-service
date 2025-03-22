@@ -25,6 +25,7 @@ import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.repository.UserRepository;
 
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -50,7 +51,7 @@ class ConfirmationServiceTest extends AbstractPostgresContainerTest {
                 .id(UUID.randomUUID())
                 .fullName("Sapporo")
                 .build());
-        var inspectors = userRepository.saveAllAndFlush(
+        var approvers = userRepository.saveAllAndFlush(
                 IntStream.range(0, 10)
                         .mapToObj(i -> UserEntity.builder()
                                 .fullName("Inspector #%d".formatted(i))
@@ -63,7 +64,7 @@ class ConfirmationServiceTest extends AbstractPostgresContainerTest {
                 .build());
         Random random = new Random();
         memberRepository.saveAllAndFlush(
-                inspectors.stream()
+                approvers.stream()
                         .map(inspector -> MemberEntity.builder()
                                 .id(inspector.getId())
                                 .role(random.nextBoolean() ? MemberRole.INSPECTOR : MemberRole.ADMIN)
@@ -93,6 +94,7 @@ class ConfirmationServiceTest extends AbstractPostgresContainerTest {
                         .build(),
                 membersConfirmApprovementData
         );
+
         var userWaitingConfirmations = confirmationService.getUserWaitingConfirmations(user.getId(), new PaginationInput(0, 20));
         assertNotNull(userWaitingConfirmations);
         assertEquals(3, userWaitingConfirmations.size());
@@ -102,5 +104,74 @@ class ConfirmationServiceTest extends AbstractPostgresContainerTest {
                         .collect(Collectors.toSet()),
                 Set.of(ConfirmationStatus.WAITING)
         );
+    }
+
+    @Test
+    void testGetApproverWaitingConfirmations() {
+        var user = userRepository.save(UserEntity.builder()
+                .id(UUID.randomUUID())
+                .fullName("Sapporo")
+                .build());
+        var approvers = userRepository.saveAllAndFlush(
+                IntStream.range(0, 10)
+                        .mapToObj(i -> UserEntity.builder()
+                                .fullName("Inspector #%d".formatted(i))
+                                .id(UUID.randomUUID())
+                                .build())
+                        .toList()
+        );
+        var club = clubRepository.save(ClubEntity.builder()
+                .name("Kayak")
+                .build());
+        Random random = new Random();
+        memberRepository.saveAllAndFlush(
+                approvers.stream()
+                        .map(inspector -> MemberEntity.builder()
+                                .id(inspector.getId())
+                                .role(random.nextBoolean() ? MemberRole.INSPECTOR : MemberRole.ADMIN)
+                                .clubId(club.getId())
+                                .build())
+                        .toList()
+        );
+        var membersConfirmApprovementData = new MembersConfirmApprovementData(3);
+        var approvement = approvementRepository.save(ApprovementEntity.builder()
+                .data(membersConfirmApprovementData)
+                .type(ApprovementType.MEMBERS_CONFIRM)
+                .clubId(club.getId())
+                .build());
+        var answer = answerRepository.save(AnswerEntity.builder()
+                .status(AnswerStatus.IN_PROGRESS)
+                .data(MembersConfirmAnswerData.INSTANCE)
+                .userId(user.getId())
+                .approvement(approvement)
+                .build());
+        confirmationService.assignApprovers(
+                ForReviewData.builder()
+                        .answerId(answer.getId())
+                        .answerData(answer.getData())
+                        .approvementData(approvement.getData())
+                        .userId(user.getId())
+                        .clubId(club.getId())
+                        .build(),
+                membersConfirmApprovementData
+        );
+
+        var singleApproverConfirmationCount = 0;
+        var standardPagination = new PaginationInput(0, 30);
+        for (var approver : approvers) {
+            var approverConfirmations = confirmationService.getApproverWaitingConfirmations(
+                    approver.getId(),
+                    standardPagination
+            );
+            try {
+                assert 1 == approverConfirmations.size();
+                var confirmation = approverConfirmations.getFirst();
+                assert Objects.equals(user.getId(), confirmation.getUserId());
+                assert ConfirmationStatus.WAITING == confirmation.getStatus();
+                singleApproverConfirmationCount++;
+            } catch (AssertionError ignored) {
+            }
+        }
+        assertEquals(3, singleApproverConfirmationCount);
     }
 }

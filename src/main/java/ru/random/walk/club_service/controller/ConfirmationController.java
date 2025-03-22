@@ -34,4 +34,16 @@ public class ConfirmationController {
                 .orElse(new PaginationInput(0, 20));
         return confirmationService.getUserWaitingConfirmations(userId, pagination);
     }
+
+    @QueryMapping
+    public List<ConfirmationEntity> getApproverWaitingConfirmations(
+            @Argument UUID approverId,
+            @Nullable @Argument PaginationInput confirmationsPagination,
+            Principal principal
+    ) {
+        authenticator.authUserById(approverId, principal);
+        var pagination = Optional.ofNullable(confirmationsPagination)
+                .orElse(new PaginationInput(0, 30));
+        return confirmationService.getApproverWaitingConfirmations(approverId, pagination);
+    }
 }
