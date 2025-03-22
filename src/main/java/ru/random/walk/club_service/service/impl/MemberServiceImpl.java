@@ -13,6 +13,7 @@ import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.MemberService;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -51,7 +52,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void addInClubIfAllTestPassed(UUID memberId, UUID clubId) {
+    public Optional<MemberEntity> addInClubIfAllTestPassed(UUID memberId, UUID clubId) {
         Set<UUID> passedApprovements = answerRepository.findAllByUserIdAndClubId(memberId, clubId).stream()
                 .filter(answer -> answer.getStatus() == AnswerStatus.PASSED)
                 .map(answer -> answer.getApprovement().getId())
@@ -61,11 +62,14 @@ public class MemberServiceImpl implements MemberService {
                 .map(ApprovementEntity::getId)
                 .collect(Collectors.toSet());
         if (passedApprovements.containsAll(clubApprovements)) {
-            memberRepository.save(MemberEntity.builder()
-                    .id(memberId)
-                    .clubId(clubId)
-                    .role(MemberRole.USER)
-                    .build());
+            return Optional.of(
+                    memberRepository.save(MemberEntity.builder()
+                            .id(memberId)
+                            .clubId(clubId)
+                            .role(MemberRole.USER)
+                            .build())
+            );
         }
+        return Optional.empty();
     }
 }

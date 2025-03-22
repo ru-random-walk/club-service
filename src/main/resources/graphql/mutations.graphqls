@@ -55,6 +55,7 @@ type Mutation {
     # Confirmation mutations
     tryJoinInClub(userId: ID!, clubId: ID!): Member!
     approveConfirmation(confirmationId: ID!): Confirmation!
+    rejectConfirmation(confirmationId: ID!): Confirmation!
 
     # Test event contract handlers (only with TEST role and testing purposes)
     listenRegisteredUserInfoEvent(event: RegisteredUserInfoEvent!): ID!

@@ -63,4 +63,10 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         return confirmationRepository.findAllByApproverId(approverId, pageable);
     }
+
+    @Override
+    public ConfirmationEntity updateConfirmationStatus(ConfirmationEntity confirmation, ConfirmationStatus status) {
+        confirmation.setStatus(status);
+        return confirmationRepository.saveAndFlush(confirmation);
+    }
 }

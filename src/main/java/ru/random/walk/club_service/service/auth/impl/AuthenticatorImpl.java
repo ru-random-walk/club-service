@@ -3,11 +3,13 @@ package ru.random.walk.club_service.service.auth.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
+import ru.random.walk.club_service.model.entity.ConfirmationEntity;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.AuthenticationException;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
+import ru.random.walk.club_service.repository.ConfirmationRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.auth.Authenticator;
 
@@ -20,6 +22,7 @@ public class AuthenticatorImpl implements Authenticator {
     private final MemberRepository memberRepository;
     private final ApprovementRepository approvementRepository;
     private final AnswerRepository answerRepository;
+    private final ConfirmationRepository confirmationRepository;
 
     @Override
     public void authAdminByClubId(Principal principal, UUID clubId) {
@@ -60,5 +63,16 @@ public class AuthenticatorImpl implements Authenticator {
     @Override
     public UUID getLogin(Principal principal) {
         return UUID.fromString(principal.getName());
+    }
+
+    @Override
+    public ConfirmationEntity authApproverByConfirmationAndGet(UUID confirmationId, Principal principal) {
+        var confirmation = confirmationRepository.findById(confirmationId)
+                .orElseThrow(() -> new NotFoundException("Confirmation with such confirmationId not found!"));
+        var login = getLogin(principal);
+        if (!confirmation.getApproverId().equals(login)) {
+            throw new AuthenticationException("You do not have access to approve this confirmation!");
+        }
+        return confirmation;
     }
 }

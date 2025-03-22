@@ -2,6 +2,7 @@ package ru.random.walk.club_service.service;
 
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
 import ru.random.walk.club_service.model.entity.ConfirmationEntity;
+import ru.random.walk.club_service.model.entity.type.ConfirmationStatus;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.model.model.ForReviewData;
 
@@ -14,4 +15,6 @@ public interface ConfirmationService {
     List<ConfirmationEntity> getUserWaitingConfirmations(UUID userId, PaginationInput pagination);
 
     List<ConfirmationEntity> getApproverWaitingConfirmations(UUID approverId, PaginationInput pagination);
+
+    ConfirmationEntity updateConfirmationStatus(ConfirmationEntity confirmation, ConfirmationStatus status);
 }

@@ -4,11 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.entity.ConfirmationEntity;
+import ru.random.walk.club_service.model.entity.MemberEntity;
+import ru.random.walk.club_service.model.entity.type.ConfirmationStatus;
+import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.service.ConfirmationService;
+import ru.random.walk.club_service.service.MemberService;
 import ru.random.walk.club_service.service.auth.Authenticator;
 
 import java.security.Principal;
@@ -21,6 +26,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ConfirmationController {
     private final ConfirmationService confirmationService;
+    private final MemberService memberService;
     private final Authenticator authenticator;
 
     @QueryMapping
@@ -45,5 +51,33 @@ public class ConfirmationController {
         var pagination = Optional.ofNullable(confirmationsPagination)
                 .orElse(new PaginationInput(0, 30));
         return confirmationService.getApproverWaitingConfirmations(approverId, pagination);
+    }
+
+    @MutationMapping
+    public MemberEntity tryJoinInClub(
+            @Argument UUID userId,
+            @Argument UUID clubId,
+            Principal principal
+    ) {
+        authenticator.authUserById(userId, principal);
+        return memberService.addInClubIfAllTestPassed(userId, clubId).orElseThrow(NotFoundException::new);
+    }
+
+    @MutationMapping
+    public ConfirmationEntity approveConfirmation(
+            @Argument UUID confirmationId,
+            Principal principal
+    ) {
+        var confirmation = authenticator.authApproverByConfirmationAndGet(confirmationId, principal);
+        return confirmationService.updateConfirmationStatus(confirmation, ConfirmationStatus.APPLIED);
+    }
+
+    @MutationMapping
+    public ConfirmationEntity rejectConfirmation(
+            @Argument UUID confirmationId,
+            Principal principal
+    ) {
+        var confirmation = authenticator.authApproverByConfirmationAndGet(confirmationId, principal);
+        return confirmationService.updateConfirmationStatus(confirmation, ConfirmationStatus.REJECT);
     }
 }
