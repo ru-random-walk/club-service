@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.service;
+package ru.random.walk.club_service.service.auth;
 
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 
@@ -13,4 +13,8 @@ public interface Authenticator {
     AnswerEntity authUserByAnswerAndGet(UUID answerId, Principal principal);
 
     void authUserById(UUID userId, Principal principal);
+
+    UUID getLogin(Principal principal);
+
+    void authApproverByConfirmation(UUID confirmationId, Principal principal);
 }

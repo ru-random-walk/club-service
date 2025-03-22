@@ -47,8 +47,7 @@ public class AnswerDataConverterTest {
                 ),
                 JsonAndExpectedClass.of("""
                                 {
-                                    "type":"members_confirm_answer_data",
-                                    "actualConfirmationNumber":1
+                                    "type":"members_confirm_answer_data"
                                 }""",
                         MembersConfirmAnswerData.class
                 )

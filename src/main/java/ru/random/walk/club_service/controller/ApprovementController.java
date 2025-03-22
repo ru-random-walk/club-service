@@ -10,7 +10,7 @@ import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.graphql.types.FormInput;
 import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
 import ru.random.walk.club_service.service.ApprovementService;
-import ru.random.walk.club_service.service.Authenticator;
+import ru.random.walk.club_service.service.auth.Authenticator;
 
 import java.security.Principal;
 import java.util.UUID;

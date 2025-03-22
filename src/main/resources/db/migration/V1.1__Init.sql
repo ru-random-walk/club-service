@@ -85,7 +85,7 @@ $$
         from pg_type
         where typname = 'answer_status';
         if not found then
-            create type club.answer_status as enum ('CREATED', 'SENT', 'IN_PROCESS', 'IN_REVIEW', 'FAILED', 'PASSED');
+            create type club.answer_status as enum ('CREATED', 'SENT', 'IN_PROGRESS', 'IN_REVIEW', 'FAILED', 'PASSED');
         end if;
     end
 $$;
