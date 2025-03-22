@@ -3,7 +3,6 @@ package ru.random.walk.club_service.service.auth.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
-import ru.random.walk.club_service.model.entity.ConfirmationEntity;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.AuthenticationException;
 import ru.random.walk.club_service.model.exception.NotFoundException;
@@ -66,13 +65,12 @@ public class AuthenticatorImpl implements Authenticator {
     }
 
     @Override
-    public ConfirmationEntity authApproverByConfirmationAndGet(UUID confirmationId, Principal principal) {
+    public void authApproverByConfirmation(UUID confirmationId, Principal principal) {
         var confirmation = confirmationRepository.findById(confirmationId)
                 .orElseThrow(() -> new NotFoundException("Confirmation with such confirmationId not found!"));
         var login = getLogin(principal);
         if (!confirmation.getApproverId().equals(login)) {
             throw new AuthenticationException("You do not have access to approve this confirmation!");
         }
-        return confirmation;
     }
 }

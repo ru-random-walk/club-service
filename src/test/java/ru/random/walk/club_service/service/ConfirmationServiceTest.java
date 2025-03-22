@@ -1,6 +1,7 @@
 package ru.random.walk.club_service.service;
 
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -140,9 +141,11 @@ class ConfirmationServiceTest extends AbstractPostgresContainerTest {
         assertEquals(3, singleApproverConfirmationCount);
     }
 
+    @SneakyThrows
     private void testUpdateConfirmationStatus(List<ConfirmationEntity> confirmations, UserEntity user, ClubEntity club) {
         confirmations.forEach(confirmation ->
-                confirmationService.updateConfirmationStatus(confirmation, ConfirmationStatus.APPLIED));
+                confirmationService.updateConfirmationStatus(confirmation.getId(), ConfirmationStatus.APPLIED));
+        Thread.sleep(1000);
         var member = memberRepository.findById(MemberId.builder()
                 .id(user.getId())
                 .clubId(club.getId())

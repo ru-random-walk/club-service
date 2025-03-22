@@ -68,8 +68,8 @@ public class ConfirmationController {
             @Argument UUID confirmationId,
             Principal principal
     ) {
-        var confirmation = authenticator.authApproverByConfirmationAndGet(confirmationId, principal);
-        return confirmationService.updateConfirmationStatus(confirmation, ConfirmationStatus.APPLIED);
+        authenticator.authApproverByConfirmation(confirmationId, principal);
+        return confirmationService.updateConfirmationStatus(confirmationId, ConfirmationStatus.APPLIED);
     }
 
     @MutationMapping
@@ -77,7 +77,7 @@ public class ConfirmationController {
             @Argument UUID confirmationId,
             Principal principal
     ) {
-        var confirmation = authenticator.authApproverByConfirmationAndGet(confirmationId, principal);
-        return confirmationService.updateConfirmationStatus(confirmation, ConfirmationStatus.REJECT);
+        authenticator.authApproverByConfirmation(confirmationId, principal);
+        return confirmationService.updateConfirmationStatus(confirmationId, ConfirmationStatus.REJECT);
     }
 }

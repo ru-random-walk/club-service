@@ -16,5 +16,5 @@ public interface ConfirmationService {
 
     List<ConfirmationEntity> getApproverWaitingConfirmations(UUID approverId, PaginationInput pagination);
 
-    ConfirmationEntity updateConfirmationStatus(ConfirmationEntity confirmation, ConfirmationStatus status);
+    ConfirmationEntity updateConfirmationStatus(UUID confirmationId, ConfirmationStatus status);
 }

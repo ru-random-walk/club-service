@@ -1,7 +1,6 @@
 package ru.random.walk.club_service.service.auth;
 
 import ru.random.walk.club_service.model.entity.AnswerEntity;
-import ru.random.walk.club_service.model.entity.ConfirmationEntity;
 
 import java.security.Principal;
 import java.util.UUID;
@@ -17,5 +16,5 @@ public interface Authenticator {
 
     UUID getLogin(Principal principal);
 
-    ConfirmationEntity authApproverByConfirmationAndGet(UUID confirmationId, Principal principal);
+    void authApproverByConfirmation(UUID confirmationId, Principal principal);
 }

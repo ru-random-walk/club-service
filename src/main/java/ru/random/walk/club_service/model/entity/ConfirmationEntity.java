@@ -45,4 +45,14 @@ public class ConfirmationEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id", nullable = false)
     private AnswerEntity answer;
+
+    @Override
+    public String toString() {
+        return "ConfirmationEntity{" +
+                "id=" + id +
+                ", approverId=" + approverId +
+                ", userId=" + userId +
+                ", status=" + status +
+                '}';
+    }
 }
