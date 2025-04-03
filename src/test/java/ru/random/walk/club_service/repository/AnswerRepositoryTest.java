@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.AbstractPostgresContainerTest;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
@@ -33,18 +32,15 @@ class AnswerRepositoryTest extends AbstractPostgresContainerTest {
         checkStatusWasChanged(answerId);
     }
 
-    @Transactional
     private void checkStatusWasChanged(UUID answerId) {
         var answer = answerRepository.findById(answerId).orElseThrow();
         assertEquals(AnswerStatus.SENT, answer.getStatus());
     }
 
-    @Transactional
     private void updateAnswerStatusToSent(UUID answerId) {
         answerRepository.updateStatus(answerId, AnswerStatus.SENT);
     }
 
-    @Transactional
     private UUID saveAnswer() {
         var club = clubRepository.save(ClubEntity.builder()
                 .name("Da")

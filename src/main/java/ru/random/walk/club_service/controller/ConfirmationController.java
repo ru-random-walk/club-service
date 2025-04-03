@@ -78,6 +78,6 @@ public class ConfirmationController {
             Principal principal
     ) {
         authenticator.authApproverByConfirmation(confirmationId, principal);
-        return confirmationService.updateConfirmationStatus(confirmationId, ConfirmationStatus.REJECT);
+        return confirmationService.updateConfirmationStatus(confirmationId, ConfirmationStatus.REJECTED);
     }
 }

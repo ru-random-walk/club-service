@@ -6,7 +6,7 @@ $$
         from pg_type
         where typname = 'confirmation_status';
         if not found then
-            create type club.confirmation_status as enum ('WAITING', 'APPLIED', 'REJECT');
+            create type club.confirmation_status as enum ('WAITING', 'APPLIED', 'REJECTED');
         end if;
     end
 $$;

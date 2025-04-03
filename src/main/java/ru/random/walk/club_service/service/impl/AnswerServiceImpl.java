@@ -3,7 +3,6 @@ package ru.random.walk.club_service.service.impl;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.model.domain.answer.AnswerData;
 import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
@@ -87,7 +86,6 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @NotNull
-    @Transactional
     private AnswerEntity updateEntityStatusToSent(UUID answerId, Principal principal) {
         var answer = authenticator.authUserByAnswerAndGet(answerId, principal);
         if (answer.getStatus() != AnswerStatus.CREATED) {

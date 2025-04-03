@@ -28,5 +28,5 @@ enum AnswerStatus {
 enum ConfirmationStatus {
     WAITING
     APPLIED
-    REJECT
+    REJECTED
 }

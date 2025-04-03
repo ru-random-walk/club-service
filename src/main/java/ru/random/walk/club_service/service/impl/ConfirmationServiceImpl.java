@@ -86,7 +86,6 @@ public class ConfirmationServiceImpl implements ConfirmationService {
     }
 
     @NotNull
-    @Transactional
     private ConfirmationWithApprovement updateStatus(UUID confirmationId, ConfirmationStatus status) {
         var confirmation = confirmationRepository.updateStatusById(confirmationId, status);
         var answer = answerRepository.findById(confirmation.getAnswer().getId()).orElseThrow();
