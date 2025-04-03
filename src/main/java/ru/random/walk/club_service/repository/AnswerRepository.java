@@ -11,6 +11,7 @@ import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public interface AnswerRepository extends JpaRepository<AnswerEntity, UUID> {
@@ -32,13 +33,14 @@ public interface AnswerRepository extends JpaRepository<AnswerEntity, UUID> {
 
     @Query(
             value = """
-                    select answer.*
+                    select distinct answer.approvement_id
                     from club.answer answer
                     join club.approvement approvement
                     on answer.approvement_id = approvement.id
                     where answer.user_id = :userId and approvement.club_id = :clubId
+                    and answer.status = 'PASSED'
                     """,
             nativeQuery = true
     )
-    List<AnswerEntity> findAllByUserIdAndClubId(@Param("userId") UUID userId, @Param("clubId") UUID clubId);
+    Set<UUID> findAllPassedIdsByUserIdAndClubId(@Param("userId") UUID userId, @Param("clubId") UUID clubId);
 }

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
-import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.repository.AnswerRepository;
@@ -53,10 +52,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public Optional<MemberEntity> addInClubIfAllTestPassed(UUID memberId, UUID clubId) {
-        Set<UUID> passedApprovements = answerRepository.findAllByUserIdAndClubId(memberId, clubId).stream()
-                .filter(answer -> answer.getStatus() == AnswerStatus.PASSED)
-                .map(answer -> answer.getApprovement().getId())
-                .collect(Collectors.toSet());
+        Set<UUID> passedApprovements = answerRepository.findAllPassedIdsByUserIdAndClubId(memberId, clubId);
         var clubApprovements = clubRepository.findById(clubId).orElseThrow()
                 .getApprovements().stream()
                 .map(ApprovementEntity::getId)
