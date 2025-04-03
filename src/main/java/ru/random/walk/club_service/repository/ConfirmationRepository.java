@@ -17,7 +17,13 @@ public interface ConfirmationRepository extends JpaRepository<ConfirmationEntity
 
     List<ConfirmationEntity> findAllByApproverId(UUID approverId, Pageable pageable);
 
-    List<ConfirmationEntity> findAllByAnswerId(UUID answerId);
+    @Query("""
+            select count(*)
+            from ConfirmationEntity c
+            where c.answer.id = :answerId
+            and cast(c.status as string) = :#{#status.toString()}
+            """)
+    Integer countAllByAnswerIdAndStatus(@Param("answerId") UUID answerId, @Param("status") ConfirmationStatus status);
 
     @Query(
             value = """

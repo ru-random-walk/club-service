@@ -27,9 +27,7 @@ public class ConfirmationReviewerImpl implements ConfirmationReviewer {
     @Transactional
     public void review(ForReviewData forReviewData) {
         log.info("Start to review confirmation answer");
-        var appliedConfirmations = confirmationRepository.findAllByAnswerId(forReviewData.answerId()).stream()
-                .filter(confirmation -> confirmation.getStatus().equals(ConfirmationStatus.APPLIED))
-                .count();
+        var appliedConfirmations = confirmationRepository.countAllByAnswerIdAndStatus(forReviewData.answerId(), ConfirmationStatus.APPLIED);
         var confirmApprovementData = ((MembersConfirmApprovementData) forReviewData.approvementData());
         var requiredConfirmationNumber = confirmApprovementData.getRequiredConfirmationNumber();
         if (appliedConfirmations >= requiredConfirmationNumber) {
