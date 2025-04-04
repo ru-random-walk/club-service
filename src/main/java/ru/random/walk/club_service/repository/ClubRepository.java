@@ -28,9 +28,9 @@ public interface ClubRepository extends JpaRepository<ClubEntity, UUID> {
                                 1 as priority
                             from club.member m
                             where m.id = :user_id
-                            \s
+
                             union all
-                            \s
+
                             select
                                 distinct approvement.club_id as id,
                                 'PENDING_APPROVAL' as role,
@@ -42,7 +42,7 @@ public interface ClubRepository extends JpaRepository<ClubEntity, UUID> {
                         )
                     )
                     where priority_place = 1
-                   \s""",
+                   """,
             nativeQuery = true
     )
     List<ClubWithUserRoleProjection> findAllClubsWithRoleByUser(@Param("user_id") UUID userId);
