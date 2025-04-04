@@ -14,40 +14,35 @@ public interface ClubRepository extends JpaRepository<ClubEntity, UUID> {
             value = """
                     select id, role
                     from (
-                    	select
-                    		c.id,
-                    		case
-                    			when coalesce(m.role, 'PENDING_APPROVAL') = 'USER' then 'MEMBER'
-                    			else coalesce(m.role, 'PENDING_APPROVAL')
+                        select
+                            id,
+                            case
+                    			when role = 'USER' then 'MEMBER'
+                    			else role
                     		end as role,
-                    		row_number() over (partition by c.id order by priority) as priority_place
-                    	from
-                    		club.club c
-                    	left join (
-                    		select
-                    			m.club_id,
-                    			cast(m.role as text),
-                    			1 as priority
-                    		from
-                    			club.member m
-                    		where
-                    			m.id = :user_id
-                    	    union all
-                    		select
-                    			distinct approvement.club_id,
-                    			'PENDING_APPROVAL' as role,
-                    			2 as priority
-                    		from
-                    			club.approvement approvement
-                    		join club.answer answer on
-                    			answer.approvement_id = approvement.id
-                    		where
-                    			answer.user_id = :user_id
-                        ) as m
-                        on c.id = m.club_id
+                    		row_number() over (partition by id order by priority) as priority_place
+                        from (
+                            select
+                                m.club_id as id,
+                                cast(m.role as text) as role,
+                                1 as priority
+                            from club.member m
+                            where m.id = :user_id
+                            \s
+                            union all
+                            \s
+                            select
+                                distinct approvement.club_id as id,
+                                'PENDING_APPROVAL' as role,
+                                2 as priority
+                            from club.approvement approvement
+                            join club.answer
+                            on answer.approvement_id = approvement.id
+                            where answer.user_id = :user_id
+                        )
                     )
                     where priority_place = 1
-                    """,
+                   \s""",
             nativeQuery = true
     )
     List<ClubWithUserRoleProjection> findAllClubsWithRoleByUser(@Param("user_id") UUID userId);

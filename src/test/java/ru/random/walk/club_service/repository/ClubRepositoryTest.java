@@ -5,12 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.random.walk.club_service.AbstractPostgresContainerTest;
-import ru.random.walk.club_service.model.entity.AnswerEntity;
-import ru.random.walk.club_service.model.entity.ApprovementEntity;
-import ru.random.walk.club_service.model.entity.ClubEntity;
+import ru.random.walk.club_service.model.entity.*;
 import ru.random.walk.club_service.model.entity.projection.ClubWithUserRoleProjection;
-import ru.random.walk.club_service.model.entity.MemberEntity;
-import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
@@ -59,6 +55,9 @@ class ClubRepositoryTest extends AbstractPostgresContainerTest {
                 .name("Wild memory")
                 .build());
         var clubForMember = clubRepository.save(ClubEntity.builder()
+                .name("Wild memory")
+                .build());
+        clubRepository.save(ClubEntity.builder()
                 .name("Wild memory")
                 .build());
         memberRepository.saveAndFlush(MemberEntity.builder()
