@@ -60,3 +60,11 @@ type FormAnswerData {
 type QuestionAnswer {
     optionNumbers: [Int!]!
 }
+
+type Confirmation {
+    id: ID!
+    approverId: ID!
+    userId: ID!
+    status: ConfirmationStatus!
+    answer: Answer
+}
