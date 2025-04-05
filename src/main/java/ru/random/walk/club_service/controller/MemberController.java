@@ -9,7 +9,7 @@ import ru.random.walk.club_service.mapper.MemberMapper;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.graphql.types.MemberRole;
 import ru.random.walk.club_service.service.MemberService;
-import ru.random.walk.club_service.service.impl.AuthenticatorImpl;
+import ru.random.walk.club_service.service.auth.impl.AuthenticatorImpl;
 
 import java.security.Principal;
 import java.util.UUID;
