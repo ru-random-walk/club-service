@@ -10,6 +10,7 @@ type Query {
     # User queries
     getUserClubs(userId: ID!, pagination: PaginationInput): [Club!]!
     getUserAnswers(userId: ID!, pagination: PaginationInput): [Answer!]!
+    getUserClubsWithRole(userId: ID!): [ClubWithUserRole!]!
 
     # Confirmation queries
     getMyWaitingConfirmations(userId: ID!, pagination: PaginationInput): [Confirmation!]!

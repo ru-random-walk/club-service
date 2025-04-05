@@ -12,11 +12,7 @@ import ru.random.walk.club_service.model.entity.MemberEntity.MemberId;
 import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
-import ru.random.walk.club_service.repository.AnswerRepository;
-import ru.random.walk.club_service.repository.ApprovementRepository;
-import ru.random.walk.club_service.repository.ClubRepository;
-import ru.random.walk.club_service.repository.MemberRepository;
-import ru.random.walk.club_service.repository.UserRepository;
+import ru.random.walk.club_service.repository.*;
 import ru.random.walk.club_service.service.MemberService;
 import ru.random.walk.club_service.util.StubDataUtil;
 

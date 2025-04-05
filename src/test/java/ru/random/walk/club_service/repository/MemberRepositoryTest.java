@@ -2,6 +2,7 @@ package ru.random.walk.club_service.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @SpringBootTest
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 class MemberRepositoryTest extends AbstractPostgresContainerTest {
-    @Autowired
     private MemberRepository memberRepository;
-    @Autowired
     private ClubRepository clubRepository;
-    @Autowired
     private UserRepository userRepository;
 
     @PersistenceContext
