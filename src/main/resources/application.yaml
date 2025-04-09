@@ -1,4 +1,8 @@
 spring:
+  graphql:
+    graphiql:
+      enabled:
+        true
   application:
     name: club_service
   datasource:
