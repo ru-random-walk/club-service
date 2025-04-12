@@ -81,11 +81,10 @@ public class ClubServiceImpl implements ClubService {
                                 row -> Pair.of(row.clubId(), row.memberRole()),
                                 ClubIdToMemberRoleToCountProjection::count
                         ));
-        return clubs.stream()
-                .collect(Collectors.toMap(
-                        Function.identity(),
-                        club -> getApproversNumber(club, clubMembersRoleToCount)
-                ));
+        return clubs.stream().collect(Collectors.toMap(
+                Function.identity(),
+                club -> getApproversNumber(club, clubMembersRoleToCount)
+        ));
     }
 
     private static Integer getApproversNumber(ClubEntity club, Map<Pair<UUID, MemberRole>, Integer> clubMembersRoleToCount) {
