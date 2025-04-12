@@ -75,12 +75,12 @@ public class ClubServiceImpl implements ClubService {
     @Override
     public Map<ClubEntity, Integer> getClubToApproversNumber(List<ClubEntity> clubs) {
         var clubIds = clubs.stream().map(ClubEntity::getId).toList();
-        Map<Pair<UUID, MemberRole>, Integer> clubMembersRoleToCount =
-                memberRepository.findAllClubIdToRoleToCountByClubIds(clubIds).stream()
-                        .collect(Collectors.toMap(
-                                row -> Pair.of(row.clubId(), row.memberRole()),
-                                ClubIdToMemberRoleToCountProjection::count
-                        ));
+        Map<Pair<UUID, MemberRole>, Integer> clubMembersRoleToCount = memberRepository
+                .findAllClubIdToRoleToCountByClubIds(clubIds).stream()
+                .collect(Collectors.toMap(
+                        row -> Pair.of(row.clubId(), row.memberRole()),
+                        ClubIdToMemberRoleToCountProjection::count
+                ));
         return clubs.stream().collect(Collectors.toMap(
                 Function.identity(),
                 club -> getApproversNumber(club, clubMembersRoleToCount)
