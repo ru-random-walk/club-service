@@ -23,36 +23,49 @@ public interface ClubRepository extends JpaRepository<ClubEntity, UUID> {
     // что означает что юзер только отправил или ещё не закончил аппрувмент
     @Query(
             value = """
-                    select id, role
-                    from (
-                        select
-                            id,
-                            case
-                    			when role = 'USER' then 'MEMBER'
-                    			else role
-                    		end as role,
-                    		row_number() over (partition by id order by priority desc) as priority_place
-                        from (
-                            select
-                                m.club_id as id,
-                                cast(m.role as text) as role,
-                                10 as priority
-                            from club.member m
-                            where m.id = :user_id
-
-                            union all
-
-                            select
-                                distinct approvement.club_id as id,
-                                'PENDING_APPROVAL' as role,
-                                9 as priority
-                            from club.answer answer
-                            join club.approvement
-                            on answer.approvement_id = approvement.id
-                            where answer.user_id = :user_id
-                        )
-                    )
-                    where priority_place = 1
+                    WITH ClubToRoleWithPriority AS (
+                         SELECT
+                             m.club_id AS id,
+                             CAST(m.role AS TEXT) AS role,
+                             10 AS priority
+                         FROM
+                             club.member m
+                         WHERE
+                             m.id = :user_id
+                     ),
+                     PendingApprovalFromAnswerWithPriority AS (
+                         SELECT
+                             DISTINCT approvement.club_id AS id,
+                             'PENDING_APPROVAL' AS role,
+                             9 AS priority
+                         FROM
+                             club.answer answer
+                         JOIN
+                             club.approvement ON answer.approvement_id = approvement.id
+                         WHERE
+                             answer.user_id = :user_id
+                     ),
+                     ClubRoleWithPriorityPlace AS (
+                         SELECT
+                             id,
+                             CASE
+                                 WHEN role = 'USER' THEN 'MEMBER'
+                                 ELSE role
+                             END AS role,
+                             ROW_NUMBER() OVER (PARTITION BY id ORDER BY priority DESC) AS priority_place
+                         FROM (
+                             SELECT * FROM ClubToRoleWithPriority
+                             UNION ALL
+                             SELECT * FROM PendingApprovalFromAnswerWithPriority
+                         )
+                     )
+                     SELECT
+                         id,
+                         role
+                     FROM
+                         ClubRoleWithPriorityPlace
+                     WHERE
+                         priority_place = 1;
                    """,
             nativeQuery = true
     )
