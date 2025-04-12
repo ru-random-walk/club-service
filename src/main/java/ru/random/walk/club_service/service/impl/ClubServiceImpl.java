@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,7 +72,7 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public Map<ClubEntity, Integer> getClubToApproversNumber(List<ClubEntity> clubs) {
+    public List<Integer> getClubToApproversNumber(List<ClubEntity> clubs) {
         var clubIds = clubs.stream().map(ClubEntity::getId).toList();
         Map<Pair<UUID, MemberRole>, Integer> clubMembersRoleToCount = memberRepository
                 .findAllClubIdToRoleToCountByClubIds(clubIds).stream()
@@ -81,13 +80,15 @@ public class ClubServiceImpl implements ClubService {
                         row -> Pair.of(row.clubId(), row.memberRole()),
                         ClubIdToMemberRoleToCountProjection::count
                 ));
-        return clubs.stream().collect(Collectors.toMap(
-                Function.identity(),
-                club -> getApproversNumber(club, clubMembersRoleToCount)
-        ));
+        return clubs.stream()
+                .map(club -> getApproversNumber(club, clubMembersRoleToCount))
+                .toList();
     }
 
-    private static Integer getApproversNumber(ClubEntity club, Map<Pair<UUID, MemberRole>, Integer> clubMembersRoleToCount) {
+    private static Integer getApproversNumber(
+            ClubEntity club,
+            Map<Pair<UUID, MemberRole>, Integer> clubMembersRoleToCount
+    ) {
         var inspectors = clubMembersRoleToCount.getOrDefault(Pair.of(club.getId(), MemberRole.INSPECTOR), 0);
         var admins = clubMembersRoleToCount.getOrDefault(Pair.of(club.getId(), MemberRole.ADMIN), 0);
         return inspectors + admins;

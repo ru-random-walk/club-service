@@ -14,9 +14,7 @@ import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.repository.UserRepository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -89,18 +87,13 @@ class ClubServiceTest extends AbstractPostgresContainerTest {
         ));
 
         var clubIdToApproversCount = clubService.getClubToApproversNumber(
-                        Stream.of(club.getId(), club2.getId())
-                                .map(id -> ClubEntity.builder()
-                                        .id(id)
-                                        .build())
-                                .toList()
-                )
-                .entrySet().stream()
-                .collect(Collectors.toMap(
-                        entry -> entry.getKey().getId(),
-                        Map.Entry::getValue
-                ));
-        assertEquals(3, clubIdToApproversCount.get(club.getId()));
-        assertEquals(0, clubIdToApproversCount.get(club2.getId()));
+                Stream.of(club.getId(), club2.getId())
+                        .map(id -> ClubEntity.builder()
+                                .id(id)
+                                .build())
+                        .toList()
+        );
+        assertEquals(3, clubIdToApproversCount.getFirst());
+        assertEquals(0, clubIdToApproversCount.get(1));
     }
 }

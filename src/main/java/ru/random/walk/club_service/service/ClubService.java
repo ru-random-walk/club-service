@@ -5,7 +5,6 @@ import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public interface ClubService {
@@ -13,5 +12,5 @@ public interface ClubService {
 
     ClubEntity createClub(String clubName, Principal principal);
 
-    Map<ClubEntity, Integer> getClubToApproversNumber(List<ClubEntity> clubs);
+    List<Integer> getClubToApproversNumber(List<ClubEntity> clubs);
 }

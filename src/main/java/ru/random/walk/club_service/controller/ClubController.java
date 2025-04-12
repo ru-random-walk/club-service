@@ -15,7 +15,6 @@ import ru.random.walk.club_service.service.ClubService;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -64,7 +63,7 @@ public class ClubController {
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)
-    public Map<ClubEntity, Integer> approversNumber(List<ClubEntity> clubs, Principal principal) {
+    public List<Integer> approversNumber(List<ClubEntity> clubs, Principal principal) {
         log.info("""
                         Batch approversNumber query for [{}]
                         with login [{}]
