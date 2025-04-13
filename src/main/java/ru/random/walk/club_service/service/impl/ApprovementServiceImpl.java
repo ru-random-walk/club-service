@@ -25,7 +25,7 @@ public class ApprovementServiceImpl implements ApprovementService {
     @Override
     public ApprovementEntity addForClub(MembersConfirmApprovementData membersConfirmData, UUID clubId) {
         var club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new NotFoundException("Club with such answerId not found!"));
+                .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
         checkApprovementLimit(clubId);
         var approvement = ApprovementEntity.builder()
                 .club(club)
@@ -39,7 +39,7 @@ public class ApprovementServiceImpl implements ApprovementService {
     @Override
     public ApprovementEntity addForClub(FormApprovementData formApprovementData, UUID clubId) {
         var club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new NotFoundException("Club with such answerId not found!"));
+                .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
         checkApprovementLimit(clubId);
         var approvement = ApprovementEntity.builder()
                 .club(club)
@@ -60,7 +60,7 @@ public class ApprovementServiceImpl implements ApprovementService {
     @Override
     public ApprovementEntity update(MembersConfirmApprovementData membersConfirmData, UUID approvementId) {
         var approvement = approvementRepository.findById(approvementId)
-                .orElseThrow(() -> new NotFoundException("Approvement with such answerId not found!"));
+                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
         approvement.setData(membersConfirmData);
         approvement.setType(ApprovementType.MEMBERS_CONFIRM);
         return approvementRepository.save(approvement);
@@ -69,7 +69,7 @@ public class ApprovementServiceImpl implements ApprovementService {
     @Override
     public ApprovementEntity update(FormApprovementData formApprovementData, UUID approvementId) {
         var approvement = approvementRepository.findById(approvementId)
-                .orElseThrow(() -> new NotFoundException("Approvement with such answerId not found!"));
+                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
         approvement.setData(formApprovementData);
         approvement.setType(ApprovementType.FORM);
         return approvementRepository.save(approvement);
@@ -78,7 +78,7 @@ public class ApprovementServiceImpl implements ApprovementService {
     @Override
     public UUID delete(UUID approvementId) {
         var approvement = approvementRepository.findById(approvementId)
-                .orElseThrow(() -> new NotFoundException("Approvement with such answerId not found!"));
+                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
         approvementRepository.delete(approvement);
         return approvement.getId();
     }
