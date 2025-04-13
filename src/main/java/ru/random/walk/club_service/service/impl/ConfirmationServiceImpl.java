@@ -22,6 +22,7 @@ import ru.random.walk.club_service.service.ConfirmationService;
 import ru.random.walk.club_service.service.reviewer.ConfirmationReviewer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,12 +39,14 @@ public class ConfirmationServiceImpl implements ConfirmationService {
     @Transactional
     public void assignApprovers(
             ForReviewData forReviewData,
-            MembersConfirmApprovementData membersConfirmApprovementData
+            MembersConfirmApprovementData membersConfirmData
     ) {
         var answer = answerRepository.findById(forReviewData.answerId()).orElseThrow();
+        var approversToAssignCount = Optional.ofNullable(membersConfirmData.getApproversToNotifyCount())
+                .orElse(membersConfirmData.getRequiredConfirmationNumber());
         var approvers = memberRepository.findRandomApproversByClubId(
                 forReviewData.clubId(),
-                membersConfirmApprovementData.getRequiredConfirmationNumber()
+                approversToAssignCount
         );
 
         log.info("Save all assigned approvers: {}", approvers);
