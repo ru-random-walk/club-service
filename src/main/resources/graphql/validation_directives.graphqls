@@ -31,3 +31,7 @@ directive @ContainerSize(
 # - Answer type matches with correct option numbers size
 # - Answer options matches with correct option numbers indices
 directive @ValidQuestion on INPUT_OBJECT
+
+# Valid Members confirm:
+# - approversToNotifyCount must be bigger or equals than requiredConfirmationNumber
+directive @ValidMembersConfirm on ARGUMENT_DEFINITION

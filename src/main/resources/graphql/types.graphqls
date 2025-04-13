@@ -21,6 +21,7 @@ union ApprovementData = MembersConfirmApprovementData | FormApprovementData
 
 type MembersConfirmApprovementData {
     requiredConfirmationNumber: Int!
+    approversToNotifyCount: Int
 }
 
 type FormApprovementData {

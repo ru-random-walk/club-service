@@ -35,7 +35,7 @@ public class StubDataUtil {
     }
 
     public static MembersConfirmApprovementData membersConfirmApprovementData() {
-        return new MembersConfirmApprovementData(2);
+        return new MembersConfirmApprovementData(2, 4);
     }
 
     public static AnswerData membersConfirmAnswerData() {

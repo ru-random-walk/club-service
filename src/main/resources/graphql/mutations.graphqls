@@ -1,5 +1,6 @@
 input MembersConfirmInput {
     requiredConfirmationNumber: Int! @Min(value: 1, message: "requiredConfirmationNumber must be bigger or equals than 1")
+    approversToNotifyCount: Int @Min(value: 1, message: "approversToNotifyCount must be bigger or equals than 1")
 }
 
 input FormInput {
@@ -31,10 +32,10 @@ type Mutation {
     createClub(name: String!): Club!
 
     # Approvement mutations
-    addClubApprovementMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput!): Approvement!
+    addClubApprovementMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput! @ValidMembersConfirm): Approvement!
     addClubApprovementForm(clubId: ID!, form: FormInput!): Approvement!
 
-    updateClubApprovementMembersConfirm(approvementId: ID!, membersConfirm: MembersConfirmInput!): Approvement!
+    updateClubApprovementMembersConfirm(approvementId: ID!, membersConfirm: MembersConfirmInput! @ValidMembersConfirm): Approvement!
     updateClubApprovementForm(approvementId: ID!, form: FormInput!): Approvement!
 
     removeClubApprovement(approvementId: ID!): ID!

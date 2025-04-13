@@ -76,7 +76,7 @@ class ConfirmationServiceTest extends AbstractPostgresContainerTest {
                                 .build())
                         .toList()
         );
-        var membersConfirmApprovementData = new MembersConfirmApprovementData(3);
+        var membersConfirmApprovementData = new MembersConfirmApprovementData(3, 5);
         var approvement = approvementRepository.save(ApprovementEntity.builder()
                 .data(membersConfirmApprovementData)
                 .type(ApprovementType.MEMBERS_CONFIRM)
