@@ -1,5 +1,6 @@
 package ru.random.walk.club_service.service;
 
+import ru.random.walk.club_service.model.dto.ClubWithUserRole;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.UserEntity;
@@ -14,4 +15,6 @@ public interface UserService {
     Iterable<ClubEntity> getClubs(UUID userId, PaginationInput pagination);
 
     List<AnswerEntity> getAnswers(UUID userId, PaginationInput pagination);
+
+    List<ClubWithUserRole> getClubsWithRole(UUID userId);
 }
