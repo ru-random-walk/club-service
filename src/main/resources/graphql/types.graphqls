@@ -6,6 +6,11 @@ type Club {
     approversNumber: Int!
 }
 
+type ClubWithUserRole {
+    club: Club!
+    userRole: UserGroupRole!
+}
+
 type Member {
     id: ID!
     role: MemberRole!

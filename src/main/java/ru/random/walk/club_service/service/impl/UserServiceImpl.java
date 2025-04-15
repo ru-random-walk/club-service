@@ -3,10 +3,12 @@ package ru.random.walk.club_service.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.random.walk.club_service.model.dto.ClubWithUserRole;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.UserEntity;
+import ru.random.walk.club_service.model.entity.projection.ClubWithUserRoleProjection;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
@@ -16,6 +18,7 @@ import ru.random.walk.club_service.service.UserService;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -42,5 +45,20 @@ public class UserServiceImpl implements UserService {
     public List<AnswerEntity> getAnswers(UUID userId, PaginationInput pagination) {
         var pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         return answerRepository.findAllByUserId(userId, pageable);
+    }
+
+    @Override
+    public List<ClubWithUserRole> getClubsWithRole(UUID userId) {
+        var clubIdToUserRole = clubRepository.findAllClubsWithRoleByUser(userId).stream()
+                .collect(Collectors.toMap(
+                        ClubWithUserRoleProjection::clubId,
+                        ClubWithUserRoleProjection::role
+                ));
+        var clubs = clubRepository.findAllById(clubIdToUserRole.keySet());
+        return clubs.stream()
+                .map(club -> new ClubWithUserRole(
+                        club, clubIdToUserRole.get(club.getId())
+                ))
+                .toList();
     }
 }

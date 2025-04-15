@@ -28,10 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Slf4j
 @SpringBootTest
-@AllArgsConstructor(onConstructor_ = @__(@Autowired))
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 class MemberRepositoryTest extends AbstractPostgresContainerTest {
+    @Autowired
     private MemberRepository memberRepository;
+    @Autowired
     private ClubRepository clubRepository;
+    @Autowired
     private UserRepository userRepository;
 
     @PersistenceContext
