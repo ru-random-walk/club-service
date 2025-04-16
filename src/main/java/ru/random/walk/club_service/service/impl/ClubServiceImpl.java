@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
+import ru.random.walk.club_service.model.entity.projection.ClubIdToMemberRoleToCountProjection;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
@@ -14,10 +15,14 @@ import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.auth.Authenticator;
+import ru.random.walk.club_service.util.Pair;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -64,5 +69,28 @@ public class ClubServiceImpl implements ClubService {
                 .build());
         club.setMembers(Collections.singletonList(adminMember));
         return club;
+    }
+
+    @Override
+    public List<Integer> getClubToApproversNumber(List<ClubEntity> clubs) {
+        var clubIds = clubs.stream().map(ClubEntity::getId).toList();
+        Map<Pair<UUID, MemberRole>, Integer> clubMembersRoleToCount = memberRepository
+                .findAllClubIdToRoleToCountByClubIds(clubIds).stream()
+                .collect(Collectors.toMap(
+                        row -> Pair.of(row.clubId(), row.memberRole()),
+                        ClubIdToMemberRoleToCountProjection::count
+                ));
+        return clubs.stream()
+                .map(club -> getApproversNumber(club, clubMembersRoleToCount))
+                .toList();
+    }
+
+    private static Integer getApproversNumber(
+            ClubEntity club,
+            Map<Pair<UUID, MemberRole>, Integer> clubMembersRoleToCount
+    ) {
+        var inspectors = clubMembersRoleToCount.getOrDefault(Pair.of(club.getId(), MemberRole.INSPECTOR), 0);
+        var admins = clubMembersRoleToCount.getOrDefault(Pair.of(club.getId(), MemberRole.ADMIN), 0);
+        return inspectors + admins;
     }
 }

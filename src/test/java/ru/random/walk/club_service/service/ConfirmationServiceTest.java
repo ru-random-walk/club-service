@@ -8,21 +8,36 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.random.walk.club_service.AbstractPostgresContainerTest;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
-import ru.random.walk.club_service.model.entity.*;
+import ru.random.walk.club_service.model.entity.AnswerEntity;
+import ru.random.walk.club_service.model.entity.ApprovementEntity;
+import ru.random.walk.club_service.model.entity.ClubEntity;
+import ru.random.walk.club_service.model.entity.ConfirmationEntity;
+import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity.MemberId;
+import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
 import ru.random.walk.club_service.model.entity.type.ConfirmationStatus;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.model.model.ForReviewData;
-import ru.random.walk.club_service.repository.*;
+import ru.random.walk.club_service.repository.AnswerRepository;
+import ru.random.walk.club_service.repository.ApprovementRepository;
+import ru.random.walk.club_service.repository.ClubRepository;
+import ru.random.walk.club_service.repository.MemberRepository;
+import ru.random.walk.club_service.repository.UserRepository;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
