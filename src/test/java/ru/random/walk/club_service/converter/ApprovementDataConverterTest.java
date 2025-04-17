@@ -18,7 +18,8 @@ class ApprovementDataConverterTest {
     public void testSerialization() {
         List<ApprovementData> approvementDataList = List.of(
                 StubDataUtil.formApprovementData(),
-                StubDataUtil.membersConfirmApprovementData()
+                StubDataUtil.membersConfirmApprovementData(),
+                new MembersConfirmApprovementData(2)
         );
         approvementDataList.forEach(approvementData -> {
             var jsonStr = converter.convertToDatabaseColumn(approvementData);
@@ -52,6 +53,14 @@ class ApprovementDataConverterTest {
                                 {
                                     "type":"members_confirm_approvement_data",
                                     "requiredConfirmationNumber":2
+                                }""",
+                        MembersConfirmApprovementData.class
+                ),
+                JsonAndExpectedClass.of("""
+                                {
+                                    "type":"members_confirm_approvement_data",
+                                    "requiredConfirmationNumber":2,
+                                    "approversToNotifyCount":7
                                 }""",
                         MembersConfirmApprovementData.class
                 )
