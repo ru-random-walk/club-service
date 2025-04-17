@@ -110,7 +110,7 @@ class ConfirmationServiceTest extends AbstractPostgresContainerTest {
                 new PaginationInput(0, 20)
         );
         assertNotNull(userWaitingConfirmations);
-        assertEquals(3, userWaitingConfirmations.size());
+        assertEquals(5, userWaitingConfirmations.size());
         assertEquals(
                 userWaitingConfirmations.stream()
                         .map(ConfirmationEntity::getStatus)
@@ -138,7 +138,7 @@ class ConfirmationServiceTest extends AbstractPostgresContainerTest {
             } catch (AssertionError ignored) {
             }
         }
-        assertEquals(3, singleApproverConfirmationCount);
+        assertEquals(5, singleApproverConfirmationCount);
     }
 
     @SneakyThrows
