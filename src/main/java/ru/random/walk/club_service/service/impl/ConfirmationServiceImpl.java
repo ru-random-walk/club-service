@@ -19,7 +19,9 @@ import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ConfirmationRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ConfirmationService;
+import ru.random.walk.club_service.service.NotificationService;
 import ru.random.walk.club_service.service.reviewer.ConfirmationReviewer;
+import ru.random.walk.club_service.util.VirtualThreadUtil;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +31,8 @@ import java.util.UUID;
 @Slf4j
 public class ConfirmationServiceImpl implements ConfirmationService {
     private final ConfirmationReviewer confirmationReviewer;
+    private final NotificationService notificationService;
+
     private final ConfirmationRepository confirmationRepository;
     private final AnswerRepository answerRepository;
     private final MemberRepository memberRepository;
@@ -57,6 +61,14 @@ public class ConfirmationServiceImpl implements ConfirmationService {
                                 .build())
                         .toList()
         );
+
+        for (var approver : approvers) {
+            VirtualThreadUtil.scheduleTask(() -> notificationService.sendForAssignedApprover(
+                    approver,
+                    answer.getUserId(),
+                    forReviewData.clubId()
+            ));
+        }
     }
 
     @Override
