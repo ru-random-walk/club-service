@@ -4,15 +4,24 @@ import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.random.walk.club_service.AbstractPostgresContainerTest;
+import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.domain.answer.AnswerData;
 import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
-import ru.random.walk.club_service.model.entity.*;
+import ru.random.walk.club_service.model.entity.AnswerEntity;
+import ru.random.walk.club_service.model.entity.ApprovementEntity;
+import ru.random.walk.club_service.model.entity.ClubEntity;
+import ru.random.walk.club_service.model.entity.MemberEntity;
+import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.model.ForReviewData;
-import ru.random.walk.club_service.repository.*;
+import ru.random.walk.club_service.repository.AnswerRepository;
+import ru.random.walk.club_service.repository.ApprovementRepository;
+import ru.random.walk.club_service.repository.ClubRepository;
+import ru.random.walk.club_service.repository.ConfirmationRepository;
+import ru.random.walk.club_service.repository.MemberRepository;
+import ru.random.walk.club_service.repository.UserRepository;
 import ru.random.walk.club_service.service.reviewer.AnswerReviewer;
 import ru.random.walk.club_service.util.StubDataUtil;
 
@@ -25,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-class AnswerReviewerTest extends AbstractPostgresContainerTest {
+class AnswerReviewerTest extends AbstractContainerTest {
     private static final int REVIEW_TIMEOUT_IN_SECONDS = 1;
 
     private final AnswerReviewer answerReviewer;

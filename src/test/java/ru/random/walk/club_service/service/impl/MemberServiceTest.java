@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.random.walk.club_service.AbstractPostgresContainerTest;
+import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.ClubEntity;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
-class MemberServiceTest extends AbstractPostgresContainerTest {
+class MemberServiceTest extends AbstractContainerTest {
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
     private final ApprovementRepository approvementRepository;

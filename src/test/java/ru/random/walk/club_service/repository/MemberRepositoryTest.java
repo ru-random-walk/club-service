@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import ru.random.walk.club_service.AbstractPostgresContainerTest;
+import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.UserEntity;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Slf4j
 @SpringBootTest
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-class MemberRepositoryTest extends AbstractPostgresContainerTest {
+class MemberRepositoryTest extends AbstractContainerTest {
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
