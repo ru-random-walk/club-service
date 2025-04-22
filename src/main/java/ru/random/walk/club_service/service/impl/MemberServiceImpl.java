@@ -11,6 +11,10 @@ import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.MemberService;
+import ru.random.walk.club_service.service.OutboxSenderService;
+import ru.random.walk.dto.UserExcludeEvent;
+import ru.random.walk.dto.UserJoinEvent;
+import ru.random.walk.topic.EventTopic;
 
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +27,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final AnswerRepository answerRepository;
     private final ClubRepository clubRepository;
+    private final OutboxSenderService outboxSenderService;
 
     @Override
     public MemberEntity changeRole(UUID memberId, UUID clubId, MemberRole memberRole) {
@@ -33,20 +38,37 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public UUID removeFromClub(UUID memberId, UUID clubId) {
         var member = memberRepository.findByIdAndClubId(memberId, clubId)
                 .orElseThrow(() -> new NotFoundException("Member not found in club " + clubId));
         memberRepository.delete(member);
+        outboxSenderService.sendMessage(
+                EventTopic.USER_EXCLUDE,
+                UserExcludeEvent.builder()
+                        .userId(memberId)
+                        .clubId(clubId)
+                        .build()
+        );
         return member.getId();
     }
 
     @Override
+    @Transactional
     public MemberEntity addInClub(UUID memberId, UUID clubId) {
-        return memberRepository.save(MemberEntity.builder()
+        var member = memberRepository.save(MemberEntity.builder()
                 .id(memberId)
                 .role(MemberRole.USER)
                 .clubId(clubId)
                 .build());
+        outboxSenderService.sendMessage(
+                EventTopic.USER_JOIN,
+                UserJoinEvent.builder()
+                        .userId(memberId)
+                        .clubId(clubId)
+                        .build()
+        );
+        return member;
     }
 
     @Override
@@ -58,13 +80,7 @@ public class MemberServiceImpl implements MemberService {
                 .map(ApprovementEntity::getId)
                 .collect(Collectors.toSet());
         if (passedApprovements.containsAll(clubApprovements)) {
-            return Optional.of(
-                    memberRepository.save(MemberEntity.builder()
-                            .id(memberId)
-                            .clubId(clubId)
-                            .role(MemberRole.USER)
-                            .build())
-            );
+            return Optional.of(addInClub(memberId, clubId));
         }
         return Optional.empty();
     }
