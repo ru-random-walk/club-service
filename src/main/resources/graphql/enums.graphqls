@@ -4,6 +4,13 @@ enum MemberRole {
     INSPECTOR
 }
 
+enum UserGroupRole {
+    ADMIN
+    INSPECTOR
+    MEMBER
+    PENDING_APPROVAL
+}
+
 enum ApprovementType {
     MEMBERS_CONFIRM
     FORM

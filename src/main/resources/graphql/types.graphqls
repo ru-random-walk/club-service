@@ -3,6 +3,12 @@ type Club {
     name: String!
     members: [Member!]!
     approvements: [Approvement!]!
+    approversNumber: Int!
+}
+
+type ClubWithUserRole {
+    club: Club!
+    userRole: UserGroupRole!
 }
 
 type Member {

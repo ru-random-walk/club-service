@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.service.ClubService;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -58,5 +60,17 @@ public class ClubController {
                 principal, principal.getName(), name
         );
         return clubService.createClub(name, principal);
+    }
+
+    @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)
+    public List<Integer> approversNumber(List<ClubEntity> clubs, Principal principal) {
+        log.info("""
+                        Batch approversNumber query for [{}]
+                        with login [{}]
+                        with clubs size [{}]
+                        """,
+                principal, principal.getName(), clubs.size()
+        );
+        return clubService.getClubToApproversNumber(clubs);
     }
 }

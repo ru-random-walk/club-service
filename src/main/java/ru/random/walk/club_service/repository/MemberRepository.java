@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.random.walk.club_service.model.entity.MemberEntity;
+import ru.random.walk.club_service.model.entity.projection.ClubIdToMemberRoleToCountProjection;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 
 import java.util.List;
@@ -39,4 +40,12 @@ public interface MemberRepository extends JpaRepository<MemberEntity, MemberEnti
             nativeQuery = true
     )
     List<UUID> findRandomApproversByClubId(@Param("clubId") UUID clubId, @Param("count") Integer count);
+
+    @Query("""
+            select m.clubId as clubId, m.role as role, count(*) as count
+            from MemberEntity m
+            where m.clubId in (:clubIds)
+            group by m.clubId, m.role
+            """)
+    List<ClubIdToMemberRoleToCountProjection> findAllClubIdToRoleToCountByClubIds(List<UUID> clubIds);
 }
