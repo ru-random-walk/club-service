@@ -8,6 +8,7 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Controller
 @Slf4j
 @AllArgsConstructor
+@PreAuthorize("hasAuthority('DEFAULT_USER')")
 public class ClubController {
     private final ClubService clubService;
 
