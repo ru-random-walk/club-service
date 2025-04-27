@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.mapper.ApprovementMapper;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Controller
 @Slf4j
 @AllArgsConstructor
+@PreAuthorize("hasAuthority('DEFAULT_USER')")
 public class ApprovementController {
     private final ApprovementService approvementService;
     private final ApprovementMapper approvementMapper;

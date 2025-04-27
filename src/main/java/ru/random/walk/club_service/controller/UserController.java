@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.dto.ClubWithUserRole;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Controller
 @Slf4j
 @AllArgsConstructor
+@PreAuthorize("hasAuthority('DEFAULT_USER')")
 public class UserController {
     private final UserService userService;
     private final Authenticator authenticator;
