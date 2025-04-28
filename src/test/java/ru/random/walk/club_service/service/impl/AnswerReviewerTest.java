@@ -96,7 +96,7 @@ class AnswerReviewerTest extends AbstractContainerTest {
         var actualAnswer = answerRepository.findById(reviewAnswerData.answerId()).orElseThrow();
         assertEquals(AnswerStatus.IN_REVIEW, actualAnswer.getStatus());
         var approversCount = confirmationRepository.countByUserId(userId);
-        assertEquals(2, approversCount);
+        assertEquals(4, approversCount);
     }
 
     private ForReviewData userAnswerToApprovement(UUID userId, ApprovementData approvementData, AnswerData answerData) {
