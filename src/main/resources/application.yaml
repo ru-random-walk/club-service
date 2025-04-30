@@ -50,3 +50,6 @@ logging:
   level:
     ru.random.walk.chat_service: ${GENERAL_LOGGING_LEVEL:DEBUG}
     org.hibernate.orm.jdbc.bind: ${LOGGING_SHOW_BINDING_JPA_VALUES_LEVEL:TRACE}
+outbox:
+  job:
+    startIntervalInSeconds: 5
