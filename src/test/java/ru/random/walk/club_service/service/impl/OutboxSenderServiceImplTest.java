@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
@@ -30,6 +33,7 @@ class OutboxSenderServiceImplTest extends AbstractContainerTest {
     private final OutboxSendingJob outboxSendingJob;
     private final OutboxRepository outboxRepository;
     private final ObjectMapper objectMapper;
+    private final Scheduler scheduler;
 
     @Test
     @Transactional
@@ -68,5 +72,11 @@ class OutboxSenderServiceImplTest extends AbstractContainerTest {
 
     private String getPayload(UUID member1, UUID member2) throws JsonProcessingException {
         return objectMapper.writeValueAsString(new CreatePrivateChatEvent(member1, member2));
+    }
+
+    @Test
+    void checkJobsAreExist() throws SchedulerException {
+        scheduler.checkExists(JobKey.jobKey("OutboxExpireJob"));
+        scheduler.checkExists(JobKey.jobKey("OutboxSendingJob"));
     }
 }

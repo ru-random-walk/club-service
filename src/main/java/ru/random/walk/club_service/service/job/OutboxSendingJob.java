@@ -25,6 +25,7 @@ public class OutboxSendingJob implements Job {
     @Transactional
     public void execute(JobExecutionContext context) {
         List<OutboxMessage> messages = outboxRepository.findAllBySentFalse();
+        log.info("Try to send {} messages", messages.size());
         messages.forEach(this::tryToSendMessage);
         outboxRepository.saveAll(messages);
     }
