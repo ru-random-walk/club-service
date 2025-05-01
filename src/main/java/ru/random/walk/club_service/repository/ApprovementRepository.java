@@ -7,4 +7,6 @@ import java.util.UUID;
 
 public interface ApprovementRepository extends JpaRepository<ApprovementEntity, UUID> {
     Integer countByClubId(UUID clubId);
+
+    void deleteAllByClubId(UUID id);
 }

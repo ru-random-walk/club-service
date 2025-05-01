@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.service.ClubService;
+import ru.random.walk.club_service.service.auth.Authenticator;
 
 import java.security.Principal;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.UUID;
 @PreAuthorize("hasAuthority('DEFAULT_USER')")
 public class ClubController {
     private final ClubService clubService;
+    private final Authenticator authenticator;
 
     @QueryMapping
     public @Nullable ClubEntity getClub(
@@ -62,6 +64,22 @@ public class ClubController {
                 principal, principal.getName(), name
         );
         return clubService.createClub(name, principal);
+    }
+
+    @MutationMapping
+    public UUID removeClubWithAllItsData(
+            @Argument UUID clubId,
+            Principal principal
+    ) {
+        log.info("""
+                        Remove club with all its data for [{}]
+                        with login [{}]
+                        with id [{}]
+                        """,
+                principal, principal.getName(), clubId
+        );
+        authenticator.authAdminByClubId(principal, clubId);
+        return clubService.removeClubWithAllItsData(clubId);
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)
