@@ -1,5 +1,6 @@
 package ru.random.walk.club_service.model.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -33,6 +34,10 @@ public class ClubEntity {
 
     @Column(nullable = false)
     private String name;
+
+    @Column
+    @Nullable
+    private String description;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id", nullable = false, insertable = false, updatable = false)
