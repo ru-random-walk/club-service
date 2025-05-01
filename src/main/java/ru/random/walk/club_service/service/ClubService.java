@@ -16,4 +16,8 @@ public interface ClubService {
     List<Integer> getClubToApproversNumber(List<ClubEntity> clubs);
 
     UUID removeClubWithAllItsData(UUID clubId);
+
+    default ClubEntity createClub(String clubName, Principal principal) {
+        return createClub(clubName, null, principal);
+    }
 }
