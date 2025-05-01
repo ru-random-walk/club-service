@@ -29,7 +29,7 @@ input RegisteredUserInfoEvent {
 
 type Mutation {
     # Club mutations
-    createClub(name: String!): Club!
+    createClub(name: String!, description: String): Club!
     removeClubWithAllItsData(clubId: ID!): ID!
 
     # Approvement mutations

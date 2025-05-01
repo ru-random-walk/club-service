@@ -54,16 +54,18 @@ public class ClubController {
     @MutationMapping
     public ClubEntity createClub(
             @Argument String name,
+            @Argument @Nullable String description,
             Principal principal
     ) {
         log.info("""
                         Create club for [{}]
                         with login [{}]
+                        with description [{}]
                         with name [{}]
                         """,
-                principal, principal.getName(), name
+                principal, principal.getName(), description, name
         );
-        return clubService.createClub(name, principal);
+        return clubService.createClub(name, description, principal);
     }
 
     @MutationMapping
