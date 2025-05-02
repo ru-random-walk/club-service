@@ -1,6 +1,7 @@
 package ru.random.walk.club_service.service;
 
 import org.jetbrains.annotations.Nullable;
+import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 
@@ -14,4 +15,6 @@ public interface ClubService {
     ClubEntity createClub(String clubName, @Nullable String description, Principal principal);
 
     List<Integer> getClubToApproversNumber(List<ClubEntity> clubs);
+
+    ClubEntity createClubWithMembersConfirmApprovement(String name, String description, ApprovementData approvementData, Principal principal);
 }

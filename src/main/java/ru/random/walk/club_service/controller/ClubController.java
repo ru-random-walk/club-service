@@ -10,7 +10,10 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import ru.random.walk.club_service.mapper.ApprovementMapper;
 import ru.random.walk.club_service.model.entity.ClubEntity;
+import ru.random.walk.club_service.model.graphql.types.FormInput;
+import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.service.ClubService;
 
@@ -24,6 +27,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @PreAuthorize("hasAuthority('DEFAULT_USER')")
 public class ClubController {
+    private final ApprovementMapper approvementMapper;
     private final ClubService clubService;
 
     @QueryMapping
@@ -64,6 +68,46 @@ public class ClubController {
                 principal, principal.getName(), description, name
         );
         return clubService.createClub(name, description, principal);
+    }
+
+    @MutationMapping
+    public ClubEntity createClubWithMembersConfirmApprovement(
+            @Argument String name,
+            @Argument @Nullable String description,
+            @Argument MembersConfirmInput membersConfirm,
+            Principal principal
+    ) {
+        log.info("""
+                        Create club for [{}]
+                        with login [{}]
+                        with description [{}]
+                        with membersConfirm [{}]
+                        with name [{}]
+                        """,
+                principal, principal.getName(), description, membersConfirm, name
+        );
+        var membersConfirmApprovementData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
+        return clubService.createClubWithMembersConfirmApprovement(name, description, membersConfirmApprovementData, principal);
+    }
+
+    @MutationMapping
+    public ClubEntity createClubWithFormApprovement(
+            @Argument String name,
+            @Argument @Nullable String description,
+            @Argument FormInput form,
+            Principal principal
+    ) {
+        log.info("""
+                        Create club for [{}]
+                        with login [{}]
+                        with description [{}]
+                        with form [{}]
+                        with name [{}]
+                        """,
+                principal, principal.getName(), description, form, name
+        );
+        var formApprovementData = approvementMapper.toFormApprovementData(form);
+        return clubService.createClubWithMembersConfirmApprovement(name, description, formApprovementData, principal);
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)

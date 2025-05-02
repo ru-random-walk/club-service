@@ -5,13 +5,19 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
+import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;
+import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
+import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.projection.ClubIdToMemberRoleToCountProjection;
+import ru.random.walk.club_service.model.entity.type.ApprovementType;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
+import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ClubService;
@@ -19,7 +25,6 @@ import ru.random.walk.club_service.service.auth.Authenticator;
 import ru.random.walk.club_service.util.Pair;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,6 +37,7 @@ public class ClubServiceImpl implements ClubService {
 
     private final ClubRepository clubRepository;
     private final MemberRepository memberRepository;
+    private final ApprovementRepository approvementRepository;
     private final Authenticator authenticator;
 
     @Override
@@ -69,8 +75,8 @@ public class ClubServiceImpl implements ClubService {
                 .clubId(club.getId())
                 .role(MemberRole.ADMIN)
                 .build());
-        club.setMembers(Collections.singletonList(adminMember));
-        return club;
+        club.getMembers().add(adminMember);
+        return clubRepository.save(club);
     }
 
     @Override
@@ -85,6 +91,30 @@ public class ClubServiceImpl implements ClubService {
         return clubs.stream()
                 .map(club -> getApproversNumber(club, clubMembersRoleToCount))
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public ClubEntity createClubWithMembersConfirmApprovement(
+            String name,
+            String description,
+            ApprovementData approvementData,
+            Principal principal
+    ) {
+        var club = createClub(name, description, principal);
+        var approvementType = switch (approvementData) {
+            case MembersConfirmApprovementData ignored -> ApprovementType.MEMBERS_CONFIRM;
+            case FormApprovementData ignored -> ApprovementType.MEMBERS_CONFIRM;
+            default -> throw new IllegalStateException("Unexpected value: " + approvementData);
+        };
+        var approvement = approvementRepository.save(ApprovementEntity.builder()
+                .club(club)
+                .clubId(club.getId())
+                .data(approvementData)
+                .type(approvementType)
+                .build());
+        club.getApprovements().add(approvement);
+        return clubRepository.save(club);
     }
 
     private static Integer getApproversNumber(
