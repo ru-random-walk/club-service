@@ -49,5 +49,5 @@ public interface MemberRepository extends JpaRepository<MemberEntity, MemberEnti
             """)
     List<ClubIdToMemberRoleToCountProjection> findAllClubIdToRoleToCountByClubIds(List<UUID> clubIds);
 
-    void deleteAllByClubId(UUID id);
+    List<MemberEntity> deleteAllByClubId(UUID id);
 }

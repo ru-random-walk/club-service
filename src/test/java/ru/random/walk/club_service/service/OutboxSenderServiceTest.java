@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.service.impl;
+package ru.random.walk.club_service.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,13 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.OutboxMessage;
 import ru.random.walk.club_service.repository.OutboxRepository;
-import ru.random.walk.club_service.service.OutboxSenderService;
 import ru.random.walk.club_service.service.job.OutboxSendingJob;
 import ru.random.walk.dto.CreatePrivateChatEvent;
+import ru.random.walk.dto.UserExcludeEvent;
 import ru.random.walk.topic.EventTopic;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
-class OutboxSenderServiceImplTest extends AbstractContainerTest {
+class OutboxSenderServiceTest extends AbstractContainerTest {
     private final OutboxSenderService outboxSenderService;
     private final OutboxSendingJob outboxSendingJob;
     private final OutboxRepository outboxRepository;
@@ -48,6 +51,30 @@ class OutboxSenderServiceImplTest extends AbstractContainerTest {
         assertEquals(EventTopic.CREATE_CHAT, messages.getLast().getTopic());
         assertEquals(getPayload(personId, partnerId), messages.getLast().getPayload());
         assertNotNull(messages.getLast().getCreatedAt());
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void sendAllMessagesSavesToDb() {
+        var clubId = UUID.randomUUID();
+        List<UserExcludeEvent> allEvents = IntStream.range(0, 100)
+                .mapToObj(ignored -> UserExcludeEvent.builder()
+                        .clubId(clubId)
+                        .userId(UUID.randomUUID())
+                        .build())
+                .toList();
+        outboxSenderService.sendAllMessages(EventTopic.USER_EXCLUDE, allEvents);
+        var messages = outboxRepository.findAll();
+
+        assertFalse(messages.isEmpty());
+        for (var message : messages) {
+            assertEquals(EventTopic.USER_EXCLUDE, message.getTopic());
+            var event = assertDoesNotThrow(() -> objectMapper.readValue(message.getPayload(), UserExcludeEvent.class));
+            assertEquals(clubId, event.clubId());
+            assertFalse(message.isSent());
+            assertNotNull(messages.getLast().getCreatedAt());
+        }
     }
 
     @Test

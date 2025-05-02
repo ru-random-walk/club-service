@@ -1,9 +1,11 @@
 package ru.random.walk.club_service.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
@@ -13,6 +15,7 @@ import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.repository.UserRepository;
+import ru.random.walk.club_service.service.job.OutboxSendingJob;
 import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.nio.file.attribute.UserPrincipal;
@@ -22,9 +25,12 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-@AllArgsConstructor(onConstructor_ = @__(@Autowired))
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 class ClubServiceTest extends AbstractContainerTest {
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
@@ -34,6 +40,10 @@ class ClubServiceTest extends AbstractContainerTest {
     private final ClubService clubService;
     private final ApprovementService approvementService;
     private final UserService userService;
+    private final OutboxSendingJob outboxSendingJob;
+
+    @MockitoSpyBean
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @Test
     void getClubToApproversNumber() {
@@ -119,7 +129,9 @@ class ClubServiceTest extends AbstractContainerTest {
         memberRepository.findByIdAndClubId(userId, club.getId()).orElseThrow();
 
         clubService.removeClubWithAllItsData(club.getId());
+        outboxSendingJob.execute(null);
 
+        verify(kafkaTemplate, times(1)).send(any(), any());
         assertTrue(clubRepository.findById(club.getId()).isEmpty());
     }
 }

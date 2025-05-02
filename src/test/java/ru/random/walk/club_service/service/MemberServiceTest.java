@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.service.impl;
+package ru.random.walk.club_service.service;
 
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,6 @@ import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.repository.UserRepository;
-import ru.random.walk.club_service.service.MemberService;
 import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.UUID;

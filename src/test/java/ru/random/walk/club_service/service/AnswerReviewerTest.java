@@ -1,4 +1,4 @@
-package ru.random.walk.club_service.service.impl;
+package ru.random.walk.club_service.service;
 
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
