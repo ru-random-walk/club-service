@@ -22,6 +22,10 @@ input QuestionAnswerInput {
     optionNumbers: [Int!]!
 }
 
+input PhotoInput {
+    base64: String!
+}
+
 input RegisteredUserInfoEvent {
     id: ID!
     fullName: String!
@@ -30,6 +34,7 @@ input RegisteredUserInfoEvent {
 type Mutation {
     # Club mutations
     createClub(name: String!): Club!
+    uploadPhotoForClub(clubId: ID!, photo: PhotoInput!): PhotoUrl!
 
     # Approvement mutations
     addClubApprovementMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput! @ValidMembersConfirm): Approvement!

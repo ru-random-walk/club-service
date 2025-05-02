@@ -6,6 +6,7 @@ input PaginationInput {
 type Query {
     # Club queries
     getClub(clubId: ID!, membersPagination: PaginationInput): Club
+    getClubPhoto(clubId: ID!): PhotoUrl!
 
     # User queries
     getUserClubs(userId: ID!, pagination: PaginationInput): [Club!]!
