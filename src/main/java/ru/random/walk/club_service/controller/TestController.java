@@ -15,7 +15,7 @@ import java.util.UUID;
 @Controller
 @AllArgsConstructor
 @Slf4j
-@PreAuthorize("hasRole('TESTER')")
+@PreAuthorize("hasAuthority('TESTER')")
 public class TestController {
     private final UserMapper userMapper;
     private final UserService userService;
