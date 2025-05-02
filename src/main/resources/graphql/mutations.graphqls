@@ -33,7 +33,7 @@ input RegisteredUserInfoEvent {
 
 type Mutation {
     # Club mutations
-    createClub(name: String!): Club!
+    createClub(name: String!, description: String): Club!
     uploadPhotoForClub(clubId: ID!, photo: PhotoInput!): PhotoUrl!
 
     # Approvement mutations

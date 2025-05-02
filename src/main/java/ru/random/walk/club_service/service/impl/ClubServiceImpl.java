@@ -1,6 +1,7 @@
 package ru.random.walk.club_service.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,13 +54,14 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     @Transactional
-    public ClubEntity createClub(String clubName, Principal principal) {
+    public ClubEntity createClub(String clubName, @Nullable String description, Principal principal) {
         var adminLogin = UUID.fromString(principal.getName());
         var userClubCount = memberRepository.countByIdAndRole(adminLogin, MemberRole.ADMIN);
         if (userClubCount >= MAX_CLUB_COUNT_BY_USER) {
             throw new ValidationException("You are reached maximum count of clubs!");
         }
         var club = clubRepository.save(ClubEntity.builder()
+                .description(description)
                 .name(clubName)
                 .build());
         var adminMember = memberRepository.save(MemberEntity.builder()

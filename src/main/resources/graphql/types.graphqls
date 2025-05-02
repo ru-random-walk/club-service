@@ -1,6 +1,7 @@
 type Club {
     id: ID!
     name: String!
+    description: String
     members: [Member!]!
     approvements: [Approvement!]!
     approversNumber: Int!
