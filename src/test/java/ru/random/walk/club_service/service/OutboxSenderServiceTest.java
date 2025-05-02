@@ -3,13 +3,12 @@ package ru.random.walk.club_service.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.OutboxMessage;
@@ -29,8 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
-@AllArgsConstructor(onConstructor_ = @__(@Autowired))
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 class OutboxSenderServiceTest extends AbstractContainerTest {
     private final OutboxSenderService outboxSenderService;
     private final OutboxSendingJob outboxSendingJob;
@@ -38,9 +36,13 @@ class OutboxSenderServiceTest extends AbstractContainerTest {
     private final ObjectMapper objectMapper;
     private final Scheduler scheduler;
 
+    @BeforeEach
+    public void clearAll(){
+        outboxRepository.deleteAll();
+    }
+
     @Test
     @Transactional
-    @Rollback
     void sendMessageSavesToDb() throws JsonProcessingException {
         UUID personId = UUID.randomUUID();
         UUID partnerId = UUID.randomUUID();
@@ -55,10 +57,10 @@ class OutboxSenderServiceTest extends AbstractContainerTest {
 
     @Test
     @Transactional
-    @Rollback
     void sendAllMessagesSavesToDb() {
         var clubId = UUID.randomUUID();
-        List<UserExcludeEvent> allEvents = IntStream.range(0, 100)
+        var eventCount = 100;
+        List<UserExcludeEvent> allEvents = IntStream.range(0, eventCount)
                 .mapToObj(ignored -> UserExcludeEvent.builder()
                         .clubId(clubId)
                         .userId(UUID.randomUUID())
@@ -68,6 +70,7 @@ class OutboxSenderServiceTest extends AbstractContainerTest {
         var messages = outboxRepository.findAll();
 
         assertFalse(messages.isEmpty());
+        assertEquals(eventCount, messages.size());
         for (var message : messages) {
             assertEquals(EventTopic.USER_EXCLUDE, message.getTopic());
             var event = assertDoesNotThrow(() -> objectMapper.readValue(message.getPayload(), UserExcludeEvent.class));
@@ -79,7 +82,6 @@ class OutboxSenderServiceTest extends AbstractContainerTest {
 
     @Test
     @Transactional
-    @Rollback
     void checkOutboxJobIsSendingMessages() throws JsonProcessingException {
         String payload = getPayload(UUID.randomUUID(), UUID.randomUUID());
 
