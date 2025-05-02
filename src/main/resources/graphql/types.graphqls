@@ -74,7 +74,7 @@ type Confirmation {
 }
 
 type PhotoUrl {
-    club: Club!
+    clubId: ID!
     url: String!
     expiresInMinutes: Int!
 }
