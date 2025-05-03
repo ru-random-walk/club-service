@@ -61,3 +61,8 @@ storage:
   region: ${STORAGE_REGION}
   temporaryUrlTtlInMinutes: 5
   servicePath: club-service
+rate-limiter:
+  uploadPhotoForClubRateLimiter:
+    period-duration: PT12H
+  getClubPhotoUserRateLimiter:
+    period-duration: PT1H

@@ -18,6 +18,7 @@ import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.auth.Authenticator;
 import ru.random.walk.util.FileUtil;
+import ru.random.walk.util.KeyRateLimiter;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -32,6 +33,8 @@ import java.util.UUID;
 public class ClubController {
     private final ClubService clubService;
     private final Authenticator authenticator;
+    private final KeyRateLimiter<UUID> uploadPhotoForClubRateLimiter;
+    private final KeyRateLimiter<UUID> getClubPhotoUserRateLimiter;
 
     @QueryMapping
     public @Nullable ClubEntity getClub(
@@ -86,6 +89,7 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId
         );
+        uploadPhotoForClubRateLimiter.throwIfRateLimitExceeded(clubId, new ValidationException("Rate limit exceeded!"));
         authenticator.authAdminByClubId(principal, clubId);
         if (!FileUtil.isImage(photo.getBase64())) {
             throw new ValidationException("File is not image!");
@@ -106,6 +110,8 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId
         );
+        var user = UUID.fromString(principal.getName());
+        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(user, new ValidationException("Rate limit exceeded!"));
         return clubService.getClubPhoto(clubId);
     }
 
