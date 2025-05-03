@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
@@ -12,6 +13,7 @@ import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.repository.UserRepository;
+import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.List;
 import java.util.UUID;
@@ -95,5 +97,21 @@ class ClubServiceTest extends AbstractContainerTest {
         );
         assertEquals(3, clubIdToApproversCount.getFirst());
         assertEquals(0, clubIdToApproversCount.get(1));
+    }
+
+    @Test
+    @Transactional
+    void testCreateClubWithApprovement() {
+        var user = userRepository.save(UserEntity.builder()
+                .id(UUID.randomUUID())
+                .fullName("")
+                .build());
+        var club = clubService.createClubWithApprovement("", "", StubDataUtil.membersConfirmApprovementData(), user.getId());
+
+        var actualClub = clubRepository.findById(club.getId()).orElseThrow();
+        assertEquals(1, actualClub.getMembers().size());
+        assertEquals(1, actualClub.getApprovements().size());
+        assertEquals(user.getId(), actualClub.getMembers().getFirst().getId());
+        assertEquals(MemberRole.ADMIN, actualClub.getMembers().getFirst().getRole());
     }
 }

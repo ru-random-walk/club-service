@@ -60,8 +60,7 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     @Transactional
-    public ClubEntity createClub(String clubName, @Nullable String description, Principal principal) {
-        var adminLogin = UUID.fromString(principal.getName());
+    public ClubEntity createClub(String clubName, @Nullable String description, UUID adminLogin) {
         var userClubCount = memberRepository.countByIdAndRole(adminLogin, MemberRole.ADMIN);
         if (userClubCount >= MAX_CLUB_COUNT_BY_USER) {
             throw new ValidationException("You are reached maximum count of clubs!");
@@ -95,13 +94,13 @@ public class ClubServiceImpl implements ClubService {
 
     @Override
     @Transactional
-    public ClubEntity createClubWithMembersConfirmApprovement(
+    public ClubEntity createClubWithApprovement(
             String name,
             String description,
             ApprovementData approvementData,
-            Principal principal
+            UUID adminLogin
     ) {
-        var club = createClub(name, description, principal);
+        var club = createClub(name, description, adminLogin);
         var approvementType = switch (approvementData) {
             case MembersConfirmApprovementData ignored -> ApprovementType.MEMBERS_CONFIRM;
             case FormApprovementData ignored -> ApprovementType.MEMBERS_CONFIRM;

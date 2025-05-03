@@ -67,7 +67,8 @@ public class ClubController {
                         """,
                 principal, principal.getName(), description, name
         );
-        return clubService.createClub(name, description, principal);
+        var adminLogin = UUID.fromString(principal.getName());
+        return clubService.createClub(name, description, adminLogin);
     }
 
     @MutationMapping
@@ -87,7 +88,8 @@ public class ClubController {
                 principal, principal.getName(), description, membersConfirm, name
         );
         var membersConfirmApprovementData = approvementMapper.toMembersConfirmApprovementData(membersConfirm);
-        return clubService.createClubWithMembersConfirmApprovement(name, description, membersConfirmApprovementData, principal);
+        var adminLogin = UUID.fromString(principal.getName());
+        return clubService.createClubWithApprovement(name, description, membersConfirmApprovementData, adminLogin);
     }
 
     @MutationMapping
@@ -107,7 +109,8 @@ public class ClubController {
                 principal, principal.getName(), description, form, name
         );
         var formApprovementData = approvementMapper.toFormApprovementData(form);
-        return clubService.createClubWithMembersConfirmApprovement(name, description, formApprovementData, principal);
+        var adminLogin = UUID.fromString(principal.getName());
+        return clubService.createClubWithApprovement(name, description, formApprovementData, adminLogin);
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)

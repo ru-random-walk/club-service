@@ -12,9 +12,9 @@ import java.util.UUID;
 public interface ClubService {
     ClubEntity getClubById(UUID clubId, PaginationInput membersPagination, boolean membersIsRequired, Principal principal);
 
-    ClubEntity createClub(String clubName, @Nullable String description, Principal principal);
+    ClubEntity createClub(String clubName, @Nullable String description, UUID adminLogin);
 
     List<Integer> getClubToApproversNumber(List<ClubEntity> clubs);
 
-    ClubEntity createClubWithMembersConfirmApprovement(String name, String description, ApprovementData approvementData, Principal principal);
+    ClubEntity createClubWithApprovement(String name, String description, ApprovementData approvementData, UUID adminLogin);
 }
