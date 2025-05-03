@@ -94,6 +94,21 @@ public class ClubController {
         return clubService.uploadPhotoForClub(clubId, inputFile);
     }
 
+    @QueryMapping
+    public PhotoUrl getClubPhoto(
+            @Argument UUID clubId,
+            Principal principal
+    ) {
+        log.info("""
+                        Get club photo for [{}]
+                        with login [{}]
+                        with clubId [{}]
+                        """,
+                principal, principal.getName(), clubId
+        );
+        return clubService.getClubPhoto(clubId);
+    }
+
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)
     public List<Integer> approversNumber(List<ClubEntity> clubs, Principal principal) {
         log.info("""

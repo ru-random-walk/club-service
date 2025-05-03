@@ -19,4 +19,6 @@ public interface ClubService {
     List<Integer> getClubToApproversNumber(List<ClubEntity> clubs);
 
     PhotoUrl uploadPhotoForClub(UUID clubId, InputStream inputFile) throws IOException;
+
+    PhotoUrl getClubPhoto(UUID clubId);
 }

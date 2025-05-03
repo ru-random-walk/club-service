@@ -103,6 +103,12 @@ public class ClubServiceImpl implements ClubService {
         return new PhotoUrl(club.getId().toString(), url, storageProperties.temporaryUrlTtlInMinutes());
     }
 
+    @Override
+    public PhotoUrl getClubPhoto(UUID clubId) {
+        var url = storageClient.getPngUrl(Map.of(PathKey.CLUB_ID, clubId));
+        return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
+    }
+
     @NotNull
     private ClubEntity updatePhotoVersionAndGet(UUID clubId) {
         var club = clubRepository.findById(clubId).orElseThrow();
