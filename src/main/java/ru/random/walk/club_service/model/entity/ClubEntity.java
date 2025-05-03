@@ -39,6 +39,10 @@ public class ClubEntity {
     @Nullable
     private String description;
 
+    @Column(name = "photo_version")
+    @Nullable
+    private Integer photoVersion;
+
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id", nullable = false, insertable = false, updatable = false)
     private List<MemberEntity> members;

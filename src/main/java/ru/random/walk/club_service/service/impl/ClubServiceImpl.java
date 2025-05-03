@@ -1,10 +1,12 @@
 package ru.random.walk.club_service.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.random.walk.client.StorageClient;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.projection.ClubIdToMemberRoleToCountProjection;
@@ -12,27 +14,38 @@ import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
+import ru.random.walk.club_service.model.graphql.types.PhotoInput;
+import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.auth.Authenticator;
 import ru.random.walk.club_service.util.Pair;
+import ru.random.walk.config.StorageProperties;
+import ru.random.walk.model.PathKey;
+import ru.random.walk.util.FileUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class ClubServiceImpl implements ClubService {
+    private final static int MAX_CLUB_PHOTO_SIZE_IN_BYTES = 5 * 1024 * 1024;
     private final static int MAX_CLUB_COUNT_BY_USER = 3;
 
     private final ClubRepository clubRepository;
     private final MemberRepository memberRepository;
     private final Authenticator authenticator;
+    private final StorageClient storageClient;
+    private final StorageProperties storageProperties;
 
     @Override
     public ClubEntity getClubById(
@@ -85,6 +98,36 @@ public class ClubServiceImpl implements ClubService {
         return clubs.stream()
                 .map(club -> getApproversNumber(club, clubMembersRoleToCount))
                 .toList();
+    }
+
+    @Override
+    public PhotoUrl uploadPhotoForClub(UUID clubId, PhotoInput photoInput, Principal principal) throws IOException {
+        try (var input = validateImageAndGetInputStream(photoInput.getBase64())) {
+            var club = updatePhotoVersionAndGet(clubId);
+            var url = storageClient.uploadPngAndGetUrl(input, Map.of(PathKey.CLUB_ID, club.getId()));
+            return new PhotoUrl(club.getId().toString(), url, storageProperties.temporaryUrlTtlInMinutes());
+        }
+    }
+
+    @NotNull
+    private ClubEntity updatePhotoVersionAndGet(UUID clubId) {
+        var club = clubRepository.findById(clubId).orElseThrow();
+        club.setPhotoVersion(Optional.ofNullable(club.getPhotoVersion()).orElse(0) + 1);
+        clubRepository.save(club);
+        return club;
+    }
+
+    @NotNull
+    private static InputStream validateImageAndGetInputStream(String base64) throws IOException {
+        var inputStream = FileUtil.getInputStream(base64);
+        if (!FileUtil.isImage(base64)) {
+            throw new ValidationException("File is not image!");
+        }
+        long fileSizeInBytes = inputStream.available();
+        if (fileSizeInBytes > MAX_CLUB_PHOTO_SIZE_IN_BYTES) {
+            throw new ValidationException("File size exceeds the maximum allowed size!");
+        }
+        return inputStream;
     }
 
     private static Integer getApproversNumber(

@@ -12,8 +12,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
+import ru.random.walk.club_service.model.graphql.types.PhotoInput;
+import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
 import ru.random.walk.club_service.service.ClubService;
+import ru.random.walk.club_service.service.auth.Authenticator;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +29,7 @@ import java.util.UUID;
 @PreAuthorize("hasAuthority('DEFAULT_USER')")
 public class ClubController {
     private final ClubService clubService;
+    private final Authenticator authenticator;
 
     @QueryMapping
     public @Nullable ClubEntity getClub(
@@ -64,6 +69,23 @@ public class ClubController {
                 principal, principal.getName(), description, name
         );
         return clubService.createClub(name, description, principal);
+    }
+
+    @MutationMapping
+    public PhotoUrl uploadPhotoForClub(
+            @Argument UUID clubId,
+            @Argument PhotoInput photo,
+            Principal principal
+    ) throws IOException {
+        log.info("""
+                        Upload club photo for [{}]
+                        with login [{}]
+                        with clubId [{}]
+                        """,
+                principal, principal.getName(), clubId
+        );
+        authenticator.authAdminByClubId(principal, clubId);
+        return clubService.uploadPhotoForClub(clubId, photo, principal);
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)

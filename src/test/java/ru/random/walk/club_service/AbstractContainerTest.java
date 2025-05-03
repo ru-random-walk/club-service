@@ -5,17 +5,21 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
+import ru.random.walk.client.StorageClient;
 
 @SuppressWarnings("resource")
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractContainerTest {
-
     private static final PostgreSQLContainer<?> DATABASE_CONTAINER;
     private static final KafkaContainer KAFKA_CONTAINER;
+
+    @MockitoBean
+    protected StorageClient storageClient;
 
     static {
         DATABASE_CONTAINER = new PostgreSQLContainer<>("postgres:latest")
