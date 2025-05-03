@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class ClubServiceImpl implements ClubService {
-    private final static int MAX_CLUB_PHOTO_SIZE_IN_BYTES = 5 * 1024 * 1024;
     private final static int MAX_CLUB_COUNT_BY_USER = 3;
 
     private final ClubRepository clubRepository;
