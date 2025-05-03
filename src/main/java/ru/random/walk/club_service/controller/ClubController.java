@@ -11,11 +11,13 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.model.entity.ClubEntity;
+import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.model.graphql.types.PhotoInput;
 import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.auth.Authenticator;
+import ru.random.walk.util.FileUtil;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -85,7 +87,11 @@ public class ClubController {
                 principal, principal.getName(), clubId
         );
         authenticator.authAdminByClubId(principal, clubId);
-        return clubService.uploadPhotoForClub(clubId, photo, principal);
+        if (!FileUtil.isImage(photo.getBase64())) {
+            throw new ValidationException("File is not image!");
+        }
+        var inputFile = FileUtil.getInputStream(photo.getBase64());
+        return clubService.uploadPhotoForClub(clubId, inputFile);
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)
