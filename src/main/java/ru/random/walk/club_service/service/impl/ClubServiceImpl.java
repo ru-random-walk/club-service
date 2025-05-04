@@ -19,6 +19,7 @@ import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
+import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
@@ -43,6 +44,7 @@ public class ClubServiceImpl implements ClubService {
     private final ClubRepository clubRepository;
     private final MemberRepository memberRepository;
     private final ApprovementRepository approvementRepository;
+    private final AnswerRepository answerRepository;
 
     private final MemberService memberService;
     private final StorageClient storageClient;
@@ -126,6 +128,10 @@ public class ClubServiceImpl implements ClubService {
     @Transactional
     public UUID removeClubWithAllItsData(UUID clubId) {
         var club = clubRepository.findById(clubId).orElseThrow();
+        var approvementIds = approvementRepository.findAllByClubId(club.getId()).stream()
+                .map(ApprovementEntity::getId)
+                .toList();
+        answerRepository.deleteAllByApprovementIdIn(approvementIds);
         approvementRepository.deleteAllByClubId(club.getId());
         memberService.deleteAllByClubId(club.getId());
         clubRepository.delete(club);

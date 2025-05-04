@@ -9,6 +9,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.AbstractContainerTest;
+import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.UserEntity;
@@ -21,9 +22,7 @@ import ru.random.walk.club_service.service.job.OutboxSendingJob;
 import ru.random.walk.club_service.util.StubDataUtil;
 import ru.random.walk.dto.UserExcludeEvent;
 import ru.random.walk.topic.EventTopic;
-import ru.random.walk.club_service.util.StubDataUtil;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -46,6 +45,7 @@ class ClubServiceTest extends AbstractContainerTest {
     private final ClubService clubService;
     private final ApprovementService approvementService;
     private final UserService userService;
+    private final AnswerService answerService;
 
     private final OutboxSendingJob outboxSendingJob;
 
@@ -123,6 +123,11 @@ class ClubServiceTest extends AbstractContainerTest {
 
     @Test
     void testRemoveClubWithAllItsData() throws JsonProcessingException {
+        var answererId = UUID.randomUUID();
+        userService.add(UserEntity.builder()
+                .fullName("John")
+                .id(answererId)
+                .build());
         var userId = UUID.randomUUID();
         userService.add(UserEntity.builder()
                 .fullName("John")
@@ -130,6 +135,7 @@ class ClubServiceTest extends AbstractContainerTest {
                 .build());
         var club = clubService.createClub("Majors", userId);
         var approvement = approvementService.addForClub(StubDataUtil.formApprovementData(), club.getId());
+        answerService.createForm(approvement.getId(), (FormAnswerData) StubDataUtil.formAnswerData(), answererId);
 
         clubRepository.findById(club.getId()).orElseThrow();
         approvementRepository.findById(approvement.getId()).orElseThrow();
