@@ -5,6 +5,7 @@ type Club {
     members: [Member!]!
     approvements: [Approvement!]!
     approversNumber: Int!
+    photoVersion: Int
 }
 
 type ClubWithUserRole {
@@ -70,4 +71,10 @@ type Confirmation {
     userId: ID!
     status: ConfirmationStatus!
     answer: Answer
+}
+
+type PhotoUrl {
+    clubId: ID!
+    url: String!
+    expiresInMinutes: Int!
 }

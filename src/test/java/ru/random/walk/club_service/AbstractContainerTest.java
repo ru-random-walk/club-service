@@ -3,6 +3,7 @@ package ru.random.walk.club_service;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.KafkaContainer;
@@ -12,8 +13,8 @@ import org.testcontainers.utility.DockerImageName;
 @SuppressWarnings("resource")
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Import(TestContextConfiguration.class)
 public abstract class AbstractContainerTest {
-
     private static final PostgreSQLContainer<?> DATABASE_CONTAINER;
     private static final KafkaContainer KAFKA_CONTAINER;
 

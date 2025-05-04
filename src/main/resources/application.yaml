@@ -53,3 +53,16 @@ logging:
 outbox:
   job:
     startIntervalInSeconds: 5
+storage:
+  endpoint: ${STORAGE_ENDPOINT}
+  bucketName: ${STORAGE_BUCKET_NAME}
+  accessKey: ${STORAGE_ACCESS_KEY}
+  secretKey: ${STORAGE_SECRET_KEY}
+  region: ${STORAGE_REGION}
+  temporaryUrlTtlInMinutes: 5
+  servicePath: club-service
+rate-limiter:
+  uploadPhotoForClubRateLimiter:
+    period-duration: PT12H
+  getClubPhotoUserRateLimiter:
+    period-duration: PT1H

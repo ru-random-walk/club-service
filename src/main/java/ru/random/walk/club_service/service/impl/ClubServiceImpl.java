@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.random.walk.client.StorageClient;
 import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
@@ -17,6 +18,7 @@ import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
+import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
@@ -24,10 +26,14 @@ import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.MemberService;
 import ru.random.walk.club_service.service.auth.Authenticator;
 import ru.random.walk.club_service.util.Pair;
+import ru.random.walk.config.StorageProperties;
+import ru.random.walk.model.PathKey;
 
+import java.io.InputStream;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -42,6 +48,8 @@ public class ClubServiceImpl implements ClubService {
 
     private final MemberService memberService;
     private final Authenticator authenticator;
+    private final StorageClient storageClient;
+    private final StorageProperties storageProperties;
 
     @Override
     public ClubEntity getClubById(
@@ -127,6 +135,26 @@ public class ClubServiceImpl implements ClubService {
         memberService.deleteAllByClubId(club.getId());
         clubRepository.delete(club);
         return club.getId();
+    }
+
+    @Override
+    @Transactional
+    public PhotoUrl uploadPhotoForClub(UUID clubId, InputStream inputFile) {
+        updateClubPhotoVersion(clubId);
+        var url = storageClient.uploadPngAndGetUrl(inputFile, Map.of(PathKey.CLUB_ID, clubId));
+        return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
+    }
+
+    @Override
+    public PhotoUrl getClubPhoto(UUID clubId) {
+        var url = storageClient.getPngUrl(Map.of(PathKey.CLUB_ID, clubId));
+        return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
+    }
+
+    private void updateClubPhotoVersion(UUID clubId) {
+        var club = clubRepository.findById(clubId).orElseThrow();
+        club.setPhotoVersion(Optional.ofNullable(club.getPhotoVersion()).orElse(0) + 1);
+        clubRepository.save(club);
     }
 
     private static Integer getApproversNumber(
