@@ -77,6 +77,22 @@ public class ClubController {
     }
 
     @MutationMapping
+    public UUID removeClubWithAllItsData(
+            @Argument UUID clubId,
+            Principal principal
+    ) {
+        log.info("""
+                        Remove club with all its data for [{}]
+                        with login [{}]
+                        with id [{}]
+                        """,
+                principal, principal.getName(), clubId
+        );
+        authenticator.authAdminByClubId(principal, clubId);
+        return clubService.removeClubWithAllItsData(clubId);
+    }
+
+    @MutationMapping
     public PhotoUrl uploadPhotoForClub(
             @Argument UUID clubId,
             @Argument PhotoInput photo,

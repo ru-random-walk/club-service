@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
@@ -39,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
 class ConfirmationServiceTest extends AbstractContainerTest {
     private final ConfirmationService confirmationService;

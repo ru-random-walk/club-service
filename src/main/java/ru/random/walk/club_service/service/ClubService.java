@@ -18,7 +18,13 @@ public interface ClubService {
 
     List<Integer> getClubToApproversNumber(List<ClubEntity> clubs);
 
+    UUID removeClubWithAllItsData(UUID clubId);
+
     PhotoUrl uploadPhotoForClub(UUID clubId, InputStream inputFile) throws IOException;
 
     PhotoUrl getClubPhoto(UUID clubId);
+
+    default ClubEntity createClub(String clubName, Principal principal) {
+        return createClub(clubName, null, principal);
+    }
 }

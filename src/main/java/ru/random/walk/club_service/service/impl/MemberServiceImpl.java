@@ -16,6 +16,7 @@ import ru.random.walk.dto.UserExcludeEvent;
 import ru.random.walk.dto.UserJoinEvent;
 import ru.random.walk.topic.EventTopic;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -83,5 +84,18 @@ public class MemberServiceImpl implements MemberService {
             return Optional.of(addInClub(memberId, clubId));
         }
         return Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllByClubId(UUID clubId) {
+        var members = memberRepository.deleteAllByClubId(clubId);
+        List<UserExcludeEvent> eventList = members.stream()
+                .map(memberEntity -> UserExcludeEvent.builder()
+                        .clubId(memberEntity.getClubId())
+                        .userId(memberEntity.getId())
+                        .build())
+                .toList();
+        outboxSenderService.sendAllMessages(EventTopic.USER_EXCLUDE, eventList);
     }
 }

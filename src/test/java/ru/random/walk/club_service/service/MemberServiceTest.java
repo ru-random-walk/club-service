@@ -1,9 +1,8 @@
-package ru.random.walk.club_service.service.impl;
+package ru.random.walk.club_service.service;
 
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
@@ -17,14 +16,12 @@ import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.repository.UserRepository;
-import ru.random.walk.club_service.service.MemberService;
 import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
 class MemberServiceTest extends AbstractContainerTest {
     private final UserRepository userRepository;

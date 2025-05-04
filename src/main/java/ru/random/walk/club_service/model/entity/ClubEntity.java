@@ -45,7 +45,8 @@ public class ClubEntity {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id", nullable = false, insertable = false, updatable = false)
-    private List<MemberEntity> members;
+    @Builder.Default
+    private List<MemberEntity> members = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_id", nullable = false, insertable = false, updatable = false)
