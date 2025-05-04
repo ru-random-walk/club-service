@@ -24,13 +24,11 @@ import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.MemberService;
-import ru.random.walk.club_service.service.auth.Authenticator;
 import ru.random.walk.club_service.util.Pair;
 import ru.random.walk.config.StorageProperties;
 import ru.random.walk.model.PathKey;
 
 import java.io.InputStream;
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +45,6 @@ public class ClubServiceImpl implements ClubService {
     private final ApprovementRepository approvementRepository;
 
     private final MemberService memberService;
-    private final Authenticator authenticator;
     private final StorageClient storageClient;
     private final StorageProperties storageProperties;
 
@@ -55,13 +52,11 @@ public class ClubServiceImpl implements ClubService {
     public ClubEntity getClubById(
             UUID clubId,
             PaginationInput membersPagination,
-            boolean membersIsRequired,
-            Principal principal
+            boolean membersIsRequired
     ) {
         var club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new NotFoundException("Club with such answerId not found!"));
         if (membersIsRequired) {
-            authenticator.authAdminByClubId(principal, clubId);
             var membersPageable = PageRequest.of(membersPagination.getPage(), membersPagination.getSize());
             var membersPage = memberRepository.findAllByClubId(clubId, membersPageable);
             club.setMembers(membersPage.getContent());
