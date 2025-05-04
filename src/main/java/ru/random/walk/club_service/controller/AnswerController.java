@@ -10,6 +10,7 @@ import ru.random.walk.club_service.mapper.AnswerMapper;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.graphql.types.FormAnswerInput;
 import ru.random.walk.club_service.service.AnswerService;
+import ru.random.walk.club_service.service.auth.Authenticator;
 
 import java.security.Principal;
 import java.util.UUID;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class AnswerController {
     private final AnswerMapper answerMapper;
     private final AnswerService answerService;
+    private final Authenticator authenticator;
 
     @MutationMapping
     public AnswerEntity createApprovementAnswerMembersConfirm(
@@ -34,7 +36,8 @@ public class AnswerController {
                         """,
                 principal, principal.getName(), approvementId
         );
-        return answerService.createMembersConfirm(approvementId, principal);
+        var userId = authenticator.getLogin(principal);
+        return answerService.createMembersConfirm(approvementId, userId);
     }
 
     @MutationMapping
@@ -52,7 +55,8 @@ public class AnswerController {
                 principal, principal.getName(), approvementId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return answerService.createForm(approvementId, formAnswerData, principal);
+        var userId = authenticator.getLogin(principal);
+        return answerService.createForm(approvementId, formAnswerData, userId);
     }
 
     @MutationMapping
@@ -69,8 +73,9 @@ public class AnswerController {
                         """,
                 principal, principal.getName(), answerId, formAnswer
         );
+        authenticator.authUserByAnswer(answerId, principal);
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return answerService.updateForm(answerId, formAnswerData, principal);
+        return answerService.updateForm(answerId, formAnswerData);
     }
 
     @MutationMapping
@@ -85,6 +90,8 @@ public class AnswerController {
                         """,
                 principal, principal.getName(), answerId
         );
-        return answerService.setStatusToSent(answerId, principal);
+        authenticator.authUserByAnswer(answerId, principal);
+        var userId = authenticator.getLogin(principal);
+        return answerService.setStatusToSent(answerId, userId);
     }
 }
