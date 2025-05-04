@@ -1,16 +1,15 @@
 package ru.random.walk.club_service.service.impl;
 
 import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.random.walk.client.StorageClient;
 import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
-import ru.random.walk.client.StorageClient;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.projection.ClubIdToMemberRoleToCountProjection;
@@ -19,8 +18,8 @@ import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
-import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
+import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ClubService;
@@ -139,10 +138,11 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
+    @Transactional
     public PhotoUrl uploadPhotoForClub(UUID clubId, InputStream inputFile) {
-        var club = updatePhotoVersionAndGet(clubId);
-        var url = storageClient.uploadPngAndGetUrl(inputFile, Map.of(PathKey.CLUB_ID, club.getId()));
-        return new PhotoUrl(club.getId().toString(), url, storageProperties.temporaryUrlTtlInMinutes());
+        updateClubPhotoVersion(clubId);
+        var url = storageClient.uploadPngAndGetUrl(inputFile, Map.of(PathKey.CLUB_ID, clubId));
+        return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
     }
 
     @Override
@@ -151,12 +151,10 @@ public class ClubServiceImpl implements ClubService {
         return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
     }
 
-    @NotNull
-    private ClubEntity updatePhotoVersionAndGet(UUID clubId) {
+    private void updateClubPhotoVersion(UUID clubId) {
         var club = clubRepository.findById(clubId).orElseThrow();
         club.setPhotoVersion(Optional.ofNullable(club.getPhotoVersion()).orElse(0) + 1);
         clubRepository.save(club);
-        return club;
     }
 
     private static Integer getApproversNumber(
