@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.AbstractContainerTest;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Slf4j
-@SpringBootTest
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 class MemberRepositoryTest extends AbstractContainerTest {
     @Autowired

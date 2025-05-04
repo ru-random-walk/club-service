@@ -16,6 +16,7 @@ import ru.random.walk.club_service.model.graphql.types.FormInput;
 import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.service.ClubService;
+import ru.random.walk.club_service.service.auth.Authenticator;
 
 import java.security.Principal;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.UUID;
 public class ClubController {
     private final ApprovementMapper approvementMapper;
     private final ClubService clubService;
+    private final Authenticator authenticator;
 
     @QueryMapping
     public @Nullable ClubEntity getClub(
@@ -111,6 +113,22 @@ public class ClubController {
         var formApprovementData = approvementMapper.toFormApprovementData(form);
         var adminLogin = UUID.fromString(principal.getName());
         return clubService.createClubWithApprovement(name, description, formApprovementData, adminLogin);
+    }
+
+    @MutationMapping
+    public UUID removeClubWithAllItsData(
+            @Argument UUID clubId,
+            Principal principal
+    ) {
+        log.info("""
+                        Remove club with all its data for [{}]
+                        with login [{}]
+                        with id [{}]
+                        """,
+                principal, principal.getName(), clubId
+        );
+        authenticator.authAdminByClubId(principal, clubId);
+        return clubService.removeClubWithAllItsData(clubId);
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)
