@@ -8,12 +8,11 @@ import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
 public interface ClubService {
-    ClubEntity getClubById(UUID clubId, PaginationInput membersPagination, boolean membersIsRequired, Principal principal);
+    ClubEntity getClubById(UUID clubId, PaginationInput membersPagination, boolean membersIsRequired);
 
     ClubEntity createClub(String clubName, @Nullable String description, UUID adminLogin);
 
