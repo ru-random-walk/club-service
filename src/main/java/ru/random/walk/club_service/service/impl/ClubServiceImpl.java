@@ -12,9 +12,11 @@ import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
+import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ClubService;
+import ru.random.walk.club_service.service.MemberService;
 import ru.random.walk.club_service.service.auth.Authenticator;
 import ru.random.walk.club_service.util.Pair;
 
@@ -32,6 +34,9 @@ public class ClubServiceImpl implements ClubService {
 
     private final ClubRepository clubRepository;
     private final MemberRepository memberRepository;
+    private final ApprovementRepository approvementRepository;
+
+    private final MemberService memberService;
     private final Authenticator authenticator;
 
     @Override
@@ -85,6 +90,16 @@ public class ClubServiceImpl implements ClubService {
         return clubs.stream()
                 .map(club -> getApproversNumber(club, clubMembersRoleToCount))
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public UUID removeClubWithAllItsData(UUID clubId) {
+        var club = clubRepository.findById(clubId).orElseThrow();
+        approvementRepository.deleteAllByClubId(club.getId());
+        memberService.deleteAllByClubId(club.getId());
+        clubRepository.delete(club);
+        return club.getId();
     }
 
     private static Integer getApproversNumber(

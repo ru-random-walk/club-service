@@ -30,6 +30,7 @@ input RegisteredUserInfoEvent {
 type Mutation {
     # Club mutations
     createClub(name: String!, description: String): Club!
+    removeClubWithAllItsData(clubId: ID!): ID!
 
     # Approvement mutations
     addClubApprovementMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput! @ValidMembersConfirm): Approvement!

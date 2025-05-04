@@ -3,7 +3,6 @@ package ru.random.walk.club_service.repository;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
@@ -17,7 +16,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
 class AnswerRepositoryTest extends AbstractContainerTest {
     private final AnswerRepository answerRepository;
