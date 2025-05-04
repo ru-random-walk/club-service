@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
@@ -20,6 +21,7 @@ import ru.random.walk.club_service.service.job.OutboxSendingJob;
 import ru.random.walk.club_service.util.StubDataUtil;
 import ru.random.walk.dto.UserExcludeEvent;
 import ru.random.walk.topic.EventTopic;
+import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
@@ -126,7 +128,7 @@ class ClubServiceTest extends AbstractContainerTest {
                 .fullName("John")
                 .id(userId)
                 .build());
-        var club = clubService.createClub("Majors", (UserPrincipal) userId::toString);
+        var club = clubService.createClub("Majors", userId);
         var approvement = approvementService.addForClub(StubDataUtil.formApprovementData(), club.getId());
 
         clubRepository.findById(club.getId()).orElseThrow();
@@ -146,5 +148,21 @@ class ClubServiceTest extends AbstractContainerTest {
                 )
         );
         assertTrue(clubRepository.findById(club.getId()).isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void testCreateClubWithApprovement() {
+        var user = userRepository.save(UserEntity.builder()
+                .id(UUID.randomUUID())
+                .fullName("")
+                .build());
+        var club = clubService.createClubWithApprovement("", "", StubDataUtil.membersConfirmApprovementData(), user.getId());
+
+        var actualClub = clubRepository.findById(club.getId()).orElseThrow();
+        assertEquals(1, actualClub.getMembers().size());
+        assertEquals(1, actualClub.getApprovements().size());
+        assertEquals(user.getId(), actualClub.getMembers().getFirst().getId());
+        assertEquals(MemberRole.ADMIN, actualClub.getMembers().getFirst().getRole());
     }
 }
