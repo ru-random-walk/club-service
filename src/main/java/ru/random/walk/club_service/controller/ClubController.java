@@ -12,12 +12,18 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.mapper.ApprovementMapper;
 import ru.random.walk.club_service.model.entity.ClubEntity;
+import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.FormInput;
 import ru.random.walk.club_service.model.graphql.types.MembersConfirmInput;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
+import ru.random.walk.club_service.model.graphql.types.PhotoInput;
+import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.auth.Authenticator;
+import ru.random.walk.util.FileUtil;
+import ru.random.walk.util.KeyRateLimiter;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +37,8 @@ public class ClubController {
     private final ApprovementMapper approvementMapper;
     private final ClubService clubService;
     private final Authenticator authenticator;
+    private final KeyRateLimiter<UUID> uploadPhotoForClubRateLimiter;
+    private final KeyRateLimiter<UUID> getClubPhotoUserRateLimiter;
 
     @QueryMapping
     public @Nullable ClubEntity getClub(
@@ -129,6 +137,45 @@ public class ClubController {
         );
         authenticator.authAdminByClubId(principal, clubId);
         return clubService.removeClubWithAllItsData(clubId);
+    }
+
+    @MutationMapping
+    public PhotoUrl uploadPhotoForClub(
+            @Argument UUID clubId,
+            @Argument PhotoInput photo,
+            Principal principal
+    ) throws IOException {
+        log.info("""
+                        Upload club photo for [{}]
+                        with login [{}]
+                        with clubId [{}]
+                        """,
+                principal, principal.getName(), clubId
+        );
+        uploadPhotoForClubRateLimiter.throwIfRateLimitExceeded(clubId, new ValidationException("Rate limit exceeded!"));
+        authenticator.authAdminByClubId(principal, clubId);
+        if (!FileUtil.isImage(photo.getBase64())) {
+            throw new ValidationException("File is not image!");
+        }
+        var inputFile = FileUtil.getInputStream(photo.getBase64());
+        return clubService.uploadPhotoForClub(clubId, inputFile);
+    }
+
+    @QueryMapping
+    public PhotoUrl getClubPhoto(
+            @Argument UUID clubId,
+            Principal principal
+    ) {
+        log.info("""
+                        Get club photo for [{}]
+                        with login [{}]
+                        with clubId [{}]
+                        """,
+                principal, principal.getName(), clubId
+        );
+        var user = UUID.fromString(principal.getName());
+        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(user, new ValidationException("Rate limit exceeded!"));
+        return clubService.getClubPhoto(clubId);
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)

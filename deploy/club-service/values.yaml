@@ -36,6 +36,26 @@ secrets:
     secret_key: POSTGRES_PASSWORD
     secret_name: postgresql-secret
 
+  - name: STORAGE_ENDPOINT
+    secret_key: STORAGE_ENDPOINT
+    secret_name: storage-secret
+
+  - name: STORAGE_BUCKET_NAME
+    secret_key: STORAGE_BUCKET_NAME
+    secret_name: storage-secret
+
+  - name: STORAGE_ACCESS_KEY
+    secret_key: STORAGE_ACCESS_KEY
+    secret_name: storage-secret
+
+  - name: STORAGE_SECRET_KEY
+    secret_key: STORAGE_SECRET_KEY
+    secret_name: storage-secret
+
+  - name: STORAGE_REGION
+    secret_key: STORAGE_REGION
+    secret_name: storage-secret
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
