@@ -13,6 +13,7 @@ import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.UserEntity;
+import ru.random.walk.club_service.model.entity.type.ApprovementType;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
@@ -158,7 +159,7 @@ class ClubServiceTest extends AbstractContainerTest {
 
     @Test
     @Transactional
-    void testCreateClubWithApprovement() {
+    void testCreateClubWithMembersConfirmApprovement() {
         var user = userRepository.save(UserEntity.builder()
                 .id(UUID.randomUUID())
                 .fullName("")
@@ -168,6 +169,24 @@ class ClubServiceTest extends AbstractContainerTest {
         var actualClub = clubRepository.findById(club.getId()).orElseThrow();
         assertEquals(1, actualClub.getMembers().size());
         assertEquals(1, actualClub.getApprovements().size());
+        assertEquals(ApprovementType.MEMBERS_CONFIRM, actualClub.getApprovements().getFirst().getType());
+        assertEquals(user.getId(), actualClub.getMembers().getFirst().getId());
+        assertEquals(MemberRole.ADMIN, actualClub.getMembers().getFirst().getRole());
+    }
+
+    @Test
+    @Transactional
+    void testCreateClubWithFormApprovement() {
+        var user = userRepository.save(UserEntity.builder()
+                .id(UUID.randomUUID())
+                .fullName("")
+                .build());
+        var club = clubService.createClubWithApprovement("", "", StubDataUtil.formApprovementData(), user.getId());
+
+        var actualClub = clubRepository.findById(club.getId()).orElseThrow();
+        assertEquals(1, actualClub.getMembers().size());
+        assertEquals(1, actualClub.getApprovements().size());
+        assertEquals(ApprovementType.FORM, actualClub.getApprovements().getFirst().getType());
         assertEquals(user.getId(), actualClub.getMembers().getFirst().getId());
         assertEquals(MemberRole.ADMIN, actualClub.getMembers().getFirst().getRole());
     }
