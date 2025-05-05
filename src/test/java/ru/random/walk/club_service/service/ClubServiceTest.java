@@ -12,6 +12,7 @@ import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.UserEntity;
+import ru.random.walk.club_service.model.entity.type.ApprovementType;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
@@ -21,9 +22,7 @@ import ru.random.walk.club_service.service.job.OutboxSendingJob;
 import ru.random.walk.club_service.util.StubDataUtil;
 import ru.random.walk.dto.UserExcludeEvent;
 import ru.random.walk.topic.EventTopic;
-import ru.random.walk.club_service.util.StubDataUtil;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -152,7 +151,7 @@ class ClubServiceTest extends AbstractContainerTest {
 
     @Test
     @Transactional
-    void testCreateClubWithApprovement() {
+    void testCreateClubWithMembersConfirmApprovement() {
         var user = userRepository.save(UserEntity.builder()
                 .id(UUID.randomUUID())
                 .fullName("")
@@ -162,6 +161,24 @@ class ClubServiceTest extends AbstractContainerTest {
         var actualClub = clubRepository.findById(club.getId()).orElseThrow();
         assertEquals(1, actualClub.getMembers().size());
         assertEquals(1, actualClub.getApprovements().size());
+        assertEquals(ApprovementType.MEMBERS_CONFIRM, actualClub.getApprovements().getFirst().getType());
+        assertEquals(user.getId(), actualClub.getMembers().getFirst().getId());
+        assertEquals(MemberRole.ADMIN, actualClub.getMembers().getFirst().getRole());
+    }
+
+    @Test
+    @Transactional
+    void testCreateClubWithFormApprovement() {
+        var user = userRepository.save(UserEntity.builder()
+                .id(UUID.randomUUID())
+                .fullName("")
+                .build());
+        var club = clubService.createClubWithApprovement("", "", StubDataUtil.formApprovementData(), user.getId());
+
+        var actualClub = clubRepository.findById(club.getId()).orElseThrow();
+        assertEquals(1, actualClub.getMembers().size());
+        assertEquals(1, actualClub.getApprovements().size());
+        assertEquals(ApprovementType.FORM, actualClub.getApprovements().getFirst().getType());
         assertEquals(user.getId(), actualClub.getMembers().getFirst().getId());
         assertEquals(MemberRole.ADMIN, actualClub.getMembers().getFirst().getRole());
     }

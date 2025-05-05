@@ -114,7 +114,7 @@ public class ClubServiceImpl implements ClubService {
         var club = createClub(name, description, adminLogin);
         var approvementType = switch (approvementData) {
             case MembersConfirmApprovementData ignored -> ApprovementType.MEMBERS_CONFIRM;
-            case FormApprovementData ignored -> ApprovementType.MEMBERS_CONFIRM;
+            case FormApprovementData ignored -> ApprovementType.FORM;
             default -> throw new IllegalStateException("Unexpected value: " + approvementData);
         };
         var approvement = approvementRepository.save(ApprovementEntity.builder()
