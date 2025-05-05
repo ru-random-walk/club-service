@@ -59,7 +59,7 @@ storage:
   accessKey: ${STORAGE_ACCESS_KEY}
   secretKey: ${STORAGE_SECRET_KEY}
   region: ${STORAGE_REGION}
-  temporaryUrlTtlInMinutes: 5
+  temporaryUrlTtlInMinutes: 1
   servicePath: club-service
 rate-limiter:
 #  period-duration описание - где P это дата, а T это время
@@ -81,6 +81,6 @@ rate-limiter:
 #  # 2 года, 3 месяца, 4 дня, 5 часов, 6 минут и 7 секунд
 #  rate-limiter.uploadPhotoForClubRateLimiter.period-duration=P2Y3M4DT5H6M7S
   uploadPhotoForClubRateLimiter:
-    period-duration: PT12H
+    period-duration: PT30S
   getClubPhotoUserRateLimiter:
-    period-duration: PT1H
+    period-duration: PT15S
