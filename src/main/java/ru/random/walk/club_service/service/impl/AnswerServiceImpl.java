@@ -3,6 +3,7 @@ package ru.random.walk.club_service.service.impl;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.model.domain.answer.AnswerData;
 import ru.random.walk.club_service.model.domain.answer.FormAnswerData;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
@@ -45,7 +46,7 @@ public class AnswerServiceImpl implements AnswerService {
     @NotNull
     private AnswerEntity saveWithValidateAnswerData(UUID approvementId, AnswerData answerData, Principal principal) {
         var approvement = approvementRepository.findById(approvementId)
-                .orElseThrow(() -> new NotFoundException("Approvement with such answerId not found!"));
+                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
         answerValidatorChain.validate(answerData, approvement.getData(), approvement.getType());
         var userId = UUID.fromString(principal.getName());
         checkUserAnswerCount(approvement, userId);
@@ -77,6 +78,7 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
+    @Transactional
     public AnswerEntity setStatusToSent(UUID answerId, Principal principal) {
         var answer = updateEntityStatusToSent(answerId, principal);
         var userId = authenticator.getLogin(principal);

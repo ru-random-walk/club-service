@@ -26,6 +26,10 @@ enum AnswerStatus {
     CREATED
     # The answer has been sent for review
     SENT
+    # The answer in progress for checking answer options
+    IN_PROGRESS
+    # The answer in review and waiting for manual approve or reject
+    IN_REVIEW
     # The answer was reviewed with failed result
     FAILED
     # The answer was reviewed with passed result
