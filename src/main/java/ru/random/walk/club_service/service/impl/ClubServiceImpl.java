@@ -128,10 +128,7 @@ public class ClubServiceImpl implements ClubService {
     @Transactional
     public UUID removeClubWithAllItsData(UUID clubId) {
         var club = clubRepository.findById(clubId).orElseThrow();
-        var approvementIds = approvementRepository.findAllByClubId(club.getId()).stream()
-                .map(ApprovementEntity::getId)
-                .toList();
-        answerRepository.deleteAllByApprovementIdIn(approvementIds);
+        answerRepository.deleteAllByClubId(clubId);
         approvementRepository.deleteAllByClubId(club.getId());
         memberService.deleteAllByClubId(club.getId());
         clubRepository.delete(club);

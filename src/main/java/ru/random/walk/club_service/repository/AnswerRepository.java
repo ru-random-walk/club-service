@@ -44,5 +44,14 @@ public interface AnswerRepository extends JpaRepository<AnswerEntity, UUID> {
     )
     Set<UUID> findAllPassedIdsByUserIdAndClubId(@Param("userId") UUID userId, @Param("clubId") UUID clubId);
 
-    void deleteAllByApprovementIdIn(List<UUID> approvementIds);
+    @Query("""
+            delete from AnswerEntity a
+            where a.approvement.id in (
+                select a.id
+                from ApprovementEntity a
+                where a.clubId = :clubId
+            )
+            """)
+    @Modifying
+    void deleteAllByClubId(UUID clubId);
 }
