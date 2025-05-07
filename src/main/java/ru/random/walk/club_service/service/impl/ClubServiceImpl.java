@@ -19,18 +19,17 @@ import ru.random.walk.club_service.model.exception.NotFoundException;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
+import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.MemberService;
-import ru.random.walk.club_service.service.auth.Authenticator;
 import ru.random.walk.club_service.util.Pair;
 import ru.random.walk.config.StorageProperties;
 import ru.random.walk.model.PathKey;
 
 import java.io.InputStream;
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -45,9 +44,9 @@ public class ClubServiceImpl implements ClubService {
     private final ClubRepository clubRepository;
     private final MemberRepository memberRepository;
     private final ApprovementRepository approvementRepository;
+    private final AnswerRepository answerRepository;
 
     private final MemberService memberService;
-    private final Authenticator authenticator;
     private final StorageClient storageClient;
     private final StorageProperties storageProperties;
 
@@ -55,13 +54,11 @@ public class ClubServiceImpl implements ClubService {
     public ClubEntity getClubById(
             UUID clubId,
             PaginationInput membersPagination,
-            boolean membersIsRequired,
-            Principal principal
+            boolean membersIsRequired
     ) {
         var club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new NotFoundException("Club with such answerId not found!"));
         if (membersIsRequired) {
-            authenticator.authAdminByClubId(principal, clubId);
             var membersPageable = PageRequest.of(membersPagination.getPage(), membersPagination.getSize());
             var membersPage = memberRepository.findAllByClubId(clubId, membersPageable);
             club.setMembers(membersPage.getContent());
@@ -131,6 +128,7 @@ public class ClubServiceImpl implements ClubService {
     @Transactional
     public UUID removeClubWithAllItsData(UUID clubId) {
         var club = clubRepository.findById(clubId).orElseThrow();
+        answerRepository.deleteAllByClubId(clubId);
         approvementRepository.deleteAllByClubId(club.getId());
         memberService.deleteAllByClubId(club.getId());
         clubRepository.delete(club);

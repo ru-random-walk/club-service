@@ -17,11 +17,9 @@ import ru.random.walk.club_service.model.model.ForReviewData;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.service.AnswerService;
-import ru.random.walk.club_service.service.auth.impl.AuthenticatorImpl;
 import ru.random.walk.club_service.service.reviewer.AnswerReviewer;
 import ru.random.walk.club_service.service.validation.impl.AnswerValidatorChainImpl;
 
-import java.security.Principal;
 import java.util.UUID;
 
 @Service
@@ -30,32 +28,16 @@ public class AnswerServiceImpl implements AnswerService {
     private final AnswerRepository answerRepository;
     private final ApprovementRepository approvementRepository;
     private final AnswerValidatorChainImpl answerValidatorChain;
-    private final AuthenticatorImpl authenticator;
     private final AnswerReviewer answerReviewer;
 
     @Override
-    public AnswerEntity createMembersConfirm(UUID approvementId, Principal principal) {
-        return saveWithValidateAnswerData(approvementId, MembersConfirmAnswerData.INSTANCE, principal);
+    public AnswerEntity createMembersConfirm(UUID approvementId, UUID userId) {
+        return saveWithValidateAnswerData(approvementId, MembersConfirmAnswerData.INSTANCE, userId);
     }
 
     @Override
-    public AnswerEntity createForm(UUID approvementId, FormAnswerData formAnswerData, Principal principal) {
-        return saveWithValidateAnswerData(approvementId, formAnswerData, principal);
-    }
-
-    @NotNull
-    private AnswerEntity saveWithValidateAnswerData(UUID approvementId, AnswerData answerData, Principal principal) {
-        var approvement = approvementRepository.findById(approvementId)
-                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
-        answerValidatorChain.validate(answerData, approvement.getData(), approvement.getType());
-        var userId = UUID.fromString(principal.getName());
-        checkUserAnswerCount(approvement, userId);
-        return answerRepository.save(AnswerEntity.builder()
-                .userId(userId)
-                .status(AnswerStatus.CREATED)
-                .approvement(approvement)
-                .data(answerData)
-                .build());
+    public AnswerEntity createForm(UUID approvementId, FormAnswerData formAnswerData, UUID userId) {
+        return saveWithValidateAnswerData(approvementId, formAnswerData, userId);
     }
 
     private void checkUserAnswerCount(ApprovementEntity approvement, UUID userId) {
@@ -66,8 +48,8 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public AnswerEntity updateForm(UUID answerId, FormAnswerData formAnswerData, Principal principal) {
-        var answer = authenticator.authUserByAnswerAndGet(answerId, principal);
+    public AnswerEntity updateForm(UUID answerId, FormAnswerData formAnswerData) {
+        var answer = answerRepository.findById(answerId).orElseThrow();
         if (answer.getStatus() != AnswerStatus.CREATED) {
             throw new ValidationException("Answer status is not created!");
         }
@@ -79,17 +61,30 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     @Transactional
-    public AnswerEntity setStatusToSent(UUID answerId, Principal principal) {
-        var answer = updateEntityStatusToSent(answerId, principal);
-        var userId = authenticator.getLogin(principal);
+    public AnswerEntity setStatusToSent(UUID answerId, UUID userId) {
+        var answer = updateEntityStatusToSent(answerId);
         var approvement = answer.getApprovement();
         scheduleReview(answerId, answer.getData(), approvement.getData(), userId, approvement.getClubId());
         return answer;
     }
 
     @NotNull
-    private AnswerEntity updateEntityStatusToSent(UUID answerId, Principal principal) {
-        var answer = authenticator.authUserByAnswerAndGet(answerId, principal);
+    private AnswerEntity saveWithValidateAnswerData(UUID approvementId, AnswerData answerData, UUID userId) {
+        var approvement = approvementRepository.findById(approvementId)
+                .orElseThrow(() -> new NotFoundException("Approvement with such answerId not found!"));
+        answerValidatorChain.validate(answerData, approvement.getData(), approvement.getType());
+        checkUserAnswerCount(approvement, userId);
+        return answerRepository.save(AnswerEntity.builder()
+                .userId(userId)
+                .status(AnswerStatus.CREATED)
+                .approvement(approvement)
+                .data(answerData)
+                .build());
+    }
+
+    @NotNull
+    private AnswerEntity updateEntityStatusToSent(UUID answerId) {
+        var answer = answerRepository.findById(answerId).orElseThrow();
         if (answer.getStatus() != AnswerStatus.CREATED) {
             throw new ValidationException("Answer status is not equals 'CREATED'!");
         }

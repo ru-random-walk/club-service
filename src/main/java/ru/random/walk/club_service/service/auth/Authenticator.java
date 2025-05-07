@@ -1,7 +1,5 @@
 package ru.random.walk.club_service.service.auth;
 
-import ru.random.walk.club_service.model.entity.AnswerEntity;
-
 import java.security.Principal;
 import java.util.UUID;
 
@@ -10,7 +8,7 @@ public interface Authenticator {
 
     void authAdminByApprovementId(Principal principal, UUID approvementId);
 
-    AnswerEntity authUserByAnswerAndGet(UUID answerId, Principal principal);
+    void authUserByAnswer(UUID answerId, Principal principal);
 
     void authUserById(UUID userId, Principal principal);
 

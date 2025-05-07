@@ -39,7 +39,8 @@ public class AnswerController {
                         """,
                 principal, principal.getName(), approvementId
         );
-        return answerService.createMembersConfirm(approvementId, principal);
+        var userId = authenticator.getLogin(principal);
+        return answerService.createMembersConfirm(approvementId, userId);
     }
 
     @MutationMapping
@@ -57,7 +58,8 @@ public class AnswerController {
                 principal, principal.getName(), approvementId, formAnswer
         );
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return answerService.createForm(approvementId, formAnswerData, principal);
+        var userId = authenticator.getLogin(principal);
+        return answerService.createForm(approvementId, formAnswerData, userId);
     }
 
     @MutationMapping
@@ -74,8 +76,9 @@ public class AnswerController {
                         """,
                 principal, principal.getName(), answerId, formAnswer
         );
+        authenticator.authUserByAnswer(answerId, principal);
         var formAnswerData = answerMapper.toFormAnswerData(formAnswer);
-        return answerService.updateForm(answerId, formAnswerData, principal);
+        return answerService.updateForm(answerId, formAnswerData);
     }
 
     @MutationMapping
@@ -94,6 +97,7 @@ public class AnswerController {
         setAnswerStatusToSentUserRateLimiter.throwIfRateLimitExceeded(userId, new ValidationException(
                 "Rate limit exceeded!"
         ));
-        return answerService.setStatusToSent(answerId, principal);
+        authenticator.authUserByAnswer(answerId, principal);
+        return answerService.setStatusToSent(answerId, userId);
     }
 }
