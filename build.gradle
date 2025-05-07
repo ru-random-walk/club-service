@@ -27,23 +27,20 @@ generateJava{
 repositories {
     mavenLocal()
     mavenCentral()
-    repositories {
-        mavenCentral()
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/ru-random-walk/event-exchange-contract")
-            credentials {
-                username = project.findProperty("user") ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("token") ?: System.getenv("GITHUB_TOKEN")
-            }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/ru-random-walk/event-exchange-contract")
+        credentials {
+            username = project.findProperty("user") ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("token") ?: System.getenv("GITHUB_TOKEN")
         }
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/ru-random-walk/storage-client")
-            credentials {
-                username = project.findProperty("user") ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("token") ?: System.getenv("GITHUB_TOKEN")
-            }
+    }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/ru-random-walk/storage-client")
+        credentials {
+            username = project.findProperty("user") ?: System.getenv("GITHUB_ACTOR")
+            password = project.findProperty("token") ?: System.getenv("GITHUB_TOKEN")
         }
     }
 }
