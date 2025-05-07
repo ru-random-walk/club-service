@@ -9,6 +9,7 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.entity.OutboxMessage;
@@ -18,7 +19,9 @@ import ru.random.walk.dto.CreatePrivateChatEvent;
 import ru.random.walk.dto.UserExcludeEvent;
 import ru.random.walk.topic.EventTopic;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -35,9 +38,10 @@ class OutboxSenderServiceTest extends AbstractContainerTest {
     private final OutboxRepository outboxRepository;
     private final ObjectMapper objectMapper;
     private final Scheduler scheduler;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     @BeforeEach
-    public void clearAll(){
+    public void clearAll() {
         outboxRepository.deleteAll();
     }
 
@@ -105,7 +109,18 @@ class OutboxSenderServiceTest extends AbstractContainerTest {
 
     @Test
     void checkJobsAreExist() throws SchedulerException {
-        scheduler.checkExists(JobKey.jobKey("OutboxExpireJob"));
-        scheduler.checkExists(JobKey.jobKey("OutboxSendingJob"));
+        var expireJobName = "OutboxExpireJob";
+        var sendingJobName = "OutboxSendingJob";
+
+        assert scheduler.checkExists(JobKey.jobKey(expireJobName));
+        assert scheduler.checkExists(JobKey.jobKey(sendingJobName));
+        var jobs = new HashSet<>(jdbcTemplate.query(
+                """
+                        select JOB_NAME
+                        from QRTZ_JOB_DETAILS
+                        """,
+                (rs, rowNum) -> rs.getString("JOB_NAME")
+        ));
+        assertEquals(Set.of(expireJobName, sendingJobName), jobs);
     }
 }
