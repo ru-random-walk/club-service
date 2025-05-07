@@ -28,7 +28,7 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven {
-        name = "GitHubPackages"
+        name = "Event exchange contract"
         url = uri("https://maven.pkg.github.com/ru-random-walk/event-exchange-contract")
         credentials {
             username = project.findProperty("user") ?: System.getenv("GITHUB_ACTOR")
@@ -36,7 +36,7 @@ repositories {
         }
     }
     maven {
-        name = "GitHubPackages"
+        name = "Storage client"
         url = uri("https://maven.pkg.github.com/ru-random-walk/storage-client")
         credentials {
             username = project.findProperty("user") ?: System.getenv("GITHUB_ACTOR")
