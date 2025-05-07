@@ -105,7 +105,7 @@ class OutboxSenderServiceTest extends AbstractContainerTest {
 
     @Test
     void checkJobsAreExist() throws SchedulerException {
-        scheduler.checkExists(JobKey.jobKey("OutboxExpireJob"));
-        scheduler.checkExists(JobKey.jobKey("OutboxSendingJob"));
+        assert scheduler.checkExists(JobKey.jobKey("OutboxExpireJob"));
+        assert scheduler.checkExists(JobKey.jobKey("OutboxSendingJob"));
     }
 }
