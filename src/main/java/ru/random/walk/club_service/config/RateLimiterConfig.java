@@ -25,4 +25,12 @@ public class RateLimiterConfig {
     ) {
         return new KeyRateLimiter<>(period);
     }
+
+    @Bean
+    public KeyRateLimiter<UUID> setAnswerStatusToSentUserRateLimiter(
+            @Value("${rate-limiter.setAnswerStatusToSentUserRateLimiter.period-duration}")
+            Duration period
+    ) {
+        return new KeyRateLimiter<>(period);
+    }
 }

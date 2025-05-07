@@ -35,7 +35,7 @@ public class AuthenticatorImpl implements Authenticator {
     @Override
     public void authAdminByApprovementId(Principal principal, UUID approvementId) {
         var approvement = approvementRepository.findById(approvementId)
-                .orElseThrow(() -> new NotFoundException("Approvement with such answerId not found!"));
+                .orElseThrow(() -> new NotFoundException("Approvement with such id not found!"));
         authAdminByClubId(principal, approvement.getClubId());
     }
 

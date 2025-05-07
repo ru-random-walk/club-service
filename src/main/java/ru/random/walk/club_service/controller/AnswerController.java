@@ -8,9 +8,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.mapper.AnswerMapper;
 import ru.random.walk.club_service.model.entity.AnswerEntity;
+import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.FormAnswerInput;
 import ru.random.walk.club_service.service.AnswerService;
 import ru.random.walk.club_service.service.auth.Authenticator;
+import ru.random.walk.util.KeyRateLimiter;
 
 import java.security.Principal;
 import java.util.UUID;
@@ -23,6 +25,7 @@ public class AnswerController {
     private final AnswerMapper answerMapper;
     private final AnswerService answerService;
     private final Authenticator authenticator;
+    private final KeyRateLimiter<UUID> setAnswerStatusToSentUserRateLimiter;
 
     @MutationMapping
     public AnswerEntity createApprovementAnswerMembersConfirm(
@@ -90,8 +93,11 @@ public class AnswerController {
                         """,
                 principal, principal.getName(), answerId
         );
-        authenticator.authUserByAnswer(answerId, principal);
         var userId = authenticator.getLogin(principal);
+        setAnswerStatusToSentUserRateLimiter.throwIfRateLimitExceeded(userId, new ValidationException(
+                "Rate limit exceeded!"
+        ));
+        authenticator.authUserByAnswer(answerId, principal);
         return answerService.setStatusToSent(answerId, userId);
     }
 }

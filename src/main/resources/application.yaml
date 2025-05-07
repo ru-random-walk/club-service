@@ -84,3 +84,5 @@ rate-limiter:
     period-duration: PT30S
   getClubPhotoUserRateLimiter:
     period-duration: PT15S
+  setAnswerStatusToSentUserRateLimiter:
+    period-duration: PT15S
