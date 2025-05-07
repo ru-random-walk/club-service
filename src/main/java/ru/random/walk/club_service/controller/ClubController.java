@@ -49,6 +49,7 @@ public class ClubController {
     ) {
         boolean membersIsRequired = env.getSelectionSet().contains("members");
         if (membersIsRequired) {
+            authenticator.authAdminByClubId(principal, clubId);
             membersPagination = Optional.ofNullable(membersPagination)
                     .orElse(new PaginationInput(0, 10));
         }
@@ -60,7 +61,7 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId, membersPagination
         );
-        return clubService.getClubById(clubId, membersPagination, membersIsRequired, principal);
+        return clubService.getClubById(clubId, membersPagination, membersIsRequired);
     }
 
     @MutationMapping
