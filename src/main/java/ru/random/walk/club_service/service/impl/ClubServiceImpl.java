@@ -132,6 +132,7 @@ public class ClubServiceImpl implements ClubService {
         approvementRepository.deleteAllByClubId(club.getId());
         memberService.deleteAllByClubId(club.getId());
         clubRepository.delete(club);
+        storageClient.delete(buildPhotoFileKey(clubId));
         return club.getId();
     }
 
@@ -139,17 +140,17 @@ public class ClubServiceImpl implements ClubService {
     @Transactional
     public PhotoUrl uploadPhotoForClub(UUID clubId, InputStream inputFile) {
         updateClubPhotoVersion(clubId);
-        var url = storageClient.uploadAndGetUrl(inputFile, buildFileKey(clubId));
+        var url = storageClient.uploadAndGetUrl(inputFile, buildPhotoFileKey(clubId));
         return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
     }
 
     @Override
     public PhotoUrl getClubPhoto(UUID clubId) {
-        var url = storageClient.getUrl(buildFileKey(clubId));
+        var url = storageClient.getUrl(buildPhotoFileKey(clubId));
         return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
     }
 
-    private static String buildFileKey(UUID clubId) {
+    private static String buildPhotoFileKey(UUID clubId) {
         return PathBuilder.init()
                 .add("club-photo")
                 .add(PathBuilder.Key.CLUB_ID, clubId)
