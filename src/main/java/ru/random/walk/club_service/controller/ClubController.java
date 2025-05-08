@@ -153,7 +153,7 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId
         );
-        uploadPhotoForClubRateLimiter.throwIfRateLimitExceeded(clubId, new ValidationException("Rate limit exceeded!"));
+        uploadPhotoForClubRateLimiter.throwIfRateLimitExceeded(clubId, () -> new ValidationException("Rate limit exceeded!"));
         authenticator.authAdminByClubId(principal, clubId);
         if (!FileUtil.isImage(photo.getBase64())) {
             throw new ValidationException("File is not image!");
@@ -175,7 +175,7 @@ public class ClubController {
                 principal, principal.getName(), clubId
         );
         var user = UUID.fromString(principal.getName());
-        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(user, new ValidationException("Rate limit exceeded!"));
+        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(user, () -> new ValidationException("Rate limit exceeded!"));
         return clubService.getClubPhoto(clubId);
     }
 

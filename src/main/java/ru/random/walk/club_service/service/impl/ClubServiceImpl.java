@@ -27,7 +27,7 @@ import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.MemberService;
 import ru.random.walk.club_service.util.Pair;
 import ru.random.walk.config.StorageProperties;
-import ru.random.walk.model.PathKey;
+import ru.random.walk.util.PathBuilder;
 
 import java.io.InputStream;
 import java.util.List;
@@ -139,14 +139,21 @@ public class ClubServiceImpl implements ClubService {
     @Transactional
     public PhotoUrl uploadPhotoForClub(UUID clubId, InputStream inputFile) {
         updateClubPhotoVersion(clubId);
-        var url = storageClient.uploadPngAndGetUrl(inputFile, Map.of(PathKey.CLUB_ID, clubId));
+        var url = storageClient.uploadAndGetUrl(inputFile, buildFileKey(clubId));
         return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
     }
 
     @Override
     public PhotoUrl getClubPhoto(UUID clubId) {
-        var url = storageClient.getPngUrl(Map.of(PathKey.CLUB_ID, clubId));
+        var url = storageClient.getUrl(buildFileKey(clubId));
         return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
+    }
+
+    private static String buildFileKey(UUID clubId) {
+        return PathBuilder.init()
+                .add("club-photo")
+                .add(PathBuilder.Key.CLUB_ID, clubId)
+                .build();
     }
 
     private void updateClubPhotoVersion(UUID clubId) {
