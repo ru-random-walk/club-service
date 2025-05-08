@@ -24,11 +24,13 @@ import ru.random.walk.club_service.util.StubDataUtil;
 import ru.random.walk.dto.UserExcludeEvent;
 import ru.random.walk.topic.EventTopic;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -189,5 +191,25 @@ class ClubServiceTest extends AbstractContainerTest {
         assertEquals(ApprovementType.FORM, actualClub.getApprovements().getFirst().getType());
         assertEquals(user.getId(), actualClub.getMembers().getFirst().getId());
         assertEquals(MemberRole.ADMIN, actualClub.getMembers().getFirst().getRole());
+    }
+
+    @Test
+    void testRemoveClubPhoto() throws IOException {
+        var admin = userRepository.save(UserEntity.builder()
+                .id(UUID.randomUUID())
+                .fullName("")
+                .build());
+        var club = clubService.createClub("", admin.getId());
+
+        clubService.uploadPhotoForClub(club.getId(), null);
+
+        var actualClub = clubRepository.findById(club.getId())
+                .orElseThrow();
+        assertEquals(1, actualClub.getPhotoVersion());
+
+        clubService.removeClubPhoto(club.getId());
+        actualClub = clubRepository.findById(club.getId())
+                .orElseThrow();
+        assertNull(actualClub.getPhotoVersion());
     }
 }

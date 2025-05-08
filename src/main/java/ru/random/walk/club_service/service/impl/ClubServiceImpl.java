@@ -150,6 +150,19 @@ public class ClubServiceImpl implements ClubService {
         return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
     }
 
+    @Override
+    @Transactional
+    public ClubEntity removeClubPhoto(UUID clubId) {
+        var club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
+        var photoFileKey = buildPhotoFileKey(clubId);
+        if (storageClient.exist(photoFileKey)) {
+            storageClient.delete(photoFileKey);
+        }
+        club.setPhotoVersion(null);
+        return club;
+    }
+
     private static String buildPhotoFileKey(UUID clubId) {
         return PathBuilder.init()
                 .add("club-photo")

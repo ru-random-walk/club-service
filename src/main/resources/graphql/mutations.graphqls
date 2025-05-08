@@ -38,6 +38,7 @@ type Mutation {
     createClubWithFormApprovement(name: String!, description: String, form: FormInput!): Club!
     removeClubWithAllItsData(clubId: ID!): ID!
     uploadPhotoForClub(clubId: ID!, photo: PhotoInput!): PhotoUrl!
+    removeClubPhoto(clubId: ID!): Club!
 
     # Approvement mutations
     addClubApprovementMembersConfirm(clubId: ID!, membersConfirm: MembersConfirmInput! @ValidMembersConfirm): Approvement!

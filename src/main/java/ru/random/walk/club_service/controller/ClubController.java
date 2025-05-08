@@ -162,6 +162,19 @@ public class ClubController {
         return clubService.uploadPhotoForClub(clubId, inputFile);
     }
 
+    @MutationMapping
+    public ClubEntity removeClubPhoto(@Argument UUID clubId, Principal principal) {
+        log.info("""
+                        Remove club photo for [{}]
+                        with login [{}]
+                        with clubId [{}]
+                        """,
+                principal, principal.getName(), clubId
+        );
+        authenticator.authAdminByClubId(principal, clubId);
+        return clubService.removeClubPhoto(clubId);
+    }
+
     @QueryMapping
     public PhotoUrl getClubPhoto(
             @Argument UUID clubId,
