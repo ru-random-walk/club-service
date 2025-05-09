@@ -29,4 +29,6 @@ public interface ClubService {
     default ClubEntity createClub(String clubName, UUID adminLogin) {
         return createClub(clubName, null, adminLogin);
     }
+
+    ClubEntity removeClubPhoto(UUID clubId);
 }

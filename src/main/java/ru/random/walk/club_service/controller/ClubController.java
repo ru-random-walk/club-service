@@ -153,13 +153,26 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId
         );
-        uploadPhotoForClubRateLimiter.throwIfRateLimitExceeded(clubId, new ValidationException("Rate limit exceeded!"));
+        uploadPhotoForClubRateLimiter.throwIfRateLimitExceeded(clubId, () -> new ValidationException("Rate limit exceeded!"));
         authenticator.authAdminByClubId(principal, clubId);
         if (!FileUtil.isImage(photo.getBase64())) {
             throw new ValidationException("File is not image!");
         }
         var inputFile = FileUtil.getInputStream(photo.getBase64());
         return clubService.uploadPhotoForClub(clubId, inputFile);
+    }
+
+    @MutationMapping
+    public ClubEntity removeClubPhoto(@Argument UUID clubId, Principal principal) {
+        log.info("""
+                        Remove club photo for [{}]
+                        with login [{}]
+                        with clubId [{}]
+                        """,
+                principal, principal.getName(), clubId
+        );
+        authenticator.authAdminByClubId(principal, clubId);
+        return clubService.removeClubPhoto(clubId);
     }
 
     @QueryMapping
@@ -175,7 +188,7 @@ public class ClubController {
                 principal, principal.getName(), clubId
         );
         var user = UUID.fromString(principal.getName());
-        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(user, new ValidationException("Rate limit exceeded!"));
+        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(user, () -> new ValidationException("Rate limit exceeded!"));
         return clubService.getClubPhoto(clubId);
     }
 

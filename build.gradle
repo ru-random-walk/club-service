@@ -76,7 +76,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'com.graphql-java:graphql-java-extended-validation'
     implementation 'ru.random.walk:event-exchange-contract:1.2.4'
-    implementation 'ru.random.walk:storage-client:1.0.4'
+    implementation 'ru.random.walk:storage-client:2.0.0'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.boot:spring-boot-starter-quartz'
 }

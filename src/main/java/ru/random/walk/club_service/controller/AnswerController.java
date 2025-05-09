@@ -94,7 +94,7 @@ public class AnswerController {
                 principal, principal.getName(), answerId
         );
         var userId = authenticator.getLogin(principal);
-        setAnswerStatusToSentUserRateLimiter.throwIfRateLimitExceeded(userId, new ValidationException(
+        setAnswerStatusToSentUserRateLimiter.throwIfRateLimitExceeded(userId, () -> new ValidationException(
                 "Rate limit exceeded!"
         ));
         authenticator.authUserByAnswer(answerId, principal);
