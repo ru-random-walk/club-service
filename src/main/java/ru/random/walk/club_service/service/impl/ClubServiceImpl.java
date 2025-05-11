@@ -27,7 +27,7 @@ import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.MemberService;
 import ru.random.walk.club_service.util.Pair;
 import ru.random.walk.config.StorageProperties;
-import ru.random.walk.model.PathKey;
+import ru.random.walk.util.PathBuilder;
 
 import java.io.InputStream;
 import java.util.List;
@@ -132,6 +132,7 @@ public class ClubServiceImpl implements ClubService {
         approvementRepository.deleteAllByClubId(club.getId());
         memberService.deleteAllByClubId(club.getId());
         clubRepository.delete(club);
+        storageClient.delete(buildPhotoFileKey(clubId));
         return club.getId();
     }
 
@@ -139,14 +140,34 @@ public class ClubServiceImpl implements ClubService {
     @Transactional
     public PhotoUrl uploadPhotoForClub(UUID clubId, InputStream inputFile) {
         updateClubPhotoVersion(clubId);
-        var url = storageClient.uploadPngAndGetUrl(inputFile, Map.of(PathKey.CLUB_ID, clubId));
+        var url = storageClient.uploadAndGetUrl(inputFile, buildPhotoFileKey(clubId));
         return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
     }
 
     @Override
     public PhotoUrl getClubPhoto(UUID clubId) {
-        var url = storageClient.getPngUrl(Map.of(PathKey.CLUB_ID, clubId));
+        var url = storageClient.getUrl(buildPhotoFileKey(clubId));
         return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
+    }
+
+    @Override
+    @Transactional
+    public ClubEntity removeClubPhoto(UUID clubId) {
+        var club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new NotFoundException("Club with such id not found!"));
+        var photoFileKey = buildPhotoFileKey(clubId);
+        if (storageClient.exist(photoFileKey)) {
+            storageClient.delete(photoFileKey);
+        }
+        club.setPhotoVersion(null);
+        return club;
+    }
+
+    private static String buildPhotoFileKey(UUID clubId) {
+        return PathBuilder.init()
+                .add("club-photo")
+                .add(PathBuilder.Key.CLUB_ID, clubId)
+                .build();
     }
 
     private void updateClubPhotoVersion(UUID clubId) {
