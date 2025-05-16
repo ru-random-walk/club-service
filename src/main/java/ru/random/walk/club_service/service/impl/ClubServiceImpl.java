@@ -163,6 +163,12 @@ public class ClubServiceImpl implements ClubService {
         return club;
     }
 
+    @Override
+    public List<ClubEntity> searchClubs(String query, PaginationInput pagination) {
+        var offset = pagination.getPage() * pagination.getSize();
+        return clubRepository.searchClubsByNameWithDescription(query, offset, pagination.getSize());
+    }
+
     private static String buildPhotoFileKey(UUID clubId) {
         return PathBuilder.init()
                 .add("club-photo")

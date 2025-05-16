@@ -7,6 +7,7 @@ type Query {
     # Club queries
     getClub(clubId: ID!, membersPagination: PaginationInput): Club
     getClubPhoto(clubId: ID!): PhotoUrl!
+    searchClubs(query: String!, pagination: PaginationInput): [Club!]
 
     # User queries
     getUserClubs(userId: ID!, pagination: PaginationInput): [Club!]!

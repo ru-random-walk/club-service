@@ -31,4 +31,6 @@ public interface ClubService {
     }
 
     ClubEntity removeClubPhoto(UUID clubId);
+
+    List<ClubEntity> searchClubs(String query, PaginationInput pagination);
 }
