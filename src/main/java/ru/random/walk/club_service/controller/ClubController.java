@@ -192,6 +192,27 @@ public class ClubController {
         return clubService.getClubPhoto(clubId);
     }
 
+    @QueryMapping
+    public List<ClubEntity> searchClubs(
+            @Argument String query,
+            @Argument PaginationInput pagination,
+            Principal principal
+    ) {
+        log.info("""
+                        Search clubs for [{}]
+                        with login [{}]
+                        with query [{}]
+                        """,
+                principal, principal.getName(), query
+        );
+        pagination = Optional.ofNullable(pagination)
+                .orElse(PaginationInput.newBuilder()
+                        .page(0)
+                        .size(30)
+                        .build());
+        return clubService.searchClubs(query, pagination);
+    }
+
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)
     public List<Integer> approversNumber(List<ClubEntity> clubs, Principal principal) {
         log.info("""

@@ -15,6 +15,7 @@ import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
+import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
@@ -211,5 +212,20 @@ class ClubServiceTest extends AbstractContainerTest {
         actualClub = clubRepository.findById(club.getId())
                 .orElseThrow();
         assertNull(actualClub.getPhotoVersion());
+    }
+
+    @Test
+    void testSearchClubs() {
+        var favoriteClub = clubRepository.save(ClubEntity.builder()
+                .name("Смешарики")
+                .build());
+        clubRepository.save(ClubEntity.builder()
+                .name("Автомобили Porsche")
+                .build());
+        var clubs = clubService.searchClubs("Смешарики", PaginationInput.newBuilder()
+                .page(0)
+                .size(30)
+                .build());
+        assertEquals(favoriteClub.getId(), clubs.getFirst().getId());
     }
 }

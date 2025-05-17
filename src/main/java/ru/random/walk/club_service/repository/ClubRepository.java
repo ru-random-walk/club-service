@@ -23,51 +23,63 @@ public interface ClubRepository extends JpaRepository<ClubEntity, UUID> {
     // что означает что юзер только отправил или ещё не закончил аппрувмент
     @Query(
             value = """
-                    WITH ClubToRoleWithPriority AS (
-                         SELECT
-                             m.club_id AS id,
-                             CAST(m.role AS TEXT) AS role,
-                             10 AS priority
-                         FROM
-                             club.member m
-                         WHERE
-                             m.id = :user_id
-                     ),
-                     PendingApprovalFromAnswerWithPriority AS (
-                         SELECT
-                             DISTINCT approvement.club_id AS id,
-                             'PENDING_APPROVAL' AS role,
-                             9 AS priority
-                         FROM
-                             club.answer answer
-                         JOIN
-                             club.approvement ON answer.approvement_id = approvement.id
-                         WHERE
-                             answer.user_id = :user_id
-                     ),
-                     ClubRoleWithPriorityPlace AS (
-                         SELECT
-                             id,
-                             CASE
-                                 WHEN role = 'USER' THEN 'MEMBER'
-                                 ELSE role
-                             END AS role,
-                             ROW_NUMBER() OVER (PARTITION BY id ORDER BY priority DESC) AS priority_place
-                         FROM (
-                             SELECT * FROM ClubToRoleWithPriority
-                             UNION ALL
-                             SELECT * FROM PendingApprovalFromAnswerWithPriority
-                         )
-                     )
-                     SELECT
-                         id,
-                         role
-                     FROM
-                         ClubRoleWithPriorityPlace
-                     WHERE
-                         priority_place = 1;
-                   """,
+                     WITH ClubToRoleWithPriority AS (
+                          SELECT
+                              m.club_id AS id,
+                              CAST(m.role AS TEXT) AS role,
+                              10 AS priority
+                          FROM
+                              club.member m
+                          WHERE
+                              m.id = :user_id
+                      ),
+                      PendingApprovalFromAnswerWithPriority AS (
+                          SELECT
+                              DISTINCT approvement.club_id AS id,
+                              'PENDING_APPROVAL' AS role,
+                              9 AS priority
+                          FROM
+                              club.answer answer
+                          JOIN
+                              club.approvement ON answer.approvement_id = approvement.id
+                          WHERE
+                              answer.user_id = :user_id
+                      ),
+                      ClubRoleWithPriorityPlace AS (
+                          SELECT
+                              id,
+                              CASE
+                                  WHEN role = 'USER' THEN 'MEMBER'
+                                  ELSE role
+                              END AS role,
+                              ROW_NUMBER() OVER (PARTITION BY id ORDER BY priority DESC) AS priority_place
+                          FROM (
+                              SELECT * FROM ClubToRoleWithPriority
+                              UNION ALL
+                              SELECT * FROM PendingApprovalFromAnswerWithPriority
+                          )
+                      )
+                      SELECT
+                          id,
+                          role
+                      FROM
+                          ClubRoleWithPriorityPlace
+                      WHERE
+                          priority_place = 1;
+                    """,
             nativeQuery = true
     )
     List<ClubWithUserRoleProjection> findAllClubsWithRoleByUser(@Param("user_id") UUID userId);
+
+    @Query(
+            value = """
+                    select *
+                    from club.club
+                    order by similarity(concat(name,' ',description), :query) desc
+                    offset :offset
+                    limit :size
+                    """,
+            nativeQuery = true
+    )
+    List<ClubEntity> searchClubsByNameWithDescription(String query, int offset, int size);
 }
