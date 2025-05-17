@@ -58,7 +58,10 @@ public class MemberController {
                         """,
                 principal, principal.getName(), clubId, memberId
         );
-        authenticator.authAdminByClubId(principal, clubId);
+        var userId = authenticator.getLogin(principal);
+        if (!userId.equals(memberId)) {
+            authenticator.authAdminByClubId(principal, clubId);
+        }
         return memberService.removeFromClub(memberId, clubId);
     }
 
