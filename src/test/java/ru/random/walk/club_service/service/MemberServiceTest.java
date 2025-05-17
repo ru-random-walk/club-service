@@ -11,6 +11,7 @@ import ru.random.walk.club_service.model.entity.MemberEntity.MemberId;
 import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
+import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
@@ -74,6 +75,23 @@ class MemberServiceTest extends AbstractContainerTest {
         assertThrows(
                 ValidationException.class,
                 () -> memberService.removeFromClub(admin.getId(), club.getId())
+        );
+    }
+
+    @Test
+    void testSingleAdminChangeRoleFromAdmin() {
+        var admin = userRepository.save(UserEntity.builder()
+                .fullName("Nerd")
+                .id(UUID.randomUUID())
+                .build());
+        var club = clubService.createClub("Wooden", admin.getId());
+        assertThrows(
+                ValidationException.class,
+                () -> memberService.changeRole(admin.getId(), club.getId(), MemberRole.INSPECTOR)
+        );
+        assertThrows(
+                ValidationException.class,
+                () -> memberService.changeRole(admin.getId(), club.getId(), MemberRole.USER)
         );
     }
 }

@@ -33,10 +33,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberEntity changeRole(UUID memberId, UUID clubId, MemberRole memberRole) {
-        var member = memberRepository.findByIdAndClubId(memberId, clubId)
+        var memberForRemove = memberRepository.findByIdAndClubId(memberId, clubId)
                 .orElseThrow(() -> new NotFoundException("Member not found in club " + clubId));
-        member.setRole(memberRole);
-        return memberRepository.save(member);
+        checkSingleAdminRemoveCase(memberForRemove, clubId);
+        memberForRemove.setRole(memberRole);
+        return memberRepository.save(memberForRemove);
     }
 
     @Override
