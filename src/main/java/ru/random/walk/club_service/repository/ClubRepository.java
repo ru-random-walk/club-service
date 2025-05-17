@@ -75,7 +75,7 @@ public interface ClubRepository extends JpaRepository<ClubEntity, UUID> {
             value = """
                     select *
                     from club.club
-                    order by similarity(concat(name,' ',description), :query)
+                    order by similarity(concat(name,' ',description), :query) desc
                     offset :offset
                     limit :size
                     """,

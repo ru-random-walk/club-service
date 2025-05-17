@@ -216,9 +216,16 @@ class ClubServiceTest extends AbstractContainerTest {
 
     @Test
     void testSearchClubs() {
-        clubService.searchClubs("", PaginationInput.newBuilder()
+        var favoriteClub = clubRepository.save(ClubEntity.builder()
+                .name("Смешарики")
+                .build());
+        clubRepository.save(ClubEntity.builder()
+                .name("Автомобили Porsche")
+                .build());
+        var clubs = clubService.searchClubs("Смешарики", PaginationInput.newBuilder()
                 .page(0)
                 .size(30)
                 .build());
+        assertEquals(favoriteClub.getId(), clubs.getFirst().getId());
     }
 }
