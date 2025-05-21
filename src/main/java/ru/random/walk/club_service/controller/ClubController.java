@@ -188,7 +188,7 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId
         );
-        var userId = UUID.fromString(principal.getName());
+        var userId = authenticator.getLogin(principal);
         getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(
                 PathBuilder.init()
                         .add(PathBuilder.Key.USER_ID, userId)
