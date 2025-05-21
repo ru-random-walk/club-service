@@ -22,6 +22,7 @@ import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.auth.Authenticator;
 import ru.random.walk.util.FileUtil;
 import ru.random.walk.util.KeyRateLimiter;
+import ru.random.walk.util.PathBuilder;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -38,7 +39,7 @@ public class ClubController {
     private final ClubService clubService;
     private final Authenticator authenticator;
     private final KeyRateLimiter<UUID> uploadPhotoForClubRateLimiter;
-    private final KeyRateLimiter<UUID> getClubPhotoUserRateLimiter;
+    private final KeyRateLimiter<String> getClubPhotoUserRateLimiter;
 
     @QueryMapping
     public @Nullable ClubEntity getClub(
@@ -187,8 +188,14 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId
         );
-        var user = UUID.fromString(principal.getName());
-        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(user, () -> new ValidationException("Rate limit exceeded!"));
+        var userId = authenticator.getLogin(principal);
+        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(
+                PathBuilder.init()
+                        .add(PathBuilder.Key.USER_ID, userId)
+                        .add(PathBuilder.Key.CLUB_ID, clubId)
+                        .build(),
+                () -> new ValidationException("Rate limit exceeded!")
+        );
         return clubService.getClubPhoto(clubId);
     }
 
