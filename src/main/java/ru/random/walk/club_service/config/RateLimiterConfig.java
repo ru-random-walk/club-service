@@ -19,7 +19,7 @@ public class RateLimiterConfig {
     }
 
     @Bean
-    public KeyRateLimiter<UUID> getClubPhotoUserRateLimiter(
+    public KeyRateLimiter<String> getClubPhotoRateLimiter(
             @Value("${rate-limiter.getClubPhotoUserRateLimiter.period-duration}")
             Duration period
     ) {
