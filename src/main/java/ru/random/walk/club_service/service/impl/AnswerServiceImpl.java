@@ -1,6 +1,7 @@
 package ru.random.walk.club_service.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AnswerServiceImpl implements AnswerService {
     private final AnswerRepository answerRepository;
     private final ApprovementRepository approvementRepository;
@@ -64,8 +66,17 @@ public class AnswerServiceImpl implements AnswerService {
     public AnswerEntity setStatusToSent(UUID answerId, UUID userId) {
         var answer = updateEntityStatusToSent(answerId);
         var approvement = answer.getApprovement();
-        scheduleReview(answerId, answer.getData(), approvement.getData(), userId, approvement.getClubId());
+        scheduleReview(answerId, answer.getData(), approvement.getData(), userId, approvement.getClubId(), false);
         return answer;
+    }
+
+    @Override
+    @Transactional
+    public AnswerEntity setStatusToSentSync(UUID answerId, UUID userId) {
+        var answer = updateEntityStatusToSent(answerId);
+        var approvement = answer.getApprovement();
+        scheduleReview(answerId, answer.getData(), approvement.getData(), userId, approvement.getClubId(), true);
+        return answerRepository.findById(answerId).orElseThrow();
     }
 
     @NotNull
@@ -97,9 +108,17 @@ public class AnswerServiceImpl implements AnswerService {
             AnswerData answerData,
             ApprovementData approvementData,
             UUID userId,
-            UUID clubId
+            UUID clubId,
+            boolean synchronously
     ) {
-        var reviewData = new ForReviewData(answerId, answerData, approvementData, userId, clubId);
-        answerReviewer.scheduleReview(reviewData);
+        try {
+            var reviewData = new ForReviewData(answerId, answerData, approvementData, userId, clubId);
+            var future = answerReviewer.scheduleReview(reviewData);
+            if (synchronously) {
+                future.get();
+            }
+        } catch (Exception e) {
+            log.error("Error while schedule review", e);
+        }
     }
 }

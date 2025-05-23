@@ -100,4 +100,24 @@ public class AnswerController {
         authenticator.authUserByAnswer(answerId, principal);
         return answerService.setStatusToSent(answerId, userId);
     }
+
+    @MutationMapping
+    public AnswerEntity setAnswerStatusToSentSync(
+            @Argument UUID answerId,
+            Principal principal
+    ) {
+        log.info("""
+                        Set approvement answer status to sent synchronously for [{}]
+                        with login [{}]
+                        for answer id [{}]
+                        """,
+                principal, principal.getName(), answerId
+        );
+        var userId = authenticator.getLogin(principal);
+        setAnswerStatusToSentUserRateLimiter.throwIfRateLimitExceeded(userId, () -> new ValidationException(
+                "Rate limit exceeded!"
+        ));
+        authenticator.authUserByAnswer(answerId, principal);
+        return answerService.setStatusToSentSync(answerId, userId);
+    }
 }

@@ -14,6 +14,8 @@ import ru.random.walk.club_service.service.reviewer.AnswerReviewer;
 import ru.random.walk.club_service.service.reviewer.FormAnswerReviewer;
 import ru.random.walk.club_service.util.VirtualThreadUtil;
 
+import java.util.concurrent.Future;
+
 @Service
 @AllArgsConstructor
 public class AnswerReviewerImpl implements AnswerReviewer {
@@ -23,8 +25,8 @@ public class AnswerReviewerImpl implements AnswerReviewer {
     private final ConfirmationService confirmationService;
 
     @Override
-    public void scheduleReview(ForReviewData forReviewData) {
-        VirtualThreadUtil.scheduleTask(() -> {
+    public Future<?> scheduleReview(ForReviewData forReviewData) {
+        return VirtualThreadUtil.scheduleTask(() -> {
             answerRepository.updateStatus(forReviewData.answerId(), AnswerStatus.IN_PROGRESS);
             reviewAnswerData(forReviewData);
         });
