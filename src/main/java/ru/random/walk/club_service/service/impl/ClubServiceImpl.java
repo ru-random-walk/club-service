@@ -175,7 +175,7 @@ public class ClubServiceImpl implements ClubService {
                 .collect(Collectors.toMap(
                         MemberEntity::getClubId,
                         MemberEntity::getRole,
-                        (r1, r2) -> r1
+                        (role1, role2) -> role1
                 ));
         return clubs.stream()
                 .map(club -> new ClubWithMemberRole(
