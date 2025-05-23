@@ -13,6 +13,11 @@ type ClubWithUserRole {
     userRole: UserGroupRole!
 }
 
+type ClubWithMemberRole {
+    club: Club!
+    memberRole: MemberRole
+}
+
 type Member {
     id: ID!
     role: MemberRole!
