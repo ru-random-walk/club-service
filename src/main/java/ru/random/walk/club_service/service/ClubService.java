@@ -2,6 +2,7 @@ package ru.random.walk.club_service.service;
 
 import org.jetbrains.annotations.Nullable;
 import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
+import ru.random.walk.club_service.model.dto.ClubWithMemberRole;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
@@ -32,5 +33,5 @@ public interface ClubService {
 
     ClubEntity removeClubPhoto(UUID clubId);
 
-    List<ClubEntity> searchClubs(String query, PaginationInput pagination);
+    List<ClubWithMemberRole> searchClubsWithMemberRole(String query, UUID login, PaginationInput pagination);
 }

@@ -222,10 +222,69 @@ class ClubServiceTest extends AbstractContainerTest {
         clubRepository.save(ClubEntity.builder()
                 .name("Автомобили Porsche")
                 .build());
-        var clubs = clubService.searchClubs("Смешарики", PaginationInput.newBuilder()
+        var clubWithMemberRoles = clubService.searchClubsWithMemberRole("Смешарики", UUID.randomUUID(), PaginationInput.newBuilder()
                 .page(0)
                 .size(30)
                 .build());
-        assertEquals(favoriteClub.getId(), clubs.getFirst().getId());
+        assertEquals(favoriteClub.getId(), clubWithMemberRoles.getFirst().club().getId());
+        assertNull(clubWithMemberRoles.getFirst().memberRole());
+    }
+
+    @Test
+    void testSearchClubsWithAllMemberRoles() {
+        var favoriteClub = clubRepository.save(ClubEntity.builder()
+                .name("Смешарики")
+                .build());
+        var porsche = clubRepository.save(ClubEntity.builder()
+                .name("Автомобили Porsche")
+                .build());
+        var forbes = clubRepository.save(ClubEntity.builder()
+                .name("Forbes")
+                .build());
+        var java = clubRepository.save(ClubEntity.builder()
+                .name("Java Software engineering")
+                .build());
+
+        var user = userRepository.saveAndFlush(UserEntity.builder()
+                .id(UUID.randomUUID())
+                .fullName("Saki yakking")
+                .build());
+
+        memberRepository.saveAllAndFlush(List.of(
+                MemberEntity.builder()
+                        .clubId(porsche.getId())
+                        .id(user.getId())
+                        .role(MemberRole.ADMIN)
+                        .build(),
+                MemberEntity.builder()
+                        .clubId(forbes.getId())
+                        .id(user.getId())
+                        .role(MemberRole.INSPECTOR)
+                        .build(),
+                MemberEntity.builder()
+                        .clubId(java.getId())
+                        .id(user.getId())
+                        .role(MemberRole.USER)
+                        .build()
+        ));
+
+        var clubWithMemberRoles = clubService.searchClubsWithMemberRole("Смешарики", user.getId(), PaginationInput.newBuilder()
+                .page(0)
+                .size(30)
+                .build());
+        assertEquals(favoriteClub.getId(), clubWithMemberRoles.getFirst().club().getId());
+
+        assertNull(clubWithMemberRoles.getFirst().memberRole());
+        clubWithMemberRoles.subList(1, 4).forEach(clubWithMemberRole -> {
+            var clubId = clubWithMemberRole.club().getId();
+            var role = clubWithMemberRole.memberRole();
+            if (porsche.getId().equals(clubId)) {
+                assertEquals(MemberRole.ADMIN, role);
+            } else if (forbes.getId().equals(clubId)) {
+                assertEquals(MemberRole.INSPECTOR, role);
+            } else if (java.getId().equals(clubId)) {
+                assertEquals(MemberRole.USER, role);
+            }
+        });
     }
 }

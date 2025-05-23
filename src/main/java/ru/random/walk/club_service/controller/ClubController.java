@@ -11,6 +11,7 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.mapper.ApprovementMapper;
+import ru.random.walk.club_service.model.dto.ClubWithMemberRole;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.FormInput;
@@ -200,24 +201,25 @@ public class ClubController {
     }
 
     @QueryMapping
-    public List<ClubEntity> searchClubs(
+    public List<ClubWithMemberRole> searchClubs(
             @Argument String query,
             @Argument PaginationInput pagination,
             Principal principal
     ) {
+        var login = authenticator.getLogin(principal);
         log.info("""
                         Search clubs for [{}]
                         with login [{}]
                         with query [{}]
                         """,
-                principal, principal.getName(), query
+                principal, login, query
         );
         pagination = Optional.ofNullable(pagination)
                 .orElse(PaginationInput.newBuilder()
                         .page(0)
                         .size(30)
                         .build());
-        return clubService.searchClubs(query, pagination);
+        return clubService.searchClubsWithMemberRole(query, login, pagination);
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)

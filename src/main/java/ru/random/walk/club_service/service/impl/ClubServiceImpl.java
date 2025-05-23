@@ -9,6 +9,7 @@ import ru.random.walk.client.StorageClient;
 import ru.random.walk.club_service.model.domain.approvement.ApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.FormApprovementData;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
+import ru.random.walk.club_service.model.dto.ClubWithMemberRole;
 import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
@@ -164,9 +165,24 @@ public class ClubServiceImpl implements ClubService {
     }
 
     @Override
-    public List<ClubEntity> searchClubs(String query, PaginationInput pagination) {
+    public List<ClubWithMemberRole> searchClubsWithMemberRole(String query, UUID login, PaginationInput pagination) {
         var offset = pagination.getPage() * pagination.getSize();
-        return clubRepository.searchClubsByNameWithDescription(query, offset, pagination.getSize());
+        var clubs = clubRepository.searchClubsByNameWithDescription(query, offset, pagination.getSize());
+        var clubIds = clubs.stream()
+                .map(ClubEntity::getId)
+                .toList();
+        Map<UUID, MemberRole> clubIdToMemberRole = memberRepository.findAllByIdAndClubIds(clubIds, login).stream()
+                .collect(Collectors.toMap(
+                        MemberEntity::getClubId,
+                        MemberEntity::getRole,
+                        (role1, role2) -> role1
+                ));
+        return clubs.stream()
+                .map(club -> new ClubWithMemberRole(
+                        club,
+                        clubIdToMemberRole.get(club.getId())
+                ))
+                .toList();
     }
 
     private static String buildPhotoFileKey(UUID clubId) {
