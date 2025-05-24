@@ -11,6 +11,7 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import ru.random.walk.club_service.mapper.ApprovementMapper;
+import ru.random.walk.club_service.model.dto.ClubWithMemberRole;
 import ru.random.walk.club_service.model.entity.ClubEntity;
 import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.model.graphql.types.FormInput;
@@ -22,6 +23,7 @@ import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.auth.Authenticator;
 import ru.random.walk.util.FileUtil;
 import ru.random.walk.util.KeyRateLimiter;
+import ru.random.walk.util.PathBuilder;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -38,7 +40,7 @@ public class ClubController {
     private final ClubService clubService;
     private final Authenticator authenticator;
     private final KeyRateLimiter<UUID> uploadPhotoForClubRateLimiter;
-    private final KeyRateLimiter<UUID> getClubPhotoUserRateLimiter;
+    private final KeyRateLimiter<String> getClubPhotoUserRateLimiter;
 
     @QueryMapping
     public @Nullable ClubEntity getClub(
@@ -187,9 +189,37 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId
         );
-        var user = UUID.fromString(principal.getName());
-        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(user, () -> new ValidationException("Rate limit exceeded!"));
+        var userId = authenticator.getLogin(principal);
+        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(
+                PathBuilder.init()
+                        .add(PathBuilder.Key.USER_ID, userId)
+                        .add(PathBuilder.Key.CLUB_ID, clubId)
+                        .build(),
+                () -> new ValidationException("Rate limit exceeded!")
+        );
         return clubService.getClubPhoto(clubId);
+    }
+
+    @QueryMapping
+    public List<ClubWithMemberRole> searchClubs(
+            @Argument String query,
+            @Argument PaginationInput pagination,
+            Principal principal
+    ) {
+        var login = authenticator.getLogin(principal);
+        log.info("""
+                        Search clubs for [{}]
+                        with login [{}]
+                        with query [{}]
+                        """,
+                principal, login, query
+        );
+        pagination = Optional.ofNullable(pagination)
+                .orElse(PaginationInput.newBuilder()
+                        .page(0)
+                        .size(30)
+                        .build());
+        return clubService.searchClubsWithMemberRole(query, login, pagination);
     }
 
     @BatchMapping(typeName = "Club", field = "approversNumber", maxBatchSize = 30)
