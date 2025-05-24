@@ -82,4 +82,5 @@ type PhotoUrl {
     clubId: ID!
     url: String!
     expiresInMinutes: Int!
+    photoVersion: Int
 }

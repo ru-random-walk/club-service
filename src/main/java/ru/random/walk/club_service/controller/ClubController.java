@@ -21,8 +21,9 @@ import ru.random.walk.club_service.model.graphql.types.PhotoInput;
 import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.auth.Authenticator;
+import ru.random.walk.club_service.service.rate_limiter.GetClubPhotoRateLimiter;
+import ru.random.walk.club_service.service.rate_limiter.UploadClubPhotoRateLimiter;
 import ru.random.walk.util.FileUtil;
-import ru.random.walk.util.KeyRateLimiter;
 import ru.random.walk.util.PathBuilder;
 
 import java.io.IOException;
@@ -39,8 +40,8 @@ public class ClubController {
     private final ApprovementMapper approvementMapper;
     private final ClubService clubService;
     private final Authenticator authenticator;
-    private final KeyRateLimiter<String> uploadPhotoForClubRateLimiter;
-    private final KeyRateLimiter<String> getClubPhotoUserRateLimiter;
+    private final UploadClubPhotoRateLimiter uploadClubPhotoRateLimiter;
+    private final GetClubPhotoRateLimiter getClubPhotoRateLimiter;
 
     @QueryMapping
     public @Nullable ClubEntity getClub(
@@ -156,7 +157,7 @@ public class ClubController {
                         """,
                 principal, login, clubId
         );
-        uploadPhotoForClubRateLimiter.throwIfRateLimitExceeded(
+        uploadClubPhotoRateLimiter.throwIfRateLimitExceeded(
                 PathBuilder.init()
                         .add(PathBuilder.Key.CLUB_ID, clubId)
                         .add(PathBuilder.Key.USER_ID, login)
@@ -197,7 +198,7 @@ public class ClubController {
                 principal, principal.getName(), clubId
         );
         var userId = authenticator.getLogin(principal);
-        getClubPhotoUserRateLimiter.throwIfRateLimitExceeded(
+        getClubPhotoRateLimiter.throwIfRateLimitExceeded(
                 PathBuilder.init()
                         .add(PathBuilder.Key.USER_ID, userId)
                         .add(PathBuilder.Key.CLUB_ID, clubId)

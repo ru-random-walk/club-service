@@ -3,6 +3,8 @@ package ru.random.walk.club_service.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.random.walk.club_service.service.rate_limiter.GetClubPhotoRateLimiter;
+import ru.random.walk.club_service.service.rate_limiter.UploadClubPhotoRateLimiter;
 import ru.random.walk.util.KeyRateLimiter;
 
 import java.time.Duration;
@@ -11,19 +13,19 @@ import java.util.UUID;
 @Configuration
 public class RateLimiterConfig {
     @Bean
-    public KeyRateLimiter<String> uploadPhotoForClubRateLimiter(
+    public UploadClubPhotoRateLimiter uploadPhotoForClubRateLimiter(
             @Value("${rate-limiter.uploadPhotoForClubRateLimiter.period-duration}")
             Duration period
     ) {
-        return new KeyRateLimiter<>(period);
+        return new UploadClubPhotoRateLimiter(period);
     }
 
     @Bean
-    public KeyRateLimiter<String> getClubPhotoRateLimiter(
+    public GetClubPhotoRateLimiter getClubPhotoRateLimiter(
             @Value("${rate-limiter.getClubPhotoUserRateLimiter.period-duration}")
             Duration period
     ) {
-        return new KeyRateLimiter<>(period);
+        return new GetClubPhotoRateLimiter(period);
     }
 
     @Bean
