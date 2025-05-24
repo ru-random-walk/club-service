@@ -15,4 +15,6 @@ public interface Authenticator {
     UUID getLogin(Principal principal);
 
     void authApproverByConfirmation(UUID confirmationId, Principal principal);
+
+    void authMember(Principal principal, UUID clubId);
 }

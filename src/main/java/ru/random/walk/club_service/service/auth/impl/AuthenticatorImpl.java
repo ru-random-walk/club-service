@@ -71,4 +71,11 @@ public class AuthenticatorImpl implements Authenticator {
             throw new AuthenticationException("You do not have access to approve this confirmation!");
         }
     }
+
+    @Override
+    public void authMember(Principal principal, UUID clubId) {
+        var login = getLogin(principal);
+        memberRepository.findByIdAndClubId(login, clubId)
+                .orElseThrow(() -> new AuthenticationException("You are not become member of given club!"));
+    }
 }

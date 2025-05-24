@@ -58,7 +58,7 @@ public class MemberController {
                         """,
                 principal, principal.getName(), clubId, memberId
         );
-        authenticator.authAdminByClubId(principal, clubId);
+        authenticator.authMember(principal, clubId);
         return memberService.removeFromClub(memberId, clubId);
     }
 
