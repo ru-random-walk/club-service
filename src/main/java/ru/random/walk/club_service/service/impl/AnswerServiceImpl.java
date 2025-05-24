@@ -75,8 +75,9 @@ public class AnswerServiceImpl implements AnswerService {
     public AnswerEntity setStatusToSentSync(UUID answerId, UUID userId) {
         var answer = updateEntityStatusToSent(answerId);
         var approvement = answer.getApprovement();
-        scheduleReview(answerId, answer.getData(), approvement.getData(), userId, approvement.getClubId(), true);
-        return answerRepository.findById(answerId).orElseThrow();
+        var status = scheduleReview(answerId, answer.getData(), approvement.getData(), userId, approvement.getClubId(), true);
+        answer.setStatus(status);
+        return answer;
     }
 
     @NotNull
@@ -103,7 +104,7 @@ public class AnswerServiceImpl implements AnswerService {
         return answerRepository.save(answer);
     }
 
-    private void scheduleReview(
+    private AnswerStatus scheduleReview(
             UUID answerId,
             AnswerData answerData,
             ApprovementData approvementData,
@@ -115,10 +116,12 @@ public class AnswerServiceImpl implements AnswerService {
             var reviewData = new ForReviewData(answerId, answerData, approvementData, userId, clubId);
             var future = answerReviewer.scheduleReview(reviewData);
             if (synchronously) {
-                future.get();
+                return future.get();
             }
         } catch (Exception e) {
             log.error("Error while schedule review", e);
+            throw new RuntimeException("Error while schedule review", e);
         }
+        return null;
     }
 }
