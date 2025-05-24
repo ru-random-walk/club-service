@@ -61,6 +61,7 @@ type Mutation {
     updateAnswerForm(answerId: ID!, formAnswer: FormAnswerInput!): Answer!
 
     setAnswerStatusToSent(answerId: ID!): Answer!
+    setAnswerStatusToSentSync(answerId: ID!): Answer!
 
     # Confirmation mutations
     tryJoinInClub(userId: ID!, clubId: ID!): Member!

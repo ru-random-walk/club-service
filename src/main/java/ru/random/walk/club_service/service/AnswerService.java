@@ -13,4 +13,6 @@ public interface AnswerService {
     AnswerEntity updateForm(UUID answerId, FormAnswerData formAnswerData);
 
     AnswerEntity setStatusToSent(UUID answerId, UUID userId);
+
+    AnswerEntity setStatusToSentSync(UUID answerId, UUID userId);
 }
