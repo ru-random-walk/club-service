@@ -202,7 +202,8 @@ class ClubServiceTest extends AbstractContainerTest {
                 .build());
         var club = clubService.createClub("", admin.getId());
 
-        clubService.uploadPhotoForClub(club.getId(), null);
+        var photoUrl = clubService.uploadPhotoForClub(club.getId(), null);
+        assertEquals(1, photoUrl.getPhotoVersion());
 
         var actualClub = clubRepository.findById(club.getId())
                 .orElseThrow();
