@@ -27,6 +27,15 @@ public interface MemberRepository extends JpaRepository<MemberEntity, MemberEnti
     )
     Integer countByIdAndRole(UUID id, MemberRole role);
 
+    @Query(
+            value = """
+                    select count(m)
+                    from club.member m
+                    where m.club_id = :club_id and m.role = cast(:#{#role.toString()} AS club.member_role)""",
+            nativeQuery = true
+    )
+    Integer countByClubIdAndRole(@Param("club_id") UUID clubId, MemberRole role);
+
     Page<MemberEntity> findAllById(UUID userId, Pageable pageable);
 
     @Query(

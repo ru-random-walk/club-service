@@ -7,6 +7,7 @@ import ru.random.walk.club_service.model.entity.ApprovementEntity;
 import ru.random.walk.club_service.model.entity.MemberEntity;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.exception.NotFoundException;
+import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
@@ -32,18 +33,20 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberEntity changeRole(UUID memberId, UUID clubId, MemberRole memberRole) {
-        var member = memberRepository.findByIdAndClubId(memberId, clubId)
+        var memberForRemove = memberRepository.findByIdAndClubId(memberId, clubId)
                 .orElseThrow(() -> new NotFoundException("Member not found in club " + clubId));
-        member.setRole(memberRole);
-        return memberRepository.save(member);
+        checkSingleAdminRemoveCase(memberForRemove, clubId);
+        memberForRemove.setRole(memberRole);
+        return memberRepository.save(memberForRemove);
     }
 
     @Override
     @Transactional
     public UUID removeFromClub(UUID memberId, UUID clubId) {
-        var member = memberRepository.findByIdAndClubId(memberId, clubId)
+        var memberForRemove = memberRepository.findByIdAndClubId(memberId, clubId)
                 .orElseThrow(() -> new NotFoundException("Member not found in club " + clubId));
-        memberRepository.delete(member);
+        checkSingleAdminRemoveCase(memberForRemove, clubId);
+        memberRepository.delete(memberForRemove);
         outboxSenderService.sendMessage(
                 EventTopic.USER_EXCLUDE,
                 UserExcludeEvent.builder()
@@ -51,7 +54,18 @@ public class MemberServiceImpl implements MemberService {
                         .clubId(clubId)
                         .build()
         );
-        return member.getId();
+        return memberForRemove.getId();
+    }
+
+    private void checkSingleAdminRemoveCase(MemberEntity memberForRemove, UUID clubId) {
+        if (memberForRemove.getRole() == MemberRole.ADMIN) {
+            var adminsCount = memberRepository.countByClubIdAndRole(clubId, MemberRole.ADMIN);
+            if (adminsCount <= 1) {
+                throw new ValidationException(
+                        "You are single admin in given club and you are not allowed to removing yourself!"
+                );
+            }
+        }
     }
 
     @Override
