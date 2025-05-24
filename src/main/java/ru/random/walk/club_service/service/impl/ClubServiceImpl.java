@@ -140,15 +140,26 @@ public class ClubServiceImpl implements ClubService {
     @Override
     @Transactional
     public PhotoUrl uploadPhotoForClub(UUID clubId, InputStream inputFile) {
-        updateClubPhotoVersion(clubId);
+        var version = updateClubPhotoVersion(clubId);
         var url = storageClient.uploadAndGetUrl(inputFile, buildPhotoFileKey(clubId));
-        return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
+        return new PhotoUrl(
+                clubId.toString(),
+                url,
+                storageProperties.temporaryUrlTtlInMinutes(),
+                version
+        );
     }
 
     @Override
     public PhotoUrl getClubPhoto(UUID clubId) {
         var url = storageClient.getUrl(buildPhotoFileKey(clubId));
-        return new PhotoUrl(clubId.toString(), url, storageProperties.temporaryUrlTtlInMinutes());
+        var club = clubRepository.findById(clubId).orElseThrow();
+        return new PhotoUrl(
+                clubId.toString(),
+                url,
+                storageProperties.temporaryUrlTtlInMinutes(),
+                club.getPhotoVersion()
+        );
     }
 
     @Override
@@ -192,10 +203,12 @@ public class ClubServiceImpl implements ClubService {
                 .build();
     }
 
-    private void updateClubPhotoVersion(UUID clubId) {
+    private int updateClubPhotoVersion(UUID clubId) {
         var club = clubRepository.findById(clubId).orElseThrow();
-        club.setPhotoVersion(Optional.ofNullable(club.getPhotoVersion()).orElse(0) + 1);
+        var newVersion = Optional.ofNullable(club.getPhotoVersion()).orElse(0) + 1;
+        club.setPhotoVersion(newVersion);
         clubRepository.save(club);
+        return newVersion;
     }
 
     private static Integer getApproversNumber(
