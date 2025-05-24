@@ -11,7 +11,7 @@ import java.util.UUID;
 @Configuration
 public class RateLimiterConfig {
     @Bean
-    public KeyRateLimiter<UUID> uploadPhotoForClubRateLimiter(
+    public KeyRateLimiter<String> uploadPhotoForClubRateLimiter(
             @Value("${rate-limiter.uploadPhotoForClubRateLimiter.period-duration}")
             Duration period
     ) {

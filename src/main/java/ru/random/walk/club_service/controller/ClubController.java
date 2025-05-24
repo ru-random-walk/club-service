@@ -39,7 +39,7 @@ public class ClubController {
     private final ApprovementMapper approvementMapper;
     private final ClubService clubService;
     private final Authenticator authenticator;
-    private final KeyRateLimiter<UUID> uploadPhotoForClubRateLimiter;
+    private final KeyRateLimiter<String> uploadPhotoForClubRateLimiter;
     private final KeyRateLimiter<String> getClubPhotoUserRateLimiter;
 
     @QueryMapping
@@ -148,14 +148,21 @@ public class ClubController {
             @Argument PhotoInput photo,
             Principal principal
     ) throws IOException {
+        var login = authenticator.getLogin(principal);
         log.info("""
                         Upload club photo for [{}]
                         with login [{}]
                         with clubId [{}]
                         """,
-                principal, principal.getName(), clubId
+                principal, login, clubId
         );
-        uploadPhotoForClubRateLimiter.throwIfRateLimitExceeded(clubId, () -> new ValidationException("Rate limit exceeded!"));
+        uploadPhotoForClubRateLimiter.throwIfRateLimitExceeded(
+                PathBuilder.init()
+                        .add(PathBuilder.Key.CLUB_ID, clubId)
+                        .add(PathBuilder.Key.USER_ID, login)
+                        .build(),
+                () -> new ValidationException("Rate limit exceeded!")
+        );
         authenticator.authAdminByClubId(principal, clubId);
         if (!FileUtil.isImage(photo.getBase64())) {
             throw new ValidationException("File is not image!");
