@@ -69,6 +69,6 @@ public class AnswerReviewerImpl implements AnswerReviewer {
     ) {
         confirmationService.assignApprovers(forReviewData, membersConfirmApprovementData);
         answerRepository.updateStatus(forReviewData.answerId(), AnswerStatus.IN_REVIEW);
-        return null;
+        return AnswerStatus.IN_REVIEW;
     }
 }
