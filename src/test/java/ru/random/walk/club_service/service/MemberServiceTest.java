@@ -11,6 +11,8 @@ import ru.random.walk.club_service.model.entity.MemberEntity.MemberId;
 import ru.random.walk.club_service.model.entity.UserEntity;
 import ru.random.walk.club_service.model.entity.type.AnswerStatus;
 import ru.random.walk.club_service.model.entity.type.ApprovementType;
+import ru.random.walk.club_service.model.entity.type.MemberRole;
+import ru.random.walk.club_service.model.exception.ValidationException;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
@@ -20,16 +22,19 @@ import ru.random.walk.club_service.util.StubDataUtil;
 
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
 class MemberServiceTest extends AbstractContainerTest {
     private final UserRepository userRepository;
     private final ClubRepository clubRepository;
-    private final ApprovementRepository approvementRepository;
     private final AnswerRepository answerRepository;
-    private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final ApprovementRepository approvementRepository;
+
+    private final MemberService memberService;
+    private final ClubService clubService;
 
     @Test
     void addInClubIfAllTestPassedTest() {
@@ -58,5 +63,35 @@ class MemberServiceTest extends AbstractContainerTest {
                 .clubId(club.getId())
                 .build());
         assertTrue(member.isPresent(), "Member must be present!");
+    }
+
+    @Test
+    void testSingleAdminRemoveCase() {
+        var admin = userRepository.save(UserEntity.builder()
+                .fullName("Nerd")
+                .id(UUID.randomUUID())
+                .build());
+        var club = clubService.createClub("Wooden", admin.getId());
+        assertThrows(
+                ValidationException.class,
+                () -> memberService.removeFromClub(admin.getId(), club.getId())
+        );
+    }
+
+    @Test
+    void testSingleAdminChangeRoleFromAdmin() {
+        var admin = userRepository.save(UserEntity.builder()
+                .fullName("Nerd")
+                .id(UUID.randomUUID())
+                .build());
+        var club = clubService.createClub("Wooden", admin.getId());
+        assertThrows(
+                ValidationException.class,
+                () -> memberService.changeRole(admin.getId(), club.getId(), MemberRole.INSPECTOR)
+        );
+        assertThrows(
+                ValidationException.class,
+                () -> memberService.changeRole(admin.getId(), club.getId(), MemberRole.USER)
+        );
     }
 }
