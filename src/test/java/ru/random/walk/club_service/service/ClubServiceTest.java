@@ -23,6 +23,7 @@ import ru.random.walk.club_service.repository.UserRepository;
 import ru.random.walk.club_service.service.job.OutboxSendingJob;
 import ru.random.walk.club_service.util.StubDataUtil;
 import ru.random.walk.dto.UserExcludeEvent;
+import ru.random.walk.dto.UserJoinEvent;
 import ru.random.walk.topic.EventTopic;
 
 import java.io.IOException;
@@ -287,5 +288,24 @@ class ClubServiceTest extends AbstractContainerTest {
                 assertEquals(MemberRole.USER, role);
             }
         });
+    }
+
+    @Test
+    void testCreateClub() throws JsonProcessingException {
+        var user = userRepository.save(UserEntity.builder()
+                .fullName("")
+                .id(UUID.randomUUID())
+                .build());
+        var club = clubService.createClub("", user.getId());
+        outboxSendingJob.execute(null);
+        verify(kafkaTemplate).send(
+                eq(EventTopic.USER_JOIN),
+                jsonEq(
+                        objectMapper.writeValueAsString(UserJoinEvent.builder()
+                                .clubId(club.getId())
+                                .userId(user.getId())
+                                .build())
+                )
+        );
     }
 }

@@ -26,8 +26,11 @@ import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.MemberService;
+import ru.random.walk.club_service.service.OutboxSenderService;
 import ru.random.walk.club_service.util.Pair;
 import ru.random.walk.config.StorageProperties;
+import ru.random.walk.dto.UserJoinEvent;
+import ru.random.walk.topic.EventTopic;
 import ru.random.walk.util.PathBuilder;
 
 import java.io.InputStream;
@@ -48,6 +51,7 @@ public class ClubServiceImpl implements ClubService {
     private final AnswerRepository answerRepository;
 
     private final MemberService memberService;
+    private final OutboxSenderService outboxSenderService;
     private final StorageClient storageClient;
     private final StorageProperties storageProperties;
 
@@ -78,13 +82,24 @@ public class ClubServiceImpl implements ClubService {
                 .description(description)
                 .name(clubName)
                 .build());
+        addAdminInClub(adminLogin, club);
+        return clubRepository.save(club);
+    }
+
+    private void addAdminInClub(UUID adminLogin, ClubEntity club) {
         var adminMember = memberRepository.save(MemberEntity.builder()
                 .id(adminLogin)
                 .clubId(club.getId())
                 .role(MemberRole.ADMIN)
                 .build());
         club.getMembers().add(adminMember);
-        return clubRepository.save(club);
+        outboxSenderService.sendMessage(
+                EventTopic.USER_JOIN,
+                UserJoinEvent.builder()
+                        .userId(adminMember.getId())
+                        .clubId(club.getId())
+                        .build()
+        );
     }
 
     @Override
