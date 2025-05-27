@@ -14,6 +14,8 @@ import ru.random.walk.club_service.service.reviewer.AnswerReviewer;
 import ru.random.walk.club_service.service.reviewer.FormAnswerReviewer;
 import ru.random.walk.club_service.util.VirtualThreadUtil;
 
+import java.util.concurrent.Future;
+
 @Service
 @AllArgsConstructor
 public class AnswerReviewerImpl implements AnswerReviewer {
@@ -23,15 +25,15 @@ public class AnswerReviewerImpl implements AnswerReviewer {
     private final ConfirmationService confirmationService;
 
     @Override
-    public void scheduleReview(ForReviewData forReviewData) {
-        VirtualThreadUtil.scheduleTask(() -> {
+    public Future<AnswerStatus> scheduleReview(ForReviewData forReviewData) {
+        return VirtualThreadUtil.executor.submit(() -> {
             answerRepository.updateStatus(forReviewData.answerId(), AnswerStatus.IN_PROGRESS);
-            reviewAnswerData(forReviewData);
+            return reviewAnswerData(forReviewData);
         });
     }
 
-    private void reviewAnswerData(ForReviewData forReviewData) {
-        switch (forReviewData.approvementData()) {
+    private AnswerStatus reviewAnswerData(ForReviewData forReviewData) {
+        return switch (forReviewData.approvementData()) {
             case FormApprovementData formApprovementData -> reviewForm(
                     forReviewData,
                     formApprovementData,
@@ -42,10 +44,10 @@ public class AnswerReviewerImpl implements AnswerReviewer {
                     membersConfirmApprovementData
             );
             default -> throw new IllegalStateException("Unexpected value: " + forReviewData.approvementData());
-        }
+        };
     }
 
-    private void reviewForm(
+    private AnswerStatus reviewForm(
             ForReviewData forReviewData,
             FormApprovementData formApprovementData,
             FormAnswerData formAnswerData
@@ -54,16 +56,19 @@ public class AnswerReviewerImpl implements AnswerReviewer {
         if (success) {
             answerRepository.updateStatus(forReviewData.answerId(), AnswerStatus.PASSED);
             memberService.addInClubIfAllTestPassed(forReviewData.userId(), forReviewData.clubId());
+            return AnswerStatus.PASSED;
         } else {
             answerRepository.updateStatus(forReviewData.answerId(), AnswerStatus.FAILED);
+            return AnswerStatus.FAILED;
         }
     }
 
-    private void reviewConfirmation(
+    private AnswerStatus reviewConfirmation(
             ForReviewData forReviewData,
             MembersConfirmApprovementData membersConfirmApprovementData
     ) {
         confirmationService.assignApprovers(forReviewData, membersConfirmApprovementData);
         answerRepository.updateStatus(forReviewData.answerId(), AnswerStatus.IN_REVIEW);
+        return AnswerStatus.IN_REVIEW;
     }
 }

@@ -52,7 +52,7 @@ public class StubDataUtil {
         );
     }
 
-    public static AnswerData formCorrectAnswerData() {
+    public static FormAnswerData formCorrectAnswerData() {
         return new FormAnswerData(
                 List.of(
                         new QuestionAnswer(
