@@ -21,6 +21,7 @@ import ru.random.walk.club_service.model.graphql.types.PhotoInput;
 import ru.random.walk.club_service.model.graphql.types.PhotoUrl;
 import ru.random.walk.club_service.service.ClubService;
 import ru.random.walk.club_service.service.auth.Authenticator;
+import ru.random.walk.club_service.service.auth.FieldsAuthenticator;
 import ru.random.walk.club_service.service.rate_limiter.GetClubPhotoRateLimiter;
 import ru.random.walk.club_service.service.rate_limiter.UploadClubPhotoRateLimiter;
 import ru.random.walk.util.FileUtil;
@@ -42,6 +43,7 @@ public class ClubController {
     private final Authenticator authenticator;
     private final UploadClubPhotoRateLimiter uploadClubPhotoRateLimiter;
     private final GetClubPhotoRateLimiter getClubPhotoRateLimiter;
+    private final FieldsAuthenticator fieldsAuthenticator;
 
     @QueryMapping
     public @Nullable ClubEntity getClub(
@@ -173,7 +175,10 @@ public class ClubController {
     }
 
     @MutationMapping
-    public ClubEntity removeClubPhoto(@Argument UUID clubId, Principal principal) {
+    public ClubEntity removeClubPhoto(
+            @Argument UUID clubId, Principal principal,
+            DataFetchingEnvironment env
+    ) {
         log.info("""
                         Remove club photo for [{}]
                         with login [{}]
@@ -181,6 +186,7 @@ public class ClubController {
                         """,
                 principal, principal.getName(), clubId
         );
+        fieldsAuthenticator.authByClubMembers(env, clubId, principal);
         authenticator.authAdminByClubId(principal, clubId);
         return clubService.removeClubPhoto(clubId);
     }
@@ -212,7 +218,8 @@ public class ClubController {
     public List<ClubWithMemberRole> searchClubs(
             @Argument String query,
             @Argument PaginationInput pagination,
-            Principal principal
+            Principal principal,
+            DataFetchingEnvironment env
     ) {
         var login = authenticator.getLogin(principal);
         log.info("""
@@ -222,6 +229,7 @@ public class ClubController {
                         """,
                 principal, login, query
         );
+        fieldsAuthenticator.authByClubMembers(env);
         pagination = Optional.ofNullable(pagination)
                 .orElse(PaginationInput.newBuilder()
                         .page(0)
