@@ -47,6 +47,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new NotFoundException("Member not found in club " + clubId));
         checkSingleAdminRemoveCase(memberForRemove, clubId);
         memberRepository.delete(memberForRemove);
+        answerRepository.deleteAllByClubId(clubId);
         outboxSenderService.sendMessage(
                 EventTopic.USER_EXCLUDE,
                 UserExcludeEvent.builder()
