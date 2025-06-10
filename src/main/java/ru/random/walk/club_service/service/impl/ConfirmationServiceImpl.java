@@ -21,6 +21,7 @@ import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.service.ConfirmationService;
 import ru.random.walk.club_service.service.NotificationService;
 import ru.random.walk.club_service.service.reviewer.ConfirmationReviewer;
+import ru.random.walk.club_service.util.VirtualThreadUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,11 +66,11 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         );
 
         for (var approver : approvers) {
-            notificationService.sendForAssignedApprover(
+            VirtualThreadUtil.scheduleTask(() -> notificationService.sendForAssignedApprover(
                     approver,
                     answer.getUserId(),
                     forReviewData.clubId()
-            );
+            ));
         }
     }
 
