@@ -1,9 +1,12 @@
 package ru.random.walk.club_service.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import ru.random.walk.club_service.AbstractContainerTest;
 import ru.random.walk.club_service.model.domain.answer.MembersConfirmAnswerData;
 import ru.random.walk.club_service.model.domain.approvement.MembersConfirmApprovementData;
@@ -20,23 +23,33 @@ import ru.random.walk.club_service.model.entity.type.ConfirmationStatus;
 import ru.random.walk.club_service.model.entity.type.MemberRole;
 import ru.random.walk.club_service.model.graphql.types.PaginationInput;
 import ru.random.walk.club_service.model.model.ForReviewData;
+import ru.random.walk.club_service.model.model.NotificationAdditionalDataKey;
 import ru.random.walk.club_service.repository.AnswerRepository;
 import ru.random.walk.club_service.repository.ApprovementRepository;
 import ru.random.walk.club_service.repository.ClubRepository;
 import ru.random.walk.club_service.repository.MemberRepository;
 import ru.random.walk.club_service.repository.UserRepository;
+import ru.random.walk.club_service.util.VirtualThreadUtil;
+import ru.random.walk.dto.SendNotificationEvent;
+import ru.random.walk.topic.EventTopic;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static ru.random.walk.club_service.mockito.JsonArgMatcher.jsonEqAny;
 
 @AllArgsConstructor(onConstructor_ = @__(@Autowired))
 class ConfirmationServiceTest extends AbstractContainerTest {
@@ -47,14 +60,19 @@ class ConfirmationServiceTest extends AbstractContainerTest {
     private final ApprovementRepository approvementRepository;
     private final MemberRepository memberRepository;
 
+    private final ObjectMapper objectMapper;
+
+    @MockitoSpyBean
+    private KafkaTemplate<String, String> kafkaTemplate;
+
     @Test
-    void testMemberConfirmationFlow() {
+    void testMemberConfirmationFlow() throws ExecutionException, InterruptedException {
         var user = userRepository.save(UserEntity.builder()
                 .id(UUID.randomUUID())
                 .fullName("Sapporo")
                 .build());
         var approvers = userRepository.saveAllAndFlush(
-                IntStream.range(0, 10)
+                IntStream.range(0, 5)
                         .mapToObj(i -> UserEntity.builder()
                                 .fullName("Inspector #%d".formatted(i))
                                 .id(UUID.randomUUID())
@@ -96,6 +114,34 @@ class ConfirmationServiceTest extends AbstractContainerTest {
                         .build(),
                 membersConfirmApprovementData
         );
+
+        VirtualThreadUtil.awaitAllRunningTasks();
+
+        for (int i = 0; i < 5; i++) {
+            verify(kafkaTemplate, times(5))
+                    .send(
+                            eq(EventTopic.SEND_NOTIFICATION),
+                            jsonEqAny(
+                                    approvers.stream()
+                                            .map(approver -> {
+                                                try {
+                                                    return objectMapper.writeValueAsString(SendNotificationEvent.builder()
+                                                            .title("Подтверди заявку на вступление в группу 'Kayak'!")
+                                                            .userId(approver.getId())
+                                                            .body("Пользователь Sapporo хочет вступить в группу 'Kayak'!")
+                                                            .additionalData(Map.of(
+                                                                    NotificationAdditionalDataKey.ANSWERER.name(), user.getId().toString(),
+                                                                    NotificationAdditionalDataKey.CLUB_ID.name(), club.getId().toString()
+                                                            ))
+                                                            .build());
+                                                } catch (Exception e) {
+                                                    return "";
+                                                }
+                                            })
+                                            .toList()
+                            )
+                    );
+        }
 
         var confirmations = testGetUserWaitingConfirmations(user);
         testGetApproverWaitingConfirmations(approvers, user);

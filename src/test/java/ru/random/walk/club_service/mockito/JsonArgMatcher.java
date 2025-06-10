@@ -1,30 +1,37 @@
 package ru.random.walk.club_service.mockito;
 
-import lombok.AllArgsConstructor;
 import org.json.JSONException;
-import org.mockito.ArgumentMatcher;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.argThat;
 
-@AllArgsConstructor
-public class JsonArgMatcher implements ArgumentMatcher<String> {
-    private final String expectedJsonPayload;
-
+public class JsonArgMatcher {
     public static String jsonEq(String expectedJsonPayload) {
-        return argThat(new JsonArgMatcher(expectedJsonPayload));
+        return argThat(actualJsonPayload -> jsonStrEquals(expectedJsonPayload, actualJsonPayload));
     }
 
-    @Override
-    public boolean matches(String actualJsonPayload) {
+    public static String jsonEqAny(List<String> expectedJsonPayloads) {
+        return argThat(actualJsonPayload -> {
+            for (var expected : expectedJsonPayloads) {
+                if (jsonStrEquals(expected, actualJsonPayload)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+
+    private static boolean jsonStrEquals(String expectedJsonPayload, String actualJsonPayload) {
         try {
             JSONAssert.assertEquals(
                     expectedJsonPayload,
                     actualJsonPayload,
                     JSONCompareMode.STRICT
             );
-        } catch (JSONException e) {
+        } catch (JSONException | Error e) {
             return false;
         }
         return true;
